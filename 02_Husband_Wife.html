@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vikram &amp; Neha · Husband & Wife · Relationship Report</title>
+<meta name="description" content="Interactive 3D relationship compatibility report for Vikram and Neha (Husband & Wife).">
+<meta name="theme-color" content="#f9f2f7">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/report_web.css">
+<style>
+:root {
+  --bg:#f9f2f7; --bg2:#f2e3ee; --card:#fdfbfc; --ink:#3f2338; --muted:#72586b; --line:#e4d4df; --pink:#7b4c70; --pink-soft:#f0dfec; --pink-mid:#b488a7; --a:#7b4c70; --b:#a67999; --b-ink:#8f6183; --bar-track:#ede3ea; --stage-glow:rgba(240,223,236,.62); --shadow-tint:rgba(86,48,78,.52); --shadow:0 18px 40px -28px rgba(86,48,78,.52); --chip2-bg:#e8dff0; --chip2-fg:#663d71; --chip3-bg:#f7e5dc; --chip3-fg:#9d4a2d;
+  --serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --r-lg: 30px;
+  --r-md: 22px;
+  color-scheme: light;
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#p1">Skip to the report</a>
+<noscript><p class="check" style="margin:20px">This interactive report requires JavaScript to render its charts and 3D scenes.</p></noscript>
+<header class="topbar">
+  <div class="hub-bar">
+    <a class="hub-link" href="index.html" aria-label="Back to all 13 relationship reports">← All 13 Reports</a>
+    <span class="hub-sep" aria-hidden="true">|</span>
+    <label class="sr" for="rel-switcher">Switch relationship report</label>
+    <select id="rel-switcher" class="rel-select" aria-label="Switch relationship report"></select>
+  </div>
+  <nav class="nav" id="nav" aria-label="Report pages"></nav>
+</header>
+<main id="report"></main>
+<footer id="foot"></footer>
+
+<!-- ALL REPORT DATA LIVES HERE. Edit values below and every section, chart, and 3D scene updates automatically. -->
+<script>
+window.REPORT = {
+  "index": 2,
+  "slug": "02_Husband_Wife",
+  "type": "Husband & Wife",
+  "paletteName": "Muted Mauve & Warm Plum",
+  "theme": {
+    "deep": "#7b4c70",
+    "acc": "#b488a7",
+    "soft": "#f0dfec",
+    "a": "#7b4c70",
+    "b": "#a67999",
+    "heartDeep": "#673d5d",
+    "heartLight": "#a07394",
+    "heartTop": "#d8c1d1",
+    "heartRim": "#9a6d8e",
+    "shadowRgb": "86,48,78"
+  },
+  "images": {
+    "emblem": "assets/images/02_Husband_Wife/icon_emblem.png",
+    "coverPair": "assets/images/02_Husband_Wife/cover_pair.png",
+    "harmony": "assets/images/02_Husband_Wife/scene_harmony.png"
+  },
+  "people": {
+    "a": {
+      "name": "Vikram",
+      "role": "Husband",
+      "his": "his",
+      "style": "Thoughtful",
+      "styleCell": "Thoughtful · 4 of 8",
+      "inStyleText": "7 of 12",
+      "line": "Keeps the peace and remembers the small things",
+      "bust": "assets/images/02_Husband_Wife/person_a_bust.png",
+      "face": "assets/images/02_Husband_Wife/person_a_face.png",
+      "seated": "assets/images/02_Husband_Wife/person_a_seated.png"
+    },
+    "b": {
+      "name": "Neha",
+      "role": "Wife",
+      "his": "her",
+      "style": "Assertive",
+      "styleCell": "Assertive · 4 of 8",
+      "inStyleText": "4 of 12",
+      "line": "Gets things moving when everyone is stuck",
+      "bust": "assets/images/02_Husband_Wife/person_b_bust.png",
+      "face": "assets/images/02_Husband_Wife/person_b_face.png",
+      "seated": "assets/images/02_Husband_Wife/person_b_seated.png"
+    }
+  },
+  "overall": {
+    "a": 75,
+    "b": 50,
+    "together": 62
+  },
+  "areas": [
+    {
+      "name": "Talking & Understanding",
+      "short": "Talking",
+      "a": 42,
+      "b": 17,
+      "together": 29,
+      "status": "Learning each other",
+      "line": "This is where the most new learning can happen.",
+      "reachA": "Vikram reaching towards the other",
+      "reachB": "Neha reaching towards the other",
+      "tilt": "tilted towards Vikram",
+      "citation": "Research: Laurenceau, Feldman Barrett & Pietromonaco (1998)",
+      "icon": "assets/images/02_Husband_Wife/icon_talk.png",
+      "scene": "assets/images/02_Husband_Wife/scene_talking.png",
+      "sceneAlt": "Vikram and Neha — Talking & Understanding"
+    },
+    {
+      "name": "Disagreements",
+      "short": "Disagreements",
+      "a": 83,
+      "b": 67,
+      "together": 75,
+      "status": "Mostly in tune",
+      "line": "You often meet in the middle, with a little room to grow.",
+      "reachA": "Vikram reaching towards the other",
+      "reachB": "Neha reaching towards the other",
+      "tilt": "tilted towards Vikram",
+      "citation": "Research: Kim, Capaldi & Crosby (2007)",
+      "icon": "assets/images/02_Husband_Wife/icon_conflict.png",
+      "scene": "assets/images/02_Husband_Wife/scene_disagreements.png",
+      "sceneAlt": "Vikram and Neha — Disagreements"
+    },
+    {
+      "name": "Care & Support",
+      "short": "Care",
+      "a": 100,
+      "b": 67,
+      "together": 83,
+      "status": "Speaking each other’s language",
+      "line": "You already reach each other here, so keep it up.",
+      "reachA": "Vikram reaching towards the other",
+      "reachB": "Neha reaching towards the other",
+      "tilt": "tilted towards Vikram",
+      "citation": "Research: Driver & Gottman (2004)",
+      "icon": "assets/images/02_Husband_Wife/icon_care.png",
+      "scene": "assets/images/02_Husband_Wife/scene_care.png",
+      "sceneAlt": "Vikram and Neha — Care & Support"
+    }
+  ],
+  "styles": {
+    "a": {
+      "Emotional": 25.0,
+      "Assertive": 0.0,
+      "Thoughtful": 50.0,
+      "Logical": 25.0
+    },
+    "b": {
+      "Emotional": 12.5,
+      "Assertive": 50.0,
+      "Thoughtful": 12.5,
+      "Logical": 25.0
+    }
+  },
+  "picksTotal": 8,
+  "stones": {
+    "a": [
+      1,
+      3,
+      1,
+      4,
+      4,
+      4,
+      3,
+      3,
+      4,
+      4,
+      4,
+      4
+    ],
+    "b": [
+      3,
+      1,
+      1,
+      1,
+      4,
+      1,
+      3,
+      4,
+      1,
+      4,
+      4,
+      3
+    ]
+  },
+  "inStyle": {
+    "a": 7,
+    "b": 4
+  },
+  "allReports": [
+    {
+      "num": "01",
+      "slug": "01_Boyfriend_Girlfriend",
+      "type": "Boyfriend & Girlfriend",
+      "names": "Arjun & Riya",
+      "href": "01_Boyfriend_Girlfriend.html"
+    },
+    {
+      "num": "02",
+      "slug": "02_Husband_Wife",
+      "type": "Husband & Wife",
+      "names": "Vikram & Neha",
+      "href": "02_Husband_Wife.html"
+    },
+    {
+      "num": "03",
+      "slug": "03_Brother_Sister",
+      "type": "Brother & Sister",
+      "names": "Kabir & Isha",
+      "href": "03_Brother_Sister.html"
+    },
+    {
+      "num": "04",
+      "slug": "04_Brother_Brother",
+      "type": "Brother & Brother",
+      "names": "Rohan & Aarav",
+      "href": "04_Brother_Brother.html"
+    },
+    {
+      "num": "05",
+      "slug": "05_Sister_Sister",
+      "type": "Sister & Sister",
+      "names": "Priya & Sneha",
+      "href": "05_Sister_Sister.html"
+    },
+    {
+      "num": "06",
+      "slug": "06_Mother_Daughter",
+      "type": "Mother & Daughter",
+      "names": "Sunita & Kavya",
+      "href": "06_Mother_Daughter.html"
+    },
+    {
+      "num": "07",
+      "slug": "07_Mother_Son",
+      "type": "Mother & Son",
+      "names": "Meera & Aditya",
+      "href": "07_Mother_Son.html"
+    },
+    {
+      "num": "08",
+      "slug": "08_Father_Daughter",
+      "type": "Father & Daughter",
+      "names": "Rajesh & Ananya",
+      "href": "08_Father_Daughter.html"
+    },
+    {
+      "num": "09",
+      "slug": "09_Father_Son",
+      "type": "Father & Son",
+      "names": "Suresh & Karan",
+      "href": "09_Father_Son.html"
+    },
+    {
+      "num": "10",
+      "slug": "10_Best_Friends",
+      "type": "Best Friends",
+      "names": "Tanya & Simran",
+      "href": "10_Best_Friends.html"
+    },
+    {
+      "num": "11",
+      "slug": "11_Friends",
+      "type": "Friends",
+      "names": "Dev & Aman",
+      "href": "11_Friends.html"
+    },
+    {
+      "num": "12",
+      "slug": "12_Business_Partners",
+      "type": "Business Partners",
+      "names": "Rahul & Sameer",
+      "href": "12_Business_Partners.html"
+    },
+    {
+      "num": "13",
+      "slug": "13_Teammates",
+      "type": "Teammates",
+      "names": "Zoya & Nikhil",
+      "href": "13_Teammates.html"
+    }
+  ],
+  "text": {
+    "kicker": "Relationship Report",
+    "heroTitle": [
+      "Mostly in ",
+      "Tune"
+    ],
+    "overallStatus": "Mostly in tune",
+    "heroLine": "Like a duet still finding its harmony: lots of good notes, a few to practise.",
+    "heartWords": "YOUR HEART",
+    "heartNote": "The more your heart fills, the more often you met each other in each other’s style.",
+    "highlights": [
+      {
+        "label": "YOUR SUNNIEST AREA",
+        "value": "Care & Support"
+      },
+      {
+        "label": "ROOM TO GROW",
+        "value": "Talking & Understanding"
+      },
+      {
+        "label": "BEST TRANSLATOR SO FAR",
+        "value": "Vikram"
+      }
+    ],
+    "flowersTitle": [
+      "Your Style ",
+      "Flowers"
+    ],
+    "flowersLede": "Four petals, one per style. The bigger the petal, the more you lean on that style.",
+    "readingTitle": "Reading your flowers",
+    "readingHtml": [
+      "<b>Vikram</b> leads with calm: mostly <b>Thoughtful</b>, with a <b>Emotional</b> side. He likes time, gentleness and peace.",
+      "<b>Neha</b> leads with action: mostly <b>Assertive</b>, with a <b>Logical</b> side. She likes things clear and moving.",
+      "Notice where your petals overlap: those shared styles are your natural bridge to each other."
+    ],
+    "overlapTitle": [
+      "Overlap in Every ",
+      "Area"
+    ],
+    "overlapLede": "Your circles overlap more where you meet each other more easily. Full overlap = completely in tune.",
+    "didYouKnowTitle": "DID YOU KNOW?",
+    "didYouKnow": "Research suggests that calming things down during a disagreement helps couples stay together.",
+    "mountainsTitle": [
+      "Three Mountains to ",
+      "Climb"
+    ],
+    "mountainsLede": "One mountain per area. The flag shows how high you’ve climbed together; each climber shows how far they’ve come towards the other.",
+    "mountainsBox": "What the mountains say",
+    "mountainsBulletsHtml": [
+      "<b>Highest summit: Care &amp; Support.</b> You’re closest to the top here: you already reach each other well.",
+      "<b>The biggest climb: Talking &amp; Understanding.</b> Here Neha has the most room to move towards Vikram’s style.",
+      "<b>Tip:</b> Start with one ‘how did that feel?’ question a day."
+    ],
+    "balanceTitle": [
+      "Balance and ",
+      "Footsteps"
+    ],
+    "balanceLede": "On each seesaw, whoever sits higher met the other’s style more in that area. Stepping stones show each of your answers.",
+    "stonesTitle": "Stepping stones: your answers, one by one",
+    "stonesLede": "Bigger, deeper-purple stones = answers more in the other person’s style. Small, pale stones = you answered as yourself.",
+    "levels": {
+      "4": "In their style",
+      "3": "Close",
+      "2": "Opposite",
+      "1": "Comfort zone"
+    },
+    "footstepsTitle": "What your footsteps say",
+    "footstepsBulletsHtml": [
+      "<b>Vikram</b> took his biggest steps in <b>Care &amp; Support</b> and the smallest in <b>Talking &amp; Understanding</b>.",
+      "<b>Neha</b> took her biggest steps in <b>Disagreements</b> and the smallest in <b>Talking &amp; Understanding</b>.",
+      "Pale stones aren’t mistakes. They show exactly where a little stretch would help most."
+    ],
+    "methodTitle": [
+      "How We Worked ",
+      "This Out"
+    ],
+    "methodLede": "Your main results in numbers.",
+    "tableHeaders": [
+      "Area",
+      "Vikram (Husband)",
+      "Neha (Wife)",
+      "Together"
+    ],
+    "tableRows": [
+      [
+        "Talking & Understanding",
+        "42%",
+        "17%",
+        "29%"
+      ],
+      [
+        "Disagreements",
+        "83%",
+        "67%",
+        "75%"
+      ],
+      [
+        "Care & Support",
+        "100%",
+        "67%",
+        "83%"
+      ],
+      [
+        "Overall",
+        "75%",
+        "50%",
+        "62% · Mostly in tune"
+      ]
+    ],
+    "keyTitle": "Colour key",
+    "sameStyleNote": "",
+    "rememberTitle": "Please remember",
+    "rememberHtml": "This is a <b>self-reflection tool</b>, not a diagnosis or a verdict on your relationship. <b>Biases may occur:</b> mood on the day, choosing the nicest-sounding answer, family and cultural expectations, and questions that may not fit every situation can all shape the results. Styles are broad patterns, and you are both more than four colours. Use this as a conversation starter, and if anything here worries you, speak to someone you trust or a counsellor.",
+    "researchTitle": [
+      "The research behind your ",
+      "report"
+    ],
+    "researchLede": "A few key studies behind the four styles and the areas your report looks at.",
+    "studies": [
+      {
+        "group": "The four styles",
+        "icon": "",
+        "finding": "How people relate can be mapped on two dimensions: how much they take charge, and how warm they are towards others. Our four styles sit on these two axes.",
+        "cite": "Wiggins, J. S. (1979). A psychological taxonomy of trait-descriptive terms: The interpersonal domain. Journal of Personality and Social Psychology, 37(3), 395–412."
+      },
+      {
+        "group": "The areas",
+        "icon": "assets/images/02_Husband_Wife/icon_talk.png",
+        "finding": "Talking & Understanding: feeling understood and cared for is what turns sharing into closeness.",
+        "cite": "Laurenceau, J.-P., Feldman Barrett, L., & Pietromonaco, P. R. (1998). Intimacy as an interpersonal process. Journal of Personality and Social Psychology, 74(5), 1238–1251."
+      },
+      {
+        "group": "The areas",
+        "icon": "assets/images/02_Husband_Wife/icon_conflict.png",
+        "finding": "Disagreements: calming things down during conflict predicted couples staying together.",
+        "cite": "Kim, H. K., Capaldi, D. M., & Crosby, L. (2007). Generalizability of Gottman and colleagues’ affective process models of couples’ relationship outcomes. Journal of Marriage and Family, 69(1), 55–72."
+      },
+      {
+        "group": "The areas",
+        "icon": "assets/images/02_Husband_Wife/icon_care.png",
+        "finding": "Care & Support: small, everyday moments of turning towards each other are linked with more warmth and humour, even during conflict.",
+        "cite": "Driver, J. L., & Gottman, J. M. (2004). Daily marital interactions and positive affect during marital conflict among newlywed couples. Family Process, 43(3), 301–314."
+      },
+      {
+        "group": "The areas",
+        "icon": "",
+        "finding": "Support & Appreciation (Business Partners, Teammates): teams do better when people feel safe to speak up.",
+        "cite": "Edmondson, A. (1999). Psychological safety and learning behavior in work teams. Administrative Science Quarterly, 44(2), 350–383."
+      },
+      {
+        "group": "The areas",
+        "icon": "",
+        "finding": "Siblings: brothers and sisters can be close and competitive at the same time; warmth and conflict are separate.",
+        "cite": "Furman, W., & Buhrmester, D. (1985). Children’s perceptions of the qualities of sibling relationships. Child Development, 56(2), 448–461."
+      }
+    ],
+    "goodToKnow": [
+      "Good to know:",
+      "these studies shaped the styles and areas in your report; they don’t prove the test is accurate for every relationship. We’re running a pilot study to check that."
+    ],
+    "footer": "A self-reflection tool. Biases may occur.",
+    "dragHint": "Drag to turn"
+  }
+};
+</script>
+<script src="assets/js/three.r187.min.js"></script>
+<script src="assets/js/report_engine_3d.js"></script>
+</body>
+</html>

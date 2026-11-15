@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13 Relationship Reports · Interactive 3D Web Collection</title>
+<meta name="description" content="Complete collection of 13 interactive 3D web relationship reports.">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<style>
+:root {
+  --serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --ink: #3c1c2c;
+  --muted: #6f5a65;
+  --accent: #a64b6b;
+  --soft: #f8dde6;
+  --line: #ead4dc;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 400 16px/1.55 var(--sans);
+  color: var(--ink);
+  background: #fdf8f9;
+  background-image:
+    radial-gradient(960px 420px at 85% -80px, #f7dfe8, transparent 70%),
+    radial-gradient(780px 420px at 10% 15%, #e8eef9, transparent 70%);
+}
+header.hero {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 42px 20px 22px;
+  text-align: center;
+}
+.kicker {
+  font-size: .76rem;
+  letter-spacing: .36em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(2.3rem, 5.6vw, 3.8rem);
+  line-height: 1.08;
+  margin: 0 0 12px;
+}
+h1 em { color: var(--accent); font-style: italic; }
+.sub {
+  max-width: 66ch;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.badges span {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 4px 13px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+main.grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px 20px 56px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.hub-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--c-ink);
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 26px;
+  padding: 16px;
+  box-shadow: 0 16px 34px -26px rgba(60, 25, 45, .42);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.hub-card:hover, .hub-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 38px -22px rgba(60, 25, 45, .55);
+  outline: none;
+}
+.hub-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.hub-num {
+  font-size: .75rem;
+  font-weight: 800;
+  color: var(--c-muted);
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.hub-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--c-soft);
+  color: var(--c-acc);
+  font-weight: 800;
+  font-size: .8rem;
+  padding: 3px 11px;
+  border-radius: 999px;
+}
+.hub-pill img { object-fit: contain; }
+.hub-score {
+  margin-left: auto;
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  color: var(--c-acc);
+}
+.hub-art {
+  height: 195px;
+  border-radius: 20px;
+  background: radial-gradient(80% 80% at 50% 45%, #fff 0%, var(--c-soft) 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10px 10px 0;
+  overflow: hidden;
+}
+.hub-art img {
+  max-height: 182px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 14px rgba(40, 20, 35, .15));
+}
+.hub-meta {
+  padding: 12px 4px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hub-meta h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.55rem;
+  margin: 0;
+}
+.hub-status {
+  margin: 0;
+  font-weight: 800;
+  font-size: .86rem;
+  color: var(--c-acc);
+}
+.hub-styles {
+  margin: 0;
+  font-size: .84rem;
+  color: var(--c-muted);
+}
+.hub-cta {
+  margin-top: 8px;
+  display: inline-block;
+  align-self: flex-start;
+  background: var(--c-soft);
+  color: var(--c-acc);
+  font-weight: 800;
+  font-size: .8rem;
+  padding: 5px 13px;
+  border-radius: 999px;
+}
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: .85rem;
+  padding: 0 20px 36px;
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <p class="kicker">Interactive Web Report Collection</p>
+  <h1>13 Relationship <em>Reports</em></h1>
+  <p class="sub">Select any relationship pair below to explore its complete 7-section interactive report with draggable 3D glass hearts, watercolour style flowers, mountain climbs, seated seesaws, and stepping stones.</p>
+  <div class="badges">
+    <span>13 Relationships</span>
+    <span>Draggable Three.js 3D Stages</span>
+    <span>Coordinated Theme Palettes</span>
+    <span>Offline &amp; Web Ready</span>
+  </div>
+</header>
+<main class="grid">
+
+      <a class="hub-card" href="01_Boyfriend_Girlfriend.html" style="--c-bg:#fcf1f4;--c-soft:#f8dde6;--c-acc:#a64b6b;--c-line:#f1d5de;--c-ink:#512134;--c-muted:#835869">
+        <div class="hub-card-top">
+          <span class="hub-num">01</span>
+          <span class="hub-pill"><img src="assets/images/01_Boyfriend_Girlfriend/icon_emblem.png" alt="" width="18" height="18">Boyfriend & Girlfriend</span>
+          <span class="hub-score">53%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/01_Boyfriend_Girlfriend/cover_pair.png" alt="Arjun and Riya" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Arjun &amp; Riya</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Arjun: <b>Logical</b> · Riya: <b>Emotional</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="02_Husband_Wife.html" style="--c-bg:#f9f2f7;--c-soft:#f0dfec;--c-acc:#7b4c70;--c-line:#e4d4df;--c-ink:#3f2338;--c-muted:#72586b">
+        <div class="hub-card-top">
+          <span class="hub-num">02</span>
+          <span class="hub-pill"><img src="assets/images/02_Husband_Wife/icon_emblem.png" alt="" width="18" height="18">Husband & Wife</span>
+          <span class="hub-score">62%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/02_Husband_Wife/cover_pair.png" alt="Vikram and Neha" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Vikram &amp; Neha</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Vikram: <b>Thoughtful</b> · Neha: <b>Assertive</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="03_Brother_Sister.html" style="--c-bg:#f0f7fc;--c-soft:#dcebf7;--c-acc:#436d96;--c-line:#d4e3ee;--c-ink:#273349;--c-muted:#5d6579">
+        <div class="hub-card-top">
+          <span class="hub-num">03</span>
+          <span class="hub-pill"><img src="assets/images/03_Brother_Sister/icon_emblem.png" alt="" width="18" height="18">Brother & Sister</span>
+          <span class="hub-score">18%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/03_Brother_Sister/cover_pair.png" alt="Kabir and Isha" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Kabir &amp; Isha</h2>
+          <p class="hub-status">Learning each other</p>
+          <p class="hub-styles">Kabir: <b>Emotional</b> · Isha: <b>Logical</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="04_Brother_Brother.html" style="--c-bg:#eff8f7;--c-soft:#d8eeeb;--c-acc:#2e6d67;--c-line:#cee3e0;--c-ink:#203334;--c-muted:#556568">
+        <div class="hub-card-top">
+          <span class="hub-num">04</span>
+          <span class="hub-pill"><img src="assets/images/04_Brother_Brother/icon_emblem.png" alt="" width="18" height="18">Brother & Brother</span>
+          <span class="hub-score">74%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/04_Brother_Brother/cover_pair.png" alt="Rohan and Aarav" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Rohan &amp; Aarav</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Rohan: <b>Assertive</b> · Aarav: <b>Assertive</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="05_Sister_Sister.html" style="--c-bg:#f6f3fb;--c-soft:#e9e2f6;--c-acc:#6b5897;--c-line:#dfd9ed;--c-ink:#38294a;--c-muted:#6c5d7a">
+        <div class="hub-card-top">
+          <span class="hub-num">05</span>
+          <span class="hub-pill"><img src="assets/images/05_Sister_Sister/icon_emblem.png" alt="" width="18" height="18">Sister & Sister</span>
+          <span class="hub-score">76%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/05_Sister_Sister/cover_pair.png" alt="Priya and Sneha" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Priya &amp; Sneha</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Priya: <b>Thoughtful</b> · Sneha: <b>Emotional</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="06_Mother_Daughter.html" style="--c-bg:#f2f8f2;--c-soft:#e0eedf;--c-acc:#4f7556;--c-line:#d8e4da;--c-ink:#2d372e;--c-muted:#626861">
+        <div class="hub-card-top">
+          <span class="hub-num">06</span>
+          <span class="hub-pill"><img src="assets/images/06_Mother_Daughter/icon_emblem.png" alt="" width="18" height="18">Mother & Daughter</span>
+          <span class="hub-score">76%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/06_Mother_Daughter/cover_pair.png" alt="Sunita and Kavya" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Sunita &amp; Kavya</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Sunita: <b>Emotional</b> · Kavya: <b>Thoughtful</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="07_Mother_Son.html" style="--c-bg:#eff8f5;--c-soft:#d9efe8;--c-acc:#3b7465;--c-line:#d2e5e0;--c-ink:#243633;--c-muted:#5a6867">
+        <div class="hub-card-top">
+          <span class="hub-num">07</span>
+          <span class="hub-pill"><img src="assets/images/07_Mother_Son/icon_emblem.png" alt="" width="18" height="18">Mother & Son</span>
+          <span class="hub-score">69%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/07_Mother_Son/cover_pair.png" alt="Meera and Aditya" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Meera &amp; Aditya</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Meera: <b>Thoughtful</b> · Aditya: <b>Logical</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="08_Father_Daughter.html" style="--c-bg:#fcf3ee;--c-soft:#f9e2d6;--c-acc:#ab5d3d;--c-line:#f5dcd1;--c-ink:#542b20;--c-muted:#855f58">
+        <div class="hub-card-top">
+          <span class="hub-num">08</span>
+          <span class="hub-pill"><img src="assets/images/08_Father_Daughter/icon_emblem.png" alt="" width="18" height="18">Father & Daughter</span>
+          <span class="hub-score">64%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/08_Father_Daughter/cover_pair.png" alt="Rajesh and Ananya" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Rajesh &amp; Ananya</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Rajesh: <b>Assertive</b> · Ananya: <b>Emotional</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="09_Father_Son.html" style="--c-bg:#f2f4fa;--c-soft:#dfe6f2;--c-acc:#445a7d;--c-line:#d4dbe6;--c-ink:#282b3e;--c-muted:#5d5e70">
+        <div class="hub-card-top">
+          <span class="hub-num">09</span>
+          <span class="hub-pill"><img src="assets/images/09_Father_Son/icon_emblem.png" alt="" width="18" height="18">Father & Son</span>
+          <span class="hub-score">57%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/09_Father_Son/cover_pair.png" alt="Suresh and Karan" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Suresh &amp; Karan</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Suresh: <b>Logical</b> · Karan: <b>Assertive</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="10_Best_Friends.html" style="--c-bg:#fef2ef;--c-soft:#fce1d8;--c-acc:#b4533e;--c-line:#f8dad2;--c-ink:#572620;--c-muted:#885b58">
+        <div class="hub-card-top">
+          <span class="hub-num">10</span>
+          <span class="hub-pill"><img src="assets/images/10_Best_Friends/icon_emblem.png" alt="" width="18" height="18">Best Friends</span>
+          <span class="hub-score">88%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/10_Best_Friends/cover_pair.png" alt="Tanya and Simran" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Tanya &amp; Simran</h2>
+          <p class="hub-status">Speaking each other’s language</p>
+          <p class="hub-styles">Tanya: <b>Emotional</b> · Simran: <b>Emotional</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="11_Friends.html" style="--c-bg:#eff8f9;--c-soft:#d8eff1;--c-acc:#2d787e;--c-line:#cfe7e8;--c-ink:#1f373e;--c-muted:#556970">
+        <div class="hub-card-top">
+          <span class="hub-num">11</span>
+          <span class="hub-pill"><img src="assets/images/11_Friends/icon_emblem.png" alt="" width="18" height="18">Friends</span>
+          <span class="hub-score">26%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/11_Friends/cover_pair.png" alt="Dev and Aman" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Dev &amp; Aman</h2>
+          <p class="hub-status">Learning each other</p>
+          <p class="hub-styles">Dev: <b>Assertive</b> · Aman: <b>Thoughtful</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="12_Business_Partners.html" style="--c-bg:#f3f5f8;--c-soft:#e2e8ee;--c-acc:#4a5b6d;--c-line:#d8dee4;--c-ink:#2a2b36;--c-muted:#605e6a">
+        <div class="hub-card-top">
+          <span class="hub-num">12</span>
+          <span class="hub-pill"><img src="assets/images/12_Business_Partners/icon_emblem.png" alt="" width="18" height="18">Business Partners</span>
+          <span class="hub-score">78%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/12_Business_Partners/cover_pair.png" alt="Rahul and Sameer" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Rahul &amp; Sameer</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Rahul: <b>Logical</b> · Sameer: <b>Assertive</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+      <a class="hub-card" href="13_Teammates.html" style="--c-bg:#f0f5fa;--c-soft:#dce8f4;--c-acc:#38658d;--c-line:#d1deea;--c-ink:#233045;--c-muted:#596276">
+        <div class="hub-card-top">
+          <span class="hub-num">13</span>
+          <span class="hub-pill"><img src="assets/images/13_Teammates/icon_emblem.png" alt="" width="18" height="18">Teammates</span>
+          <span class="hub-score">60%</span>
+        </div>
+        <div class="hub-art">
+          <img src="assets/images/13_Teammates/cover_pair.png" alt="Zoya and Nikhil" loading="lazy">
+        </div>
+        <div class="hub-meta">
+          <h2>Zoya &amp; Nikhil</h2>
+          <p class="hub-status">Mostly in tune</p>
+          <p class="hub-styles">Zoya: <b>Emotional</b> · Nikhil: <b>Logical</b></p>
+          <span class="hub-cta">Open Interactive 3D Report →</span>
+        </div>
+      </a>
+</main>
+<footer>A self-reflection tool collection · All 13 interactive web reports</footer>
+</body>
+</html>

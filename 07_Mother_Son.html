@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meera &amp; Aditya · Mother & Son · Relationship Report</title>
+<meta name="description" content="Interactive 3D relationship compatibility report for Meera and Aditya (Mother & Son).">
+<meta name="theme-color" content="#eff8f5">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/report_web.css">
+<style>
+:root {
+  --bg:#eff8f5; --bg2:#def1eb; --card:#fafdfc; --ink:#243633; --muted:#5a6867; --line:#d2e5e0; --pink:#3b7465; --pink-soft:#d9efe8; --pink-mid:#83b8a9; --a:#3b7465; --b:#71a798; --b-ink:#548c7d; --bar-track:#e2eeeb; --stage-glow:rgba(217,239,232,.62); --shadow-tint:rgba(38,82,70,.52); --shadow:0 18px 40px -28px rgba(38,82,70,.52); --chip2-bg:#e3e7f1; --chip2-fg:#4f4b6d; --chip3-bg:#f6e8db; --chip3-fg:#9d4a2d;
+  --serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --r-lg: 30px;
+  --r-md: 22px;
+  color-scheme: light;
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#p1">Skip to the report</a>
+<noscript><p class="check" style="margin:20px">This interactive report requires JavaScript to render its charts and 3D scenes.</p></noscript>
+<header class="topbar">
+  <div class="hub-bar">
+    <a class="hub-link" href="index.html" aria-label="Back to all 13 relationship reports">← All 13 Reports</a>
+    <span class="hub-sep" aria-hidden="true">|</span>
+    <label class="sr" for="rel-switcher">Switch relationship report</label>
+    <select id="rel-switcher" class="rel-select" aria-label="Switch relationship report"></select>
+  </div>
+  <nav class="nav" id="nav" aria-label="Report pages"></nav>
+</header>
+<main id="report"></main>
+<footer id="foot"></footer>
+
+<!-- ALL REPORT DATA LIVES HERE. Edit values below and every section, chart, and 3D scene updates automatically. -->
+<script>
+window.REPORT = {
+  "index": 7,
+  "slug": "07_Mother_Son",
+  "type": "Mother & Son",
+  "paletteName": "Eucalyptus & Soft Mint",
+  "theme": {
+    "deep": "#3b7465",
+    "acc": "#83b8a9",
+    "soft": "#d9efe8",
+    "a": "#3b7465",
+    "b": "#71a798",
+    "heartDeep": "#2f6154",
+    "heartLight": "#6aa091",
+    "heartTop": "#bfdad2",
+    "heartRim": "#63998a",
+    "shadowRgb": "38,82,70"
+  },
+  "images": {
+    "emblem": "assets/images/07_Mother_Son/icon_emblem.png",
+    "coverPair": "assets/images/07_Mother_Son/cover_pair.png",
+    "harmony": "assets/images/07_Mother_Son/scene_harmony.png"
+  },
+  "people": {
+    "a": {
+      "name": "Meera",
+      "role": "Mother",
+      "his": "her",
+      "style": "Thoughtful",
+      "styleCell": "Thoughtful · 5 of 8",
+      "inStyleText": "6 of 12",
+      "line": "Keeps the peace and remembers the small things",
+      "bust": "assets/images/07_Mother_Son/person_a_bust.png",
+      "face": "assets/images/07_Mother_Son/person_a_face.png",
+      "seated": "assets/images/07_Mother_Son/person_a_seated.png"
+    },
+    "b": {
+      "name": "Aditya",
+      "role": "Son",
+      "his": "his",
+      "style": "Logical",
+      "styleCell": "Logical · 4 of 8",
+      "inStyleText": "10 of 12",
+      "line": "Sees the full picture and plans well",
+      "bust": "assets/images/07_Mother_Son/person_b_bust.png",
+      "face": "assets/images/07_Mother_Son/person_b_face.png",
+      "seated": "assets/images/07_Mother_Son/person_b_seated.png"
+    }
+  },
+  "overall": {
+    "a": 56,
+    "b": 83,
+    "together": 69
+  },
+  "areas": [
+    {
+      "name": "Talking & Understanding",
+      "short": "Talking",
+      "a": 75,
+      "b": 75,
+      "together": 75,
+      "status": "Mostly in tune",
+      "line": "You often meet in the middle, with a little room to grow.",
+      "reachA": "Meera reaching towards the other",
+      "reachB": "Aditya reaching towards the other",
+      "tilt": "nicely balanced",
+      "citation": "Research: Laurenceau, Feldman Barrett & Pietromonaco (1998)",
+      "icon": "assets/images/07_Mother_Son/icon_talk.png",
+      "scene": "assets/images/07_Mother_Son/scene_talking.png",
+      "sceneAlt": "Meera and Aditya — Talking & Understanding"
+    },
+    {
+      "name": "Disagreements",
+      "short": "Disagreements",
+      "a": 67,
+      "b": 75,
+      "together": 71,
+      "status": "Mostly in tune",
+      "line": "You often meet in the middle, with a little room to grow.",
+      "reachA": "Meera reaching towards the other",
+      "reachB": "Aditya reaching towards the other",
+      "tilt": "nicely balanced",
+      "citation": "Research: Kim, Capaldi & Crosby (2007)",
+      "icon": "assets/images/07_Mother_Son/icon_conflict.png",
+      "scene": "assets/images/07_Mother_Son/scene_disagreements.png",
+      "sceneAlt": "Meera and Aditya — Disagreements"
+    },
+    {
+      "name": "Care & Support",
+      "short": "Care",
+      "a": 25,
+      "b": 100,
+      "together": 62,
+      "status": "Mostly in tune",
+      "line": "You often meet in the middle, with a little room to grow.",
+      "reachA": "Meera reaching towards the other",
+      "reachB": "Aditya reaching towards the other",
+      "tilt": "tilted towards Aditya",
+      "citation": "Research: Driver & Gottman (2004)",
+      "icon": "assets/images/07_Mother_Son/icon_care.png",
+      "scene": "assets/images/07_Mother_Son/scene_care.png",
+      "sceneAlt": "Meera and Aditya — Care & Support"
+    }
+  ],
+  "styles": {
+    "a": {
+      "Emotional": 25.0,
+      "Assertive": 0.0,
+      "Thoughtful": 62.5,
+      "Logical": 12.5
+    },
+    "b": {
+      "Emotional": 25.0,
+      "Assertive": 0.0,
+      "Thoughtful": 25.0,
+      "Logical": 50.0
+    }
+  },
+  "picksTotal": 8,
+  "stones": {
+    "a": [
+      4,
+      4,
+      4,
+      1,
+      1,
+      4,
+      3,
+      4,
+      1,
+      1,
+      4,
+      1
+    ],
+    "b": [
+      4,
+      1,
+      4,
+      4,
+      4,
+      4,
+      4,
+      1,
+      4,
+      4,
+      4,
+      4
+    ]
+  },
+  "inStyle": {
+    "a": 6,
+    "b": 10
+  },
+  "allReports": [
+    {
+      "num": "01",
+      "slug": "01_Boyfriend_Girlfriend",
+      "type": "Boyfriend & Girlfriend",
+      "names": "Arjun & Riya",
+      "href": "01_Boyfriend_Girlfriend.html"
+    },
+    {
+      "num": "02",
+      "slug": "02_Husband_Wife",
+      "type": "Husband & Wife",
+      "names": "Vikram & Neha",
+      "href": "02_Husband_Wife.html"
+    },
+    {
+      "num": "03",
+      "slug": "03_Brother_Sister",
+      "type": "Brother & Sister",
+      "names": "Kabir & Isha",
+      "href": "03_Brother_Sister.html"
+    },
+    {
+      "num": "04",
+      "slug": "04_Brother_Brother",
+      "type": "Brother & Brother",
+      "names": "Rohan & Aarav",
+      "href": "04_Brother_Brother.html"
+    },
+    {
+      "num": "05",
+      "slug": "05_Sister_Sister",
+      "type": "Sister & Sister",
+      "names": "Priya & Sneha",
+      "href": "05_Sister_Sister.html"
+    },
+    {
+      "num": "06",
+      "slug": "06_Mother_Daughter",
+      "type": "Mother & Daughter",
+      "names": "Sunita & Kavya",
+      "href": "06_Mother_Daughter.html"
+    },
+    {
+      "num": "07",
+      "slug": "07_Mother_Son",
+      "type": "Mother & Son",
+      "names": "Meera & Aditya",
+      "href": "07_Mother_Son.html"
+    },
+    {
+      "num": "08",
+      "slug": "08_Father_Daughter",
+      "type": "Father & Daughter",
+      "names": "Rajesh & Ananya",
+      "href": "08_Father_Daughter.html"
+    },
+    {
+      "num": "09",
+      "slug": "09_Father_Son",
+      "type": "Father & Son",
+      "names": "Suresh & Karan",
+      "href": "09_Father_Son.html"
+    },
+    {
+      "num": "10",
+      "slug": "10_Best_Friends",
+      "type": "Best Friends",
+      "names": "Tanya & Simran",
+      "href": "10_Best_Friends.html"
+    },
+    {
+      "num": "11",
+      "slug": "11_Friends",
+      "type": "Friends",
+      "names": "Dev & Aman",
+      "href": "11_Friends.html"
+    },
+    {
+      "num": "12",
+      "slug": "12_Business_Partners",
+      "type": "Business Partners",
+      "names": "Rahul & Sameer",
+      "href": "12_Business_Partners.html"
+    },
+    {
+      "num": "13",
+      "slug": "13_Teammates",
+      "type": "Teammates",
+      "names": "Zoya & Nikhil",
+      "href": "13_Teammates.html"
+    }
+  ],
+  "text": {
+    "kicker": "Relationship Report",
+    "heroTitle": [
+      "Mostly in ",
+      "Tune"
+    ],
+    "overallStatus": "Mostly in tune",
+    "heroLine": "Like a duet still finding its harmony: lots of good notes, a few to practise.",
+    "heartWords": "YOUR HEART",
+    "heartNote": "The more your heart fills, the more often you met each other in each other’s style.",
+    "highlights": [
+      {
+        "label": "YOUR SUNNIEST AREA",
+        "value": "Talking & Understanding"
+      },
+      {
+        "label": "ROOM TO GROW",
+        "value": "Care & Support"
+      },
+      {
+        "label": "BEST TRANSLATOR SO FAR",
+        "value": "Aditya"
+      }
+    ],
+    "flowersTitle": [
+      "Your Style ",
+      "Flowers"
+    ],
+    "flowersLede": "Four petals, one per style. The bigger the petal, the more you lean on that style.",
+    "readingTitle": "Reading your flowers",
+    "readingHtml": [
+      "<b>Meera</b> leads with calm: mostly <b>Thoughtful</b>, with a <b>Emotional</b> side. She likes time, gentleness and peace.",
+      "<b>Aditya</b> leads with reason: mostly <b>Logical</b>, with a <b>Emotional</b> side. He likes things to make sense.",
+      "Notice where your petals overlap: those shared styles are your natural bridge to each other."
+    ],
+    "overlapTitle": [
+      "Overlap in Every ",
+      "Area"
+    ],
+    "overlapLede": "Your circles overlap more where you meet each other more easily. Full overlap = completely in tune.",
+    "didYouKnowTitle": "DID YOU KNOW?",
+    "didYouKnow": "Research suggests that calming things down during a disagreement helps couples stay together.",
+    "mountainsTitle": [
+      "Three Mountains to ",
+      "Climb"
+    ],
+    "mountainsLede": "One mountain per area. The flag shows how high you’ve climbed together; each climber shows how far they’ve come towards the other.",
+    "mountainsBox": "What the mountains say",
+    "mountainsBulletsHtml": [
+      "<b>Highest summit: Talking &amp; Understanding.</b> You’re closest to the top here: you already reach each other well.",
+      "<b>The biggest climb: Care &amp; Support.</b> Here Meera has the most room to move towards Aditya’s style.",
+      "<b>Tip:</b> Do one small thing in the other’s style this week."
+    ],
+    "balanceTitle": [
+      "Balance and ",
+      "Footsteps"
+    ],
+    "balanceLede": "On each seesaw, whoever sits higher met the other’s style more in that area. Stepping stones show each of your answers.",
+    "stonesTitle": "Stepping stones: your answers, one by one",
+    "stonesLede": "Bigger, deeper-purple stones = answers more in the other person’s style. Small, pale stones = you answered as yourself.",
+    "levels": {
+      "4": "In their style",
+      "3": "Close",
+      "2": "Opposite",
+      "1": "Comfort zone"
+    },
+    "footstepsTitle": "What your footsteps say",
+    "footstepsBulletsHtml": [
+      "<b>Meera</b> took her biggest steps in <b>Talking &amp; Understanding</b> and the smallest in <b>Care &amp; Support</b>.",
+      "<b>Aditya</b> took his biggest steps in <b>Care &amp; Support</b> and the smallest in <b>Talking &amp; Understanding</b>.",
+      "Pale stones aren’t mistakes. They show exactly where a little stretch would help most."
+    ],
+    "methodTitle": [
+      "How We Worked ",
+      "This Out"
+    ],
+    "methodLede": "Your main results in numbers.",
+    "tableHeaders": [
+      "Area",
+      "Meera (Mother)",
+      "Aditya (Son)",
+      "Together"
+    ],
+    "tableRows": [
+      [
+        "Talking & Understanding",
+        "75%",
+        "75%",
+        "75%"
+      ],
+      [
+        "Disagreements",
+        "67%",
+        "75%",
+        "71%"
+      ],
+      [
+        "Care & Support",
+        "25%",
+        "100%",
+        "62%"
+      ],
+      [
+        "Overall",
+        "56%",
+        "83%",
+        "69% · Mostly in tune"
+      ]
+    ],
+    "keyTitle": "Colour key",
+    "sameStyleNote": "",
+    "rememberTitle": "Please remember",
+    "rememberHtml": "This is a <b>self-reflection tool</b>, not a diagnosis or a verdict on your relationship. <b>Biases may occur:</b> mood on the day, choosing the nicest-sounding answer, family and cultural expectations, and questions that may not fit every situation can all shape the results. Styles are broad patterns, and you are both more than four colours. Use this as a conversation starter, and if anything here worries you, speak to someone you trust or a counsellor.",
+    "researchTitle": [
+      "The research behind your ",
+      "report"
+    ],
+    "researchLede": "A few key studies behind the four styles and the areas your report looks at.",
+    "studies": [
+      {
+        "group": "The four styles",
+        "icon": "",
+        "finding": "How people relate can be mapped on two dimensions: how much they take charge, and how warm they are towards others. Our four styles sit on these two axes.",
+        "cite": "Wiggins, J. S. (1979). A psychological taxonomy of trait-descriptive terms: The interpersonal domain. Journal of Personality and Social Psychology, 37(3), 395–412."
+      },
+      {
+        "group": "The areas",
+        "icon": "assets/images/07_Mother_Son/icon_talk.png",
+        "finding": "Talking & Understanding: feeling understood and cared for is what turns sharing into closeness.",
+        "cite": "Laurenceau, J.-P., Feldman Barrett, L., & Pietromonaco, P. R. (1998). Intimacy as an interpersonal process. Journal of Personality and Social Psychology, 74(5), 1238–1251."
+      },
+      {
+        "group": "The areas",
+        "icon": "assets/images/07_Mother_Son/icon_conflict.png",
+        "finding": "Disagreements: calming things down during conflict predicted couples staying together.",
+        "cite": "Kim, H. K., Capaldi, D. M., & Crosby, L. (2007). Generalizability of Gottman and colleagues’ affective process models of couples’ relationship outcomes. Journal of Marriage and Family, 69(1), 55–72."
+      },
+      {
+        "group": "The areas",
+        "icon": "assets/images/07_Mother_Son/icon_care.png",
+        "finding": "Care & Support: small, everyday moments of turning towards each other are linked with more warmth and humour, even during conflict.",
+        "cite": "Driver, J. L., & Gottman, J. M. (2004). Daily marital interactions and positive affect during marital conflict among newlywed couples. Family Process, 43(3), 301–314."
+      },
+      {
+        "group": "The areas",
+        "icon": "",
+        "finding": "Support & Appreciation (Business Partners, Teammates): teams do better when people feel safe to speak up.",
+        "cite": "Edmondson, A. (1999). Psychological safety and learning behavior in work teams. Administrative Science Quarterly, 44(2), 350–383."
+      },
+      {
+        "group": "The areas",
+        "icon": "",
+        "finding": "Siblings: brothers and sisters can be close and competitive at the same time; warmth and conflict are separate.",
+        "cite": "Furman, W., & Buhrmester, D. (1985). Children’s perceptions of the qualities of sibling relationships. Child Development, 56(2), 448–461."
+      }
+    ],
+    "goodToKnow": [
+      "Good to know:",
+      "these studies shaped the styles and areas in your report; they don’t prove the test is accurate for every relationship. We’re running a pilot study to check that."
+    ],
+    "footer": "A self-reflection tool. Biases may occur.",
+    "dragHint": "Drag to turn"
+  }
+};
+</script>
+<script src="assets/js/three.r187.min.js"></script>
+<script src="assets/js/report_engine_3d.js"></script>
+</body>
+</html>
