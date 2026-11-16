@@ -1,0 +1,793 @@
+{
+  "version": "2.0",
+  "description": "Gender-aware character illustration library for all 13 relationship types (plus Mother & Father alias).",
+  "relationships": {
+    "01_Boyfriend_Girlfriend": {
+      "defaultCode": "MF",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "MF"
+      ],
+      "variants": {
+        "FM": {
+          "code": "FM",
+          "genderA": "female",
+          "genderB": "male",
+          "coverPair": "assets/images/01_Boyfriend_Girlfriend/variants/FM/cover_pair.png",
+          "harmony": "assets/images/01_Boyfriend_Girlfriend/variants/FM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/01_Boyfriend_Girlfriend/variants/FM/person_a_bust.png",
+            "face": "assets/images/01_Boyfriend_Girlfriend/variants/FM/person_a_face.png",
+            "seated": "assets/images/01_Boyfriend_Girlfriend/variants/FM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/01_Boyfriend_Girlfriend/variants/FM/person_b_bust.png",
+            "face": "assets/images/01_Boyfriend_Girlfriend/variants/FM/person_b_face.png",
+            "seated": "assets/images/01_Boyfriend_Girlfriend/variants/FM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/01_Boyfriend_Girlfriend/variants/FM/scene_talking.png",
+            "disagreements": "assets/images/01_Boyfriend_Girlfriend/variants/FM/scene_disagreements.png",
+            "care": "assets/images/01_Boyfriend_Girlfriend/variants/FM/scene_care.png"
+          }
+        },
+        "MF": {
+          "code": "MF",
+          "genderA": "male",
+          "genderB": "female",
+          "coverPair": "assets/images/01_Boyfriend_Girlfriend/variants/MF/cover_pair.png",
+          "harmony": "assets/images/01_Boyfriend_Girlfriend/variants/MF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/01_Boyfriend_Girlfriend/variants/MF/person_a_bust.png",
+            "face": "assets/images/01_Boyfriend_Girlfriend/variants/MF/person_a_face.png",
+            "seated": "assets/images/01_Boyfriend_Girlfriend/variants/MF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/01_Boyfriend_Girlfriend/variants/MF/person_b_bust.png",
+            "face": "assets/images/01_Boyfriend_Girlfriend/variants/MF/person_b_face.png",
+            "seated": "assets/images/01_Boyfriend_Girlfriend/variants/MF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/01_Boyfriend_Girlfriend/variants/MF/scene_talking.png",
+            "disagreements": "assets/images/01_Boyfriend_Girlfriend/variants/MF/scene_disagreements.png",
+            "care": "assets/images/01_Boyfriend_Girlfriend/variants/MF/scene_care.png"
+          }
+        }
+      }
+    },
+    "02_Husband_Wife": {
+      "defaultCode": "MF",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "MF"
+      ],
+      "variants": {
+        "FM": {
+          "code": "FM",
+          "genderA": "female",
+          "genderB": "male",
+          "coverPair": "assets/images/02_Husband_Wife/variants/FM/cover_pair.png",
+          "harmony": "assets/images/02_Husband_Wife/variants/FM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/02_Husband_Wife/variants/FM/person_a_bust.png",
+            "face": "assets/images/02_Husband_Wife/variants/FM/person_a_face.png",
+            "seated": "assets/images/02_Husband_Wife/variants/FM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/02_Husband_Wife/variants/FM/person_b_bust.png",
+            "face": "assets/images/02_Husband_Wife/variants/FM/person_b_face.png",
+            "seated": "assets/images/02_Husband_Wife/variants/FM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/02_Husband_Wife/variants/FM/scene_talking.png",
+            "disagreements": "assets/images/02_Husband_Wife/variants/FM/scene_disagreements.png",
+            "care": "assets/images/02_Husband_Wife/variants/FM/scene_care.png"
+          }
+        },
+        "MF": {
+          "code": "MF",
+          "genderA": "male",
+          "genderB": "female",
+          "coverPair": "assets/images/02_Husband_Wife/variants/MF/cover_pair.png",
+          "harmony": "assets/images/02_Husband_Wife/variants/MF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/02_Husband_Wife/variants/MF/person_a_bust.png",
+            "face": "assets/images/02_Husband_Wife/variants/MF/person_a_face.png",
+            "seated": "assets/images/02_Husband_Wife/variants/MF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/02_Husband_Wife/variants/MF/person_b_bust.png",
+            "face": "assets/images/02_Husband_Wife/variants/MF/person_b_face.png",
+            "seated": "assets/images/02_Husband_Wife/variants/MF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/02_Husband_Wife/variants/MF/scene_talking.png",
+            "disagreements": "assets/images/02_Husband_Wife/variants/MF/scene_disagreements.png",
+            "care": "assets/images/02_Husband_Wife/variants/MF/scene_care.png"
+          }
+        }
+      }
+    },
+    "03_Brother_Sister": {
+      "defaultCode": "MF",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "MF"
+      ],
+      "variants": {
+        "FM": {
+          "code": "FM",
+          "genderA": "female",
+          "genderB": "male",
+          "coverPair": "assets/images/03_Brother_Sister/variants/FM/cover_pair.png",
+          "harmony": "assets/images/03_Brother_Sister/variants/FM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/03_Brother_Sister/variants/FM/person_a_bust.png",
+            "face": "assets/images/03_Brother_Sister/variants/FM/person_a_face.png",
+            "seated": "assets/images/03_Brother_Sister/variants/FM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/03_Brother_Sister/variants/FM/person_b_bust.png",
+            "face": "assets/images/03_Brother_Sister/variants/FM/person_b_face.png",
+            "seated": "assets/images/03_Brother_Sister/variants/FM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/03_Brother_Sister/variants/FM/scene_talking.png",
+            "disagreements": "assets/images/03_Brother_Sister/variants/FM/scene_disagreements.png",
+            "care": "assets/images/03_Brother_Sister/variants/FM/scene_care.png"
+          }
+        },
+        "MF": {
+          "code": "MF",
+          "genderA": "male",
+          "genderB": "female",
+          "coverPair": "assets/images/03_Brother_Sister/variants/MF/cover_pair.png",
+          "harmony": "assets/images/03_Brother_Sister/variants/MF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/03_Brother_Sister/variants/MF/person_a_bust.png",
+            "face": "assets/images/03_Brother_Sister/variants/MF/person_a_face.png",
+            "seated": "assets/images/03_Brother_Sister/variants/MF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/03_Brother_Sister/variants/MF/person_b_bust.png",
+            "face": "assets/images/03_Brother_Sister/variants/MF/person_b_face.png",
+            "seated": "assets/images/03_Brother_Sister/variants/MF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/03_Brother_Sister/variants/MF/scene_talking.png",
+            "disagreements": "assets/images/03_Brother_Sister/variants/MF/scene_disagreements.png",
+            "care": "assets/images/03_Brother_Sister/variants/MF/scene_care.png"
+          }
+        }
+      }
+    },
+    "04_Brother_Brother": {
+      "defaultCode": "MM",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "MM"
+      ],
+      "variants": {
+        "MM": {
+          "code": "MM",
+          "genderA": "male",
+          "genderB": "male",
+          "coverPair": "assets/images/04_Brother_Brother/variants/MM/cover_pair.png",
+          "harmony": "assets/images/04_Brother_Brother/variants/MM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/04_Brother_Brother/variants/MM/person_a_bust.png",
+            "face": "assets/images/04_Brother_Brother/variants/MM/person_a_face.png",
+            "seated": "assets/images/04_Brother_Brother/variants/MM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/04_Brother_Brother/variants/MM/person_b_bust.png",
+            "face": "assets/images/04_Brother_Brother/variants/MM/person_b_face.png",
+            "seated": "assets/images/04_Brother_Brother/variants/MM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/04_Brother_Brother/variants/MM/scene_talking.png",
+            "disagreements": "assets/images/04_Brother_Brother/variants/MM/scene_disagreements.png",
+            "care": "assets/images/04_Brother_Brother/variants/MM/scene_care.png"
+          }
+        }
+      }
+    },
+    "05_Sister_Sister": {
+      "defaultCode": "FF",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "FF"
+      ],
+      "variants": {
+        "FF": {
+          "code": "FF",
+          "genderA": "female",
+          "genderB": "female",
+          "coverPair": "assets/images/05_Sister_Sister/variants/FF/cover_pair.png",
+          "harmony": "assets/images/05_Sister_Sister/variants/FF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/05_Sister_Sister/variants/FF/person_a_bust.png",
+            "face": "assets/images/05_Sister_Sister/variants/FF/person_a_face.png",
+            "seated": "assets/images/05_Sister_Sister/variants/FF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/05_Sister_Sister/variants/FF/person_b_bust.png",
+            "face": "assets/images/05_Sister_Sister/variants/FF/person_b_face.png",
+            "seated": "assets/images/05_Sister_Sister/variants/FF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/05_Sister_Sister/variants/FF/scene_talking.png",
+            "disagreements": "assets/images/05_Sister_Sister/variants/FF/scene_disagreements.png",
+            "care": "assets/images/05_Sister_Sister/variants/FF/scene_care.png"
+          }
+        }
+      }
+    },
+    "06_Mother_Daughter": {
+      "defaultCode": "FF",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "FF"
+      ],
+      "variants": {
+        "FF": {
+          "code": "FF",
+          "genderA": "female",
+          "genderB": "female",
+          "coverPair": "assets/images/06_Mother_Daughter/variants/FF/cover_pair.png",
+          "harmony": "assets/images/06_Mother_Daughter/variants/FF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/06_Mother_Daughter/variants/FF/person_a_bust.png",
+            "face": "assets/images/06_Mother_Daughter/variants/FF/person_a_face.png",
+            "seated": "assets/images/06_Mother_Daughter/variants/FF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/06_Mother_Daughter/variants/FF/person_b_bust.png",
+            "face": "assets/images/06_Mother_Daughter/variants/FF/person_b_face.png",
+            "seated": "assets/images/06_Mother_Daughter/variants/FF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/06_Mother_Daughter/variants/FF/scene_talking.png",
+            "disagreements": "assets/images/06_Mother_Daughter/variants/FF/scene_disagreements.png",
+            "care": "assets/images/06_Mother_Daughter/variants/FF/scene_care.png"
+          }
+        }
+      }
+    },
+    "07_Mother_Son": {
+      "defaultCode": "FM",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "FM"
+      ],
+      "variants": {
+        "FM": {
+          "code": "FM",
+          "genderA": "female",
+          "genderB": "male",
+          "coverPair": "assets/images/07_Mother_Son/variants/FM/cover_pair.png",
+          "harmony": "assets/images/07_Mother_Son/variants/FM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/07_Mother_Son/variants/FM/person_a_bust.png",
+            "face": "assets/images/07_Mother_Son/variants/FM/person_a_face.png",
+            "seated": "assets/images/07_Mother_Son/variants/FM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/07_Mother_Son/variants/FM/person_b_bust.png",
+            "face": "assets/images/07_Mother_Son/variants/FM/person_b_face.png",
+            "seated": "assets/images/07_Mother_Son/variants/FM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/07_Mother_Son/variants/FM/scene_talking.png",
+            "disagreements": "assets/images/07_Mother_Son/variants/FM/scene_disagreements.png",
+            "care": "assets/images/07_Mother_Son/variants/FM/scene_care.png"
+          }
+        }
+      }
+    },
+    "08_Father_Daughter": {
+      "defaultCode": "MF",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "MF"
+      ],
+      "variants": {
+        "MF": {
+          "code": "MF",
+          "genderA": "male",
+          "genderB": "female",
+          "coverPair": "assets/images/08_Father_Daughter/variants/MF/cover_pair.png",
+          "harmony": "assets/images/08_Father_Daughter/variants/MF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/08_Father_Daughter/variants/MF/person_a_bust.png",
+            "face": "assets/images/08_Father_Daughter/variants/MF/person_a_face.png",
+            "seated": "assets/images/08_Father_Daughter/variants/MF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/08_Father_Daughter/variants/MF/person_b_bust.png",
+            "face": "assets/images/08_Father_Daughter/variants/MF/person_b_face.png",
+            "seated": "assets/images/08_Father_Daughter/variants/MF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/08_Father_Daughter/variants/MF/scene_talking.png",
+            "disagreements": "assets/images/08_Father_Daughter/variants/MF/scene_disagreements.png",
+            "care": "assets/images/08_Father_Daughter/variants/MF/scene_care.png"
+          }
+        }
+      }
+    },
+    "09_Father_Son": {
+      "defaultCode": "MM",
+      "genderSelectable": false,
+      "allowedCodes": [
+        "MM"
+      ],
+      "variants": {
+        "MM": {
+          "code": "MM",
+          "genderA": "male",
+          "genderB": "male",
+          "coverPair": "assets/images/09_Father_Son/variants/MM/cover_pair.png",
+          "harmony": "assets/images/09_Father_Son/variants/MM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/09_Father_Son/variants/MM/person_a_bust.png",
+            "face": "assets/images/09_Father_Son/variants/MM/person_a_face.png",
+            "seated": "assets/images/09_Father_Son/variants/MM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/09_Father_Son/variants/MM/person_b_bust.png",
+            "face": "assets/images/09_Father_Son/variants/MM/person_b_face.png",
+            "seated": "assets/images/09_Father_Son/variants/MM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/09_Father_Son/variants/MM/scene_talking.png",
+            "disagreements": "assets/images/09_Father_Son/variants/MM/scene_disagreements.png",
+            "care": "assets/images/09_Father_Son/variants/MM/scene_care.png"
+          }
+        }
+      }
+    },
+    "10_Best_Friends": {
+      "defaultCode": "FF",
+      "genderSelectable": true,
+      "allowedCodes": [
+        "FF",
+        "MM",
+        "MF",
+        "FM"
+      ],
+      "variants": {
+        "FF": {
+          "code": "FF",
+          "genderA": "female",
+          "genderB": "female",
+          "coverPair": "assets/images/10_Best_Friends/variants/FF/cover_pair.png",
+          "harmony": "assets/images/10_Best_Friends/variants/FF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/10_Best_Friends/variants/FF/person_a_bust.png",
+            "face": "assets/images/10_Best_Friends/variants/FF/person_a_face.png",
+            "seated": "assets/images/10_Best_Friends/variants/FF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/10_Best_Friends/variants/FF/person_b_bust.png",
+            "face": "assets/images/10_Best_Friends/variants/FF/person_b_face.png",
+            "seated": "assets/images/10_Best_Friends/variants/FF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/10_Best_Friends/variants/FF/scene_talking.png",
+            "disagreements": "assets/images/10_Best_Friends/variants/FF/scene_disagreements.png",
+            "care": "assets/images/10_Best_Friends/variants/FF/scene_care.png"
+          }
+        },
+        "FM": {
+          "code": "FM",
+          "genderA": "female",
+          "genderB": "male",
+          "coverPair": "assets/images/10_Best_Friends/variants/FM/cover_pair.png",
+          "harmony": "assets/images/10_Best_Friends/variants/FM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/10_Best_Friends/variants/FM/person_a_bust.png",
+            "face": "assets/images/10_Best_Friends/variants/FM/person_a_face.png",
+            "seated": "assets/images/10_Best_Friends/variants/FM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/10_Best_Friends/variants/FM/person_b_bust.png",
+            "face": "assets/images/10_Best_Friends/variants/FM/person_b_face.png",
+            "seated": "assets/images/10_Best_Friends/variants/FM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/10_Best_Friends/variants/FM/scene_talking.png",
+            "disagreements": "assets/images/10_Best_Friends/variants/FM/scene_disagreements.png",
+            "care": "assets/images/10_Best_Friends/variants/FM/scene_care.png"
+          }
+        },
+        "MF": {
+          "code": "MF",
+          "genderA": "male",
+          "genderB": "female",
+          "coverPair": "assets/images/10_Best_Friends/variants/MF/cover_pair.png",
+          "harmony": "assets/images/10_Best_Friends/variants/MF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/10_Best_Friends/variants/MF/person_a_bust.png",
+            "face": "assets/images/10_Best_Friends/variants/MF/person_a_face.png",
+            "seated": "assets/images/10_Best_Friends/variants/MF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/10_Best_Friends/variants/MF/person_b_bust.png",
+            "face": "assets/images/10_Best_Friends/variants/MF/person_b_face.png",
+            "seated": "assets/images/10_Best_Friends/variants/MF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/10_Best_Friends/variants/MF/scene_talking.png",
+            "disagreements": "assets/images/10_Best_Friends/variants/MF/scene_disagreements.png",
+            "care": "assets/images/10_Best_Friends/variants/MF/scene_care.png"
+          }
+        },
+        "MM": {
+          "code": "MM",
+          "genderA": "male",
+          "genderB": "male",
+          "coverPair": "assets/images/10_Best_Friends/variants/MM/cover_pair.png",
+          "harmony": "assets/images/10_Best_Friends/variants/MM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/10_Best_Friends/variants/MM/person_a_bust.png",
+            "face": "assets/images/10_Best_Friends/variants/MM/person_a_face.png",
+            "seated": "assets/images/10_Best_Friends/variants/MM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/10_Best_Friends/variants/MM/person_b_bust.png",
+            "face": "assets/images/10_Best_Friends/variants/MM/person_b_face.png",
+            "seated": "assets/images/10_Best_Friends/variants/MM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/10_Best_Friends/variants/MM/scene_talking.png",
+            "disagreements": "assets/images/10_Best_Friends/variants/MM/scene_disagreements.png",
+            "care": "assets/images/10_Best_Friends/variants/MM/scene_care.png"
+          }
+        }
+      }
+    },
+    "11_Friends": {
+      "defaultCode": "MM",
+      "genderSelectable": true,
+      "allowedCodes": [
+        "MM",
+        "FF",
+        "MF",
+        "FM"
+      ],
+      "variants": {
+        "FF": {
+          "code": "FF",
+          "genderA": "female",
+          "genderB": "female",
+          "coverPair": "assets/images/11_Friends/variants/FF/cover_pair.png",
+          "harmony": "assets/images/11_Friends/variants/FF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/11_Friends/variants/FF/person_a_bust.png",
+            "face": "assets/images/11_Friends/variants/FF/person_a_face.png",
+            "seated": "assets/images/11_Friends/variants/FF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/11_Friends/variants/FF/person_b_bust.png",
+            "face": "assets/images/11_Friends/variants/FF/person_b_face.png",
+            "seated": "assets/images/11_Friends/variants/FF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/11_Friends/variants/FF/scene_talking.png",
+            "disagreements": "assets/images/11_Friends/variants/FF/scene_disagreements.png",
+            "care": "assets/images/11_Friends/variants/FF/scene_care.png"
+          }
+        },
+        "FM": {
+          "code": "FM",
+          "genderA": "female",
+          "genderB": "male",
+          "coverPair": "assets/images/11_Friends/variants/FM/cover_pair.png",
+          "harmony": "assets/images/11_Friends/variants/FM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/11_Friends/variants/FM/person_a_bust.png",
+            "face": "assets/images/11_Friends/variants/FM/person_a_face.png",
+            "seated": "assets/images/11_Friends/variants/FM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/11_Friends/variants/FM/person_b_bust.png",
+            "face": "assets/images/11_Friends/variants/FM/person_b_face.png",
+            "seated": "assets/images/11_Friends/variants/FM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/11_Friends/variants/FM/scene_talking.png",
+            "disagreements": "assets/images/11_Friends/variants/FM/scene_disagreements.png",
+            "care": "assets/images/11_Friends/variants/FM/scene_care.png"
+          }
+        },
+        "MF": {
+          "code": "MF",
+          "genderA": "male",
+          "genderB": "female",
+          "coverPair": "assets/images/11_Friends/variants/MF/cover_pair.png",
+          "harmony": "assets/images/11_Friends/variants/MF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/11_Friends/variants/MF/person_a_bust.png",
+            "face": "assets/images/11_Friends/variants/MF/person_a_face.png",
+            "seated": "assets/images/11_Friends/variants/MF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/11_Friends/variants/MF/person_b_bust.png",
+            "face": "assets/images/11_Friends/variants/MF/person_b_face.png",
+            "seated": "assets/images/11_Friends/variants/MF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/11_Friends/variants/MF/scene_talking.png",
+            "disagreements": "assets/images/11_Friends/variants/MF/scene_disagreements.png",
+            "care": "assets/images/11_Friends/variants/MF/scene_care.png"
+          }
+        },
+        "MM": {
+          "code": "MM",
+          "genderA": "male",
+          "genderB": "male",
+          "coverPair": "assets/images/11_Friends/variants/MM/cover_pair.png",
+          "harmony": "assets/images/11_Friends/variants/MM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/11_Friends/variants/MM/person_a_bust.png",
+            "face": "assets/images/11_Friends/variants/MM/person_a_face.png",
+            "seated": "assets/images/11_Friends/variants/MM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/11_Friends/variants/MM/person_b_bust.png",
+            "face": "assets/images/11_Friends/variants/MM/person_b_face.png",
+            "seated": "assets/images/11_Friends/variants/MM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/11_Friends/variants/MM/scene_talking.png",
+            "disagreements": "assets/images/11_Friends/variants/MM/scene_disagreements.png",
+            "care": "assets/images/11_Friends/variants/MM/scene_care.png"
+          }
+        }
+      }
+    },
+    "12_Business_Partners": {
+      "defaultCode": "MM",
+      "genderSelectable": true,
+      "allowedCodes": [
+        "MM",
+        "FF",
+        "MF",
+        "FM"
+      ],
+      "variants": {
+        "FF": {
+          "code": "FF",
+          "genderA": "female",
+          "genderB": "female",
+          "coverPair": "assets/images/12_Business_Partners/variants/FF/cover_pair.png",
+          "harmony": "assets/images/12_Business_Partners/variants/FF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/12_Business_Partners/variants/FF/person_a_bust.png",
+            "face": "assets/images/12_Business_Partners/variants/FF/person_a_face.png",
+            "seated": "assets/images/12_Business_Partners/variants/FF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/12_Business_Partners/variants/FF/person_b_bust.png",
+            "face": "assets/images/12_Business_Partners/variants/FF/person_b_face.png",
+            "seated": "assets/images/12_Business_Partners/variants/FF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/12_Business_Partners/variants/FF/scene_talking.png",
+            "disagreements": "assets/images/12_Business_Partners/variants/FF/scene_disagreements.png",
+            "care": "assets/images/12_Business_Partners/variants/FF/scene_care.png"
+          }
+        },
+        "FM": {
+          "code": "FM",
+          "genderA": "female",
+          "genderB": "male",
+          "coverPair": "assets/images/12_Business_Partners/variants/FM/cover_pair.png",
+          "harmony": "assets/images/12_Business_Partners/variants/FM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/12_Business_Partners/variants/FM/person_a_bust.png",
+            "face": "assets/images/12_Business_Partners/variants/FM/person_a_face.png",
+            "seated": "assets/images/12_Business_Partners/variants/FM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/12_Business_Partners/variants/FM/person_b_bust.png",
+            "face": "assets/images/12_Business_Partners/variants/FM/person_b_face.png",
+            "seated": "assets/images/12_Business_Partners/variants/FM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/12_Business_Partners/variants/FM/scene_talking.png",
+            "disagreements": "assets/images/12_Business_Partners/variants/FM/scene_disagreements.png",
+            "care": "assets/images/12_Business_Partners/variants/FM/scene_care.png"
+          }
+        },
+        "MF": {
+          "code": "MF",
+          "genderA": "male",
+          "genderB": "female",
+          "coverPair": "assets/images/12_Business_Partners/variants/MF/cover_pair.png",
+          "harmony": "assets/images/12_Business_Partners/variants/MF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/12_Business_Partners/variants/MF/person_a_bust.png",
+            "face": "assets/images/12_Business_Partners/variants/MF/person_a_face.png",
+            "seated": "assets/images/12_Business_Partners/variants/MF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/12_Business_Partners/variants/MF/person_b_bust.png",
+            "face": "assets/images/12_Business_Partners/variants/MF/person_b_face.png",
+            "seated": "assets/images/12_Business_Partners/variants/MF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/12_Business_Partners/variants/MF/scene_talking.png",
+            "disagreements": "assets/images/12_Business_Partners/variants/MF/scene_disagreements.png",
+            "care": "assets/images/12_Business_Partners/variants/MF/scene_care.png"
+          }
+        },
+        "MM": {
+          "code": "MM",
+          "genderA": "male",
+          "genderB": "male",
+          "coverPair": "assets/images/12_Business_Partners/variants/MM/cover_pair.png",
+          "harmony": "assets/images/12_Business_Partners/variants/MM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/12_Business_Partners/variants/MM/person_a_bust.png",
+            "face": "assets/images/12_Business_Partners/variants/MM/person_a_face.png",
+            "seated": "assets/images/12_Business_Partners/variants/MM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/12_Business_Partners/variants/MM/person_b_bust.png",
+            "face": "assets/images/12_Business_Partners/variants/MM/person_b_face.png",
+            "seated": "assets/images/12_Business_Partners/variants/MM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/12_Business_Partners/variants/MM/scene_talking.png",
+            "disagreements": "assets/images/12_Business_Partners/variants/MM/scene_disagreements.png",
+            "care": "assets/images/12_Business_Partners/variants/MM/scene_care.png"
+          }
+        }
+      }
+    },
+    "13_Teammates": {
+      "defaultCode": "FM",
+      "genderSelectable": true,
+      "allowedCodes": [
+        "FM",
+        "MF",
+        "MM",
+        "FF"
+      ],
+      "variants": {
+        "FF": {
+          "code": "FF",
+          "genderA": "female",
+          "genderB": "female",
+          "coverPair": "assets/images/13_Teammates/variants/FF/cover_pair.png",
+          "harmony": "assets/images/13_Teammates/variants/FF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/13_Teammates/variants/FF/person_a_bust.png",
+            "face": "assets/images/13_Teammates/variants/FF/person_a_face.png",
+            "seated": "assets/images/13_Teammates/variants/FF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/13_Teammates/variants/FF/person_b_bust.png",
+            "face": "assets/images/13_Teammates/variants/FF/person_b_face.png",
+            "seated": "assets/images/13_Teammates/variants/FF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/13_Teammates/variants/FF/scene_talking.png",
+            "disagreements": "assets/images/13_Teammates/variants/FF/scene_disagreements.png",
+            "care": "assets/images/13_Teammates/variants/FF/scene_care.png"
+          }
+        },
+        "FM": {
+          "code": "FM",
+          "genderA": "female",
+          "genderB": "male",
+          "coverPair": "assets/images/13_Teammates/variants/FM/cover_pair.png",
+          "harmony": "assets/images/13_Teammates/variants/FM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/13_Teammates/variants/FM/person_a_bust.png",
+            "face": "assets/images/13_Teammates/variants/FM/person_a_face.png",
+            "seated": "assets/images/13_Teammates/variants/FM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/13_Teammates/variants/FM/person_b_bust.png",
+            "face": "assets/images/13_Teammates/variants/FM/person_b_face.png",
+            "seated": "assets/images/13_Teammates/variants/FM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/13_Teammates/variants/FM/scene_talking.png",
+            "disagreements": "assets/images/13_Teammates/variants/FM/scene_disagreements.png",
+            "care": "assets/images/13_Teammates/variants/FM/scene_care.png"
+          }
+        },
+        "MF": {
+          "code": "MF",
+          "genderA": "male",
+          "genderB": "female",
+          "coverPair": "assets/images/13_Teammates/variants/MF/cover_pair.png",
+          "harmony": "assets/images/13_Teammates/variants/MF/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/13_Teammates/variants/MF/person_a_bust.png",
+            "face": "assets/images/13_Teammates/variants/MF/person_a_face.png",
+            "seated": "assets/images/13_Teammates/variants/MF/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/13_Teammates/variants/MF/person_b_bust.png",
+            "face": "assets/images/13_Teammates/variants/MF/person_b_face.png",
+            "seated": "assets/images/13_Teammates/variants/MF/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/13_Teammates/variants/MF/scene_talking.png",
+            "disagreements": "assets/images/13_Teammates/variants/MF/scene_disagreements.png",
+            "care": "assets/images/13_Teammates/variants/MF/scene_care.png"
+          }
+        },
+        "MM": {
+          "code": "MM",
+          "genderA": "male",
+          "genderB": "male",
+          "coverPair": "assets/images/13_Teammates/variants/MM/cover_pair.png",
+          "harmony": "assets/images/13_Teammates/variants/MM/scene_harmony.png",
+          "personA": {
+            "bust": "assets/images/13_Teammates/variants/MM/person_a_bust.png",
+            "face": "assets/images/13_Teammates/variants/MM/person_a_face.png",
+            "seated": "assets/images/13_Teammates/variants/MM/person_a_seated.png"
+          },
+          "personB": {
+            "bust": "assets/images/13_Teammates/variants/MM/person_b_bust.png",
+            "face": "assets/images/13_Teammates/variants/MM/person_b_face.png",
+            "seated": "assets/images/13_Teammates/variants/MM/person_b_seated.png"
+          },
+          "scenes": {
+            "talking": "assets/images/13_Teammates/variants/MM/scene_talking.png",
+            "disagreements": "assets/images/13_Teammates/variants/MM/scene_disagreements.png",
+            "care": "assets/images/13_Teammates/variants/MM/scene_care.png"
+          }
+        }
+      }
+    }
+  },
+  "type_aliases": {
+    "Mother & Father": {
+      "slug": "02_Husband_Wife",
+      "locked": true,
+      "defaultCode": "FM",
+      "allowedCodes": [
+        "FM"
+      ]
+    },
+    "Father & Mother": {
+      "slug": "02_Husband_Wife",
+      "locked": true,
+      "defaultCode": "MF",
+      "allowedCodes": [
+        "MF"
+      ]
+    },
+    "Wife & Husband": {
+      "slug": "02_Husband_Wife",
+      "locked": true,
+      "defaultCode": "FM",
+      "allowedCodes": [
+        "FM"
+      ]
+    },
+    "Sister & Brother": {
+      "slug": "03_Brother_Sister",
+      "locked": true,
+      "defaultCode": "FM",
+      "allowedCodes": [
+        "FM"
+      ]
+    },
+    "Girlfriend & Boyfriend": {
+      "slug": "01_Boyfriend_Girlfriend",
+      "locked": true,
+      "defaultCode": "FM",
+      "allowedCodes": [
+        "FM"
+      ]
+    }
+  }
+}

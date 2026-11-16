@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flower Shade Library &amp; Gender Character Asset Catalog</title>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<style>
+:root {
+  --serif: "DM Serif Display", Georgia, serif;
+  --sans: "Nunito Sans", system-ui, sans-serif;
+  --ink: #34222c;
+  --muted: #6c5b64;
+  --line: #e6dce2;
+  --accent: #4f7556;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 400 15px/1.5 var(--sans); color: var(--ink); background: #f8fbf8; }
+header { max-width: 1320px; margin: 0 auto; padding: 28px 20px 14px; text-align: center; }
+.back { display: inline-block; margin-bottom: 10px; color: var(--accent); font-weight: 800; text-decoration: none; background: #e4efe4; padding: 5px 14px; border-radius: 999px; font-size: .82rem; }
+h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.1rem, 4.8vw, 3.3rem); margin: 0 0 8px; }
+h1 em { color: var(--accent); font-style: italic; }
+.sub { color: var(--muted); max-width: 72ch; margin: 0 auto 18px; }
+main { max-width: 1320px; margin: 0 auto; padding: 0 20px 60px; display: flex; flex-direction: column; gap: 28px; }
+.panel { background: #fff; border: 1px solid var(--line); border-radius: 26px; padding: 22px; box-shadow: 0 14px 32px -24px rgba(30,50,35,.35); }
+.panel > h2 { font-family: var(--serif); font-weight: 400; font-size: 1.9rem; margin: 0 0 6px; text-align: center; }
+.panel > p { text-align: center; color: var(--muted); margin: 0 0 18px; }
+
+/* Interactive Live Flower Composer */
+.composer { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: center; max-width: 900px; margin: 0 auto; }
+.flower-stage { position: relative; width: 300px; height: 300px; margin: 0 auto; background: radial-gradient(circle, #fff 35%, #eef5ee 100%); border-radius: 24px; border: 1px solid var(--line); }
+.flower-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.sliders { display: flex; flex-direction: column; gap: 12px; }
+.sl-row { display: grid; grid-template-columns: 110px minmax(0, 1fr) 58px; gap: 12px; align-items: center; font-weight: 800; }
+.sl-row input { width: 100%; accent-color: var(--accent); }
+
+/* Flower Shade Library Rows */
+.shade-list { display: flex; flex-direction: column; gap: 14px; }
+.shade-row { display: grid; grid-template-columns: 145px minmax(0, 1fr); gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 20px; padding: 10px; background: #fcfdfc; }
+.shade-head { border-radius: 14px; padding: 14px 10px; text-align: center; display: flex; flex-direction: column; gap: 6px; }
+.shade-head b { font-family: var(--serif); font-weight: 400; font-size: 1.35rem; }
+.shade-head small { font-size: .76rem; opacity: .9; }
+.shade-strip { display: grid; grid-template-columns: repeat(11, minmax(72px, 1fr)); gap: 6px; overflow-x: auto; }
+.shade-cell { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.pct-pill { font-size: .72rem; font-weight: 800; padding: 1px 8px; border-radius: 999px; }
+.shade-cell img { width: 84px; height: 84px; object-fit: contain; }
+
+/* Petal Columns */
+.petal-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.petal-col { border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: #fdfcfb; }
+.petal-col-hd { color: #fff; padding: 12px; text-align: center; display: flex; flex-direction: column; }
+.petal-col-hd b { font-family: var(--serif); font-weight: 400; font-size: 1.35rem; }
+.petal-col-hd small { font-size: .76rem; opacity: .92; }
+.petal-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 18px; border-top: 1px solid #f2ece9; }
+.petal-row img { width: 76px; height: 64px; object-fit: contain; transform: rotate(65deg); }
+
+/* Botanical Parts */
+.parts-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
+.parts-row figure { margin: 0; border: 1px solid var(--line); border-radius: 18px; padding: 12px 16px; text-align: center; background: #fafcfa; }
+.parts-row img { width: 110px; height: 110px; object-fit: contain; display: block; margin: 0 auto 6px; }
+.parts-row figcaption { font-size: .78rem; font-weight: 800; color: var(--muted); }
+
+/* Character Gender Matrix */
+.char-sec { border: 1px solid var(--line); border-radius: 20px; padding: 16px; margin-bottom: 14px; background: #fcfbfd; }
+.char-sec-hd { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.char-sec-hd h3 { font-family: var(--serif); font-weight: 400; font-size: 1.45rem; margin: 0; }
+.mode-pill { font-size: .76rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; }
+.mode-pill.sel { background: #e1f3eb; color: #216b52; }
+.mode-pill.lck { background: #f3e6ee; color: #84365c; }
+.v-block { border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 10px; }
+.v-title { font-weight: 800; font-size: .84rem; margin-bottom: 8px; color: var(--ink); }
+.v-strip { display: grid; grid-template-columns: repeat(8, minmax(95px, 1fr)); gap: 8px; overflow-x: auto; }
+.v-strip figure { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 8px; text-align: center; }
+.v-strip img { width: 100%; height: 88px; object-fit: contain; }
+.v-strip figcaption { font-size: .7rem; font-weight: 700; color: var(--muted); margin-top: 4px; }
+@media (max-width: 860px) {
+  .composer, .petal-grid, .shade-row { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="index.html">← Back to All 13 Relationship Reports</a>
+  <h1>Flower Shade &amp; Character <em>Library</em></h1>
+  <p class="sub">Complete reusable botanical hibiscus flower assets (centre-to-outer-edge percentage filling across all 4 styles) and structured gender-aware character illustration sets.</p>
+</header>
+<main>
+  <section class="panel">
+    <h2>Interactive Stackable Botanical Flower Composer</h2>
+    <p>Drag any style slider below (`0%`–`100%`) to test real-time layering from <code>assets/flowers/components/</code>.</p>
+    <div class="composer">
+      <div class="flower-stage">
+        <img src="assets/flowers/components/foliage_backdrop.png" alt="">
+        <img id="q-emotional" src="assets/flowers/components/quad_emotional/quad_emotional_62_5.png" alt="">
+        <img id="q-assertive" src="assets/flowers/components/quad_assertive/quad_assertive_0.png" alt="">
+        <img id="q-thoughtful" src="assets/flowers/components/quad_thoughtful/quad_thoughtful_12_5.png" alt="">
+        <img id="q-logical" src="assets/flowers/components/quad_logical/quad_logical_25.png" alt="">
+        <img src="assets/flowers/components/stamen_center.png" alt="">
+      </div>
+      <div class="sliders">
+        <label class="sl-row"><span style="color:#8F2249">Emotional</span><input type="range" min="0" max="100" step="10" value="60" data-st="emotional"><span id="v-emotional">60%</span></label>
+        <label class="sl-row"><span style="color:#A8461D">Assertive</span><input type="range" min="0" max="100" step="10" value="0" data-st="assertive"><span id="v-assertive">–</span></label>
+        <label class="sl-row"><span style="color:#246B5B">Thoughtful</span><input type="range" min="0" max="100" step="10" value="10" data-st="thoughtful"><span id="v-thoughtful">10%</span></label>
+        <label class="sl-row"><span style="color:#2D529E">Logical</span><input type="range" min="0" max="100" step="10" value="30" data-st="logical"><span id="v-logical">30%</span></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Flower Shade Library (0% – 100%)</h2>
+    <p>Possible shades for each personality style with percentage-based petal filling from the centre outward.</p>
+    <div class="shade-list">
+        <div class="shade-row">
+          <div class="shade-head" style="background:#FCEAF0;color:#8F2249">
+            <b>Emotional</b>
+            <small>Base Colour<br><code>#D96C91</code></small>
+          </div>
+          <div class="shade-strip"><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">0%</span><img src="assets/flowers/shades/emotional/flower_emotional_0.png" alt="Emotional 0% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">10%</span><img src="assets/flowers/shades/emotional/flower_emotional_10.png" alt="Emotional 10% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">20%</span><img src="assets/flowers/shades/emotional/flower_emotional_20.png" alt="Emotional 20% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">30%</span><img src="assets/flowers/shades/emotional/flower_emotional_30.png" alt="Emotional 30% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">40%</span><img src="assets/flowers/shades/emotional/flower_emotional_40.png" alt="Emotional 40% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">50%</span><img src="assets/flowers/shades/emotional/flower_emotional_50.png" alt="Emotional 50% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">60%</span><img src="assets/flowers/shades/emotional/flower_emotional_60.png" alt="Emotional 60% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">70%</span><img src="assets/flowers/shades/emotional/flower_emotional_70.png" alt="Emotional 70% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">80%</span><img src="assets/flowers/shades/emotional/flower_emotional_80.png" alt="Emotional 80% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">90%</span><img src="assets/flowers/shades/emotional/flower_emotional_90.png" alt="Emotional 90% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FCEAF0;color:#8F2249">100%</span><img src="assets/flowers/shades/emotional/flower_emotional_100.png" alt="Emotional 100% flower" loading="lazy"></div></div>
+        </div>
+        <div class="shade-row">
+          <div class="shade-head" style="background:#FDF0E8;color:#A8461D">
+            <b>Assertive</b>
+            <small>Base Colour<br><code>#E8895B</code></small>
+          </div>
+          <div class="shade-strip"><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">0%</span><img src="assets/flowers/shades/assertive/flower_assertive_0.png" alt="Assertive 0% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">10%</span><img src="assets/flowers/shades/assertive/flower_assertive_10.png" alt="Assertive 10% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">20%</span><img src="assets/flowers/shades/assertive/flower_assertive_20.png" alt="Assertive 20% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">30%</span><img src="assets/flowers/shades/assertive/flower_assertive_30.png" alt="Assertive 30% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">40%</span><img src="assets/flowers/shades/assertive/flower_assertive_40.png" alt="Assertive 40% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">50%</span><img src="assets/flowers/shades/assertive/flower_assertive_50.png" alt="Assertive 50% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">60%</span><img src="assets/flowers/shades/assertive/flower_assertive_60.png" alt="Assertive 60% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">70%</span><img src="assets/flowers/shades/assertive/flower_assertive_70.png" alt="Assertive 70% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">80%</span><img src="assets/flowers/shades/assertive/flower_assertive_80.png" alt="Assertive 80% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">90%</span><img src="assets/flowers/shades/assertive/flower_assertive_90.png" alt="Assertive 90% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#FDF0E8;color:#A8461D">100%</span><img src="assets/flowers/shades/assertive/flower_assertive_100.png" alt="Assertive 100% flower" loading="lazy"></div></div>
+        </div>
+        <div class="shade-row">
+          <div class="shade-head" style="background:#E8F6F2;color:#246B5B">
+            <b>Thoughtful</b>
+            <small>Base Colour<br><code>#5DA594</code></small>
+          </div>
+          <div class="shade-strip"><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">0%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_0.png" alt="Thoughtful 0% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">10%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_10.png" alt="Thoughtful 10% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">20%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_20.png" alt="Thoughtful 20% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">30%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_30.png" alt="Thoughtful 30% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">40%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_40.png" alt="Thoughtful 40% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">50%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_50.png" alt="Thoughtful 50% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">60%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_60.png" alt="Thoughtful 60% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">70%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_70.png" alt="Thoughtful 70% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">80%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_80.png" alt="Thoughtful 80% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">90%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_90.png" alt="Thoughtful 90% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#E8F6F2;color:#246B5B">100%</span><img src="assets/flowers/shades/thoughtful/flower_thoughtful_100.png" alt="Thoughtful 100% flower" loading="lazy"></div></div>
+        </div>
+        <div class="shade-row">
+          <div class="shade-head" style="background:#EAF0FC;color:#2D529E">
+            <b>Logical</b>
+            <small>Base Colour<br><code>#668BD1</code></small>
+          </div>
+          <div class="shade-strip"><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">0%</span><img src="assets/flowers/shades/logical/flower_logical_0.png" alt="Logical 0% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">10%</span><img src="assets/flowers/shades/logical/flower_logical_10.png" alt="Logical 10% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">20%</span><img src="assets/flowers/shades/logical/flower_logical_20.png" alt="Logical 20% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">30%</span><img src="assets/flowers/shades/logical/flower_logical_30.png" alt="Logical 30% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">40%</span><img src="assets/flowers/shades/logical/flower_logical_40.png" alt="Logical 40% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">50%</span><img src="assets/flowers/shades/logical/flower_logical_50.png" alt="Logical 50% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">60%</span><img src="assets/flowers/shades/logical/flower_logical_60.png" alt="Logical 60% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">70%</span><img src="assets/flowers/shades/logical/flower_logical_70.png" alt="Logical 70% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">80%</span><img src="assets/flowers/shades/logical/flower_logical_80.png" alt="Logical 80% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">90%</span><img src="assets/flowers/shades/logical/flower_logical_90.png" alt="Logical 90% flower" loading="lazy"></div><div class="shade-cell"><span class="pct-pill" style="background:#EAF0FC;color:#2D529E">100%</span><img src="assets/flowers/shades/logical/flower_logical_100.png" alt="Logical 100% flower" loading="lazy"></div></div>
+        </div></div>
+  </section>
+
+  <section class="panel">
+    <h2>Individual Petal Fill Progression (0% – 100%)</h2>
+    <p>Standalone reusable single-petal RGBA assets under <code>assets/flowers/petals/&lt;style&gt;/</code>.</p>
+    <div class="petal-grid">
+        <div class="petal-col">
+          <div class="petal-col-hd" style="background:#D96C91">
+            <b>Emotional</b><small>Base Colour: #D96C91</small>
+          </div>
+          <div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_0.png" alt="Emotional 0% petal" loading="lazy"><b>0%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_10.png" alt="Emotional 10% petal" loading="lazy"><b>10%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_20.png" alt="Emotional 20% petal" loading="lazy"><b>20%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_30.png" alt="Emotional 30% petal" loading="lazy"><b>30%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_40.png" alt="Emotional 40% petal" loading="lazy"><b>40%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_50.png" alt="Emotional 50% petal" loading="lazy"><b>50%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_60.png" alt="Emotional 60% petal" loading="lazy"><b>60%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_70.png" alt="Emotional 70% petal" loading="lazy"><b>70%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_80.png" alt="Emotional 80% petal" loading="lazy"><b>80%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_90.png" alt="Emotional 90% petal" loading="lazy"><b>90%</b></div><div class="petal-row"><img src="assets/flowers/petals/emotional/petal_emotional_100.png" alt="Emotional 100% petal" loading="lazy"><b>100%</b></div>
+        </div>
+        <div class="petal-col">
+          <div class="petal-col-hd" style="background:#E8895B">
+            <b>Assertive</b><small>Base Colour: #E8895B</small>
+          </div>
+          <div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_0.png" alt="Assertive 0% petal" loading="lazy"><b>0%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_10.png" alt="Assertive 10% petal" loading="lazy"><b>10%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_20.png" alt="Assertive 20% petal" loading="lazy"><b>20%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_30.png" alt="Assertive 30% petal" loading="lazy"><b>30%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_40.png" alt="Assertive 40% petal" loading="lazy"><b>40%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_50.png" alt="Assertive 50% petal" loading="lazy"><b>50%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_60.png" alt="Assertive 60% petal" loading="lazy"><b>60%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_70.png" alt="Assertive 70% petal" loading="lazy"><b>70%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_80.png" alt="Assertive 80% petal" loading="lazy"><b>80%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_90.png" alt="Assertive 90% petal" loading="lazy"><b>90%</b></div><div class="petal-row"><img src="assets/flowers/petals/assertive/petal_assertive_100.png" alt="Assertive 100% petal" loading="lazy"><b>100%</b></div>
+        </div>
+        <div class="petal-col">
+          <div class="petal-col-hd" style="background:#5DA594">
+            <b>Thoughtful</b><small>Base Colour: #5DA594</small>
+          </div>
+          <div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_0.png" alt="Thoughtful 0% petal" loading="lazy"><b>0%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_10.png" alt="Thoughtful 10% petal" loading="lazy"><b>10%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_20.png" alt="Thoughtful 20% petal" loading="lazy"><b>20%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_30.png" alt="Thoughtful 30% petal" loading="lazy"><b>30%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_40.png" alt="Thoughtful 40% petal" loading="lazy"><b>40%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_50.png" alt="Thoughtful 50% petal" loading="lazy"><b>50%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_60.png" alt="Thoughtful 60% petal" loading="lazy"><b>60%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_70.png" alt="Thoughtful 70% petal" loading="lazy"><b>70%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_80.png" alt="Thoughtful 80% petal" loading="lazy"><b>80%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_90.png" alt="Thoughtful 90% petal" loading="lazy"><b>90%</b></div><div class="petal-row"><img src="assets/flowers/petals/thoughtful/petal_thoughtful_100.png" alt="Thoughtful 100% petal" loading="lazy"><b>100%</b></div>
+        </div>
+        <div class="petal-col">
+          <div class="petal-col-hd" style="background:#668BD1">
+            <b>Logical</b><small>Base Colour: #668BD1</small>
+          </div>
+          <div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_0.png" alt="Logical 0% petal" loading="lazy"><b>0%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_10.png" alt="Logical 10% petal" loading="lazy"><b>10%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_20.png" alt="Logical 20% petal" loading="lazy"><b>20%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_30.png" alt="Logical 30% petal" loading="lazy"><b>30%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_40.png" alt="Logical 40% petal" loading="lazy"><b>40%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_50.png" alt="Logical 50% petal" loading="lazy"><b>50%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_60.png" alt="Logical 60% petal" loading="lazy"><b>60%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_70.png" alt="Logical 70% petal" loading="lazy"><b>70%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_80.png" alt="Logical 80% petal" loading="lazy"><b>80%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_90.png" alt="Logical 90% petal" loading="lazy"><b>90%</b></div><div class="petal-row"><img src="assets/flowers/petals/logical/petal_logical_100.png" alt="Logical 100% petal" loading="lazy"><b>100%</b></div>
+        </div></div>
+  </section>
+
+  <section class="panel">
+    <h2>Reusable Botanical Building Blocks</h2>
+    <p>Transparent RGBA foliage, bud, and stamen layers under <code>assets/flowers/components/</code>.</p>
+    <div class="parts-row">
+      <figure><img src="assets/flowers/components/foliage_backdrop.png"><figcaption>foliage_backdrop.png</figcaption></figure>
+      <figure><img src="assets/flowers/components/leaf_single.png"><figcaption>leaf_single.png</figcaption></figure>
+      <figure><img src="assets/flowers/components/sprig_left.png"><figcaption>sprig_left.png</figcaption></figure>
+      <figure><img src="assets/flowers/components/sprig_right.png"><figcaption>sprig_right.png</figcaption></figure>
+      <figure><img src="assets/flowers/components/hibiscus_bud.png"><figcaption>hibiscus_bud.png</figcaption></figure>
+      <figure><img src="assets/flowers/components/stamen_center.png"><figcaption>stamen_center.png</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Gender-Based Character Asset Matrix (All 13 Relationships)</h2>
+    <p>Locked gender pairs for family/romantic relationships and full 4-way (<code>MF</code>, <code>FM</code>, <code>MM</code>, <code>FF</code>) support for Best Friends, Friends, Business Partners, and Teammates.</p>
+    
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>01. Boyfriend & Girlfriend</h3>
+            <span class="mode-pill lck">Auto-Locked (MF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">MF · ♂ Male · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/01_Boyfriend_Girlfriend/variants/MF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/01_Boyfriend_Girlfriend/variants/MF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/01_Boyfriend_Girlfriend/variants/MF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/01_Boyfriend_Girlfriend/variants/MF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/01_Boyfriend_Girlfriend/variants/MF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/01_Boyfriend_Girlfriend/variants/MF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/01_Boyfriend_Girlfriend/variants/MF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/01_Boyfriend_Girlfriend/variants/MF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>02. Husband & Wife</h3>
+            <span class="mode-pill lck">Auto-Locked (MF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">MF · ♂ Male · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/02_Husband_Wife/variants/MF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/02_Husband_Wife/variants/MF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/02_Husband_Wife/variants/MF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/02_Husband_Wife/variants/MF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/02_Husband_Wife/variants/MF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/02_Husband_Wife/variants/MF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/02_Husband_Wife/variants/MF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/02_Husband_Wife/variants/MF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>03. Brother & Sister</h3>
+            <span class="mode-pill lck">Auto-Locked (MF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">MF · ♂ Male · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/03_Brother_Sister/variants/MF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/03_Brother_Sister/variants/MF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/03_Brother_Sister/variants/MF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/03_Brother_Sister/variants/MF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/03_Brother_Sister/variants/MF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/03_Brother_Sister/variants/MF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/03_Brother_Sister/variants/MF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/03_Brother_Sister/variants/MF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>04. Brother & Brother</h3>
+            <span class="mode-pill lck">Auto-Locked (MM)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">MM · ♂ Male · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/04_Brother_Brother/variants/MM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/04_Brother_Brother/variants/MM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/04_Brother_Brother/variants/MM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/04_Brother_Brother/variants/MM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/04_Brother_Brother/variants/MM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/04_Brother_Brother/variants/MM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/04_Brother_Brother/variants/MM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/04_Brother_Brother/variants/MM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>05. Sister & Sister</h3>
+            <span class="mode-pill lck">Auto-Locked (FF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">FF · ♀ Female · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/05_Sister_Sister/variants/FF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/05_Sister_Sister/variants/FF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/05_Sister_Sister/variants/FF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/05_Sister_Sister/variants/FF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/05_Sister_Sister/variants/FF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/05_Sister_Sister/variants/FF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/05_Sister_Sister/variants/FF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/05_Sister_Sister/variants/FF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>06. Mother & Daughter</h3>
+            <span class="mode-pill lck">Auto-Locked (FF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">FF · ♀ Female · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/06_Mother_Daughter/variants/FF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/06_Mother_Daughter/variants/FF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/06_Mother_Daughter/variants/FF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/06_Mother_Daughter/variants/FF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/06_Mother_Daughter/variants/FF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/06_Mother_Daughter/variants/FF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/06_Mother_Daughter/variants/FF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/06_Mother_Daughter/variants/FF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>07. Mother & Son</h3>
+            <span class="mode-pill lck">Auto-Locked (FM)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">FM · ♀ Female · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/07_Mother_Son/variants/FM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/07_Mother_Son/variants/FM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/07_Mother_Son/variants/FM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/07_Mother_Son/variants/FM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/07_Mother_Son/variants/FM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/07_Mother_Son/variants/FM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/07_Mother_Son/variants/FM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/07_Mother_Son/variants/FM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>08. Father & Daughter</h3>
+            <span class="mode-pill lck">Auto-Locked (MF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">MF · ♂ Male · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/08_Father_Daughter/variants/MF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/08_Father_Daughter/variants/MF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/08_Father_Daughter/variants/MF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/08_Father_Daughter/variants/MF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/08_Father_Daughter/variants/MF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/08_Father_Daughter/variants/MF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/08_Father_Daughter/variants/MF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/08_Father_Daughter/variants/MF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>09. Father & Son</h3>
+            <span class="mode-pill lck">Auto-Locked (MM)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">MM · ♂ Male · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/09_Father_Son/variants/MM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/09_Father_Son/variants/MM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/09_Father_Son/variants/MM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/09_Father_Son/variants/MM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/09_Father_Son/variants/MM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/09_Father_Son/variants/MM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/09_Father_Son/variants/MM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/09_Father_Son/variants/MM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>10. Best Friends</h3>
+            <span class="mode-pill sel">Selectable (MF · FM · MM · FF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">FF · ♀ Female · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/10_Best_Friends/variants/FF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">MM · ♂ Male · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/10_Best_Friends/variants/MM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">MF · ♂ Male · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/10_Best_Friends/variants/MF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/MF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">FM · ♀ Female · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/10_Best_Friends/variants/FM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/10_Best_Friends/variants/FM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>11. Friends</h3>
+            <span class="mode-pill sel">Selectable (MF · FM · MM · FF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">MM · ♂ Male · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/11_Friends/variants/MM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">FF · ♀ Female · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/11_Friends/variants/FF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">MF · ♂ Male · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/11_Friends/variants/MF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/MF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">FM · ♀ Female · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/11_Friends/variants/FM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/11_Friends/variants/FM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>12. Business Partners</h3>
+            <span class="mode-pill sel">Selectable (MF · FM · MM · FF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">MM · ♂ Male · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/12_Business_Partners/variants/MM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">FF · ♀ Female · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/12_Business_Partners/variants/FF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">MF · ♂ Male · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/12_Business_Partners/variants/MF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/MF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">FM · ♀ Female · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/12_Business_Partners/variants/FM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/12_Business_Partners/variants/FM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+        <section class="char-sec">
+          <div class="char-sec-hd">
+            <h3>13. Teammates</h3>
+            <span class="mode-pill sel">Selectable (MF · FM · MM · FF)</span>
+          </div>
+          
+            <div class="v-block">
+              <div class="v-title">FM · ♀ Female · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/13_Teammates/variants/FM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">MF · ♂ Male · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/13_Teammates/variants/MF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">MM · ♂ Male · ♂ Male</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/13_Teammates/variants/MM/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MM/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MM/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MM/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MM/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MM/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MM/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/MM/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+            <div class="v-block">
+              <div class="v-title">FF · ♀ Female · ♀ Female</div>
+              <div class="v-strip">
+                <figure><img src="assets/images/13_Teammates/variants/FF/cover_pair.png" loading="lazy"><figcaption>Cover Pair</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FF/person_a_bust.png" loading="lazy"><figcaption>Person A Bust</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FF/person_b_bust.png" loading="lazy"><figcaption>Person B Bust</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FF/person_a_seated.png" loading="lazy"><figcaption>Seated Left</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FF/person_b_seated.png" loading="lazy"><figcaption>Seated Right</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FF/scene_talking.png" loading="lazy"><figcaption>Talking</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FF/scene_disagreements.png" loading="lazy"><figcaption>Disagreements</figcaption></figure>
+                <figure><img src="assets/images/13_Teammates/variants/FF/scene_care.png" loading="lazy"><figcaption>Care/Support</figcaption></figure>
+              </div>
+            </div>
+        </section>
+  </section>
+</main>
+<script>
+document.querySelectorAll("input[data-st]").forEach(inp => {
+  const upd = () => {
+    const st = inp.dataset.st, v = Number(inp.value);
+    document.getElementById("q-" + st).src = `assets/flowers/components/quad_${st}/quad_${st}_${v}.png`;
+    document.getElementById("v-" + st).textContent = v === 0 ? "–" : v + "%";
+  };
+  inp.addEventListener("input", upd);
+  upd();
+});
+</script>
+</body>
+</html>
