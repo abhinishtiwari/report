@@ -155,8 +155,7 @@
       const label = `${p.name}’s style flower: ` + STYLES.map(x => `${x} ${pc(s[x])}`).join(", ") + ".";
       return `<figure class="flower">${stage("flower-" + k, label, esc(label), "", "1/1")}
         <figcaption class="person"><img src="${esc(p.bust)}" alt="${esc(p.name)} portrait" width="120" height="120">
-          <div><h3>${esc(p.name)} <span class="role-tag">(${esc(p.role)})</span> · ${esc(p.style)}</h3><p>${esc(p.line)}.</p>
-          <ul class="scores">${STYLES.map(x => `<li style="background:${STYLE_LOOK[x].soft}">${x} ${pc(s[x])}</li>`).join("")}</ul></div>
+          <div><h3>${esc(p.name)} <span class="role-tag">(${esc(p.role)})</span> · ${esc(p.style)}</h3><p>${esc(p.line)}.</p></div>
         </figcaption></figure>`;
     };
     html.push(`<section class="page" id="p2" aria-labelledby="p2-t"><span class="pg">2/7</span>
@@ -204,25 +203,17 @@
       <div class="box"><h3>${esc(T.footstepsTitle)}</h3><ul class="dots">${T.footstepsBulletsHtml.map(b => `<li><span>${b}</span></li>`).join("")}</ul></div>
     </section>`);
 
-    /* Page 6 — How We Worked This Out (complete scoring table + methodology + colour key + disclaimer) */
+    /* Page 6 — How We Worked This Out (scoring table + colour key + disclaimer) */
     html.push(`<section class="page" id="p6" aria-labelledby="p6-t"><span class="pg">6/7</span>
       ${title(T.methodTitle, "h2", "p6-t")}<p class="lede">${esc(T.methodLede)}</p>
       <div class="table-wrap">
         <table class="score-table">
           <thead><tr>${T.tableHeaders.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
           <tbody>
-            <tr><td>Style (Section 1)</td><td>${esc(A.styleCell)}</td><td>${esc(B.styleCell)}</td><td>—</td></tr>
             ${T.tableRows.map(row => `<tr class="${row[0] === "Overall" ? "overall-row" : ""}">${row.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}
-            <tr><td>Answers in the other’s style</td><td>${esc(A.inStyleText)}</td><td>${esc(B.inStyleText)}</td><td>${REPORT.inStyle.a + REPORT.inStyle.b} of 24</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="box"><h3>How the scoring works</h3><ul class="dots num">
-        <li><span><b>Section 1:</b> each of you picked one of four styles in 8 everyday moments. Your most-picked style is your leading style.</span></li>
-        <li><span><b>Section 2:</b> each of you answered 12 questions (4 per area). An answer in their style scores 4, a close style 3, the opposite style 2, and your own comfort zone 1.</span></li>
-        <li><span><b>Percentages:</b> scores are averaged and turned into 0–100% (an average of 1 = 0%, 4 = 100%). “Together” is the average of you both.</span></li>
-        <li><span><b>In the 3D visuals:</b> the glass heart fills, petals bloom, climbers ascend, and seesaws tilt by these exact numbers.</span></li>
-      </ul></div>
       <div class="box keys"><b>${esc(T.keyTitle)}</b>
         <ul class="legend">${["Assertive", "Emotional", "Thoughtful", "Logical"].map(x => `<li><span class="ic" style="background:${STYLE_LOOK[x].color}">${svg(STYLE_LOOK[x].icon)}</span>${x}</li>`).join("")}</ul>
         <span></span><ul class="legend">${[4, 3, 2, 1].map(v => `<li><i style="background:${STONE_LOOK[v].color}"></i>${esc(T.levels[v])}</li>`).join("")}</ul>
