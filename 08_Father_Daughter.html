@@ -29,6 +29,7 @@
     <label class="sr" for="rel-switcher">Switch relationship report</label>
     <select id="rel-switcher" class="rel-select" aria-label="Switch relationship report"></select>
   </div>
+  <div class="gender-bar" id="gender-bar" role="group" aria-label="Character gender selection"></div>
   <nav class="nav" id="nav" aria-label="Report pages"></nav>
 </header>
 <main id="report"></main>
@@ -61,7 +62,6 @@ window.REPORT = {
   "people": {
     "a": {
       "name": "Rajesh",
-      "role": "Father",
       "his": "his",
       "style": "Assertive",
       "styleCell": "Assertive · 5 of 8",
@@ -69,11 +69,11 @@ window.REPORT = {
       "line": "Gets things moving when everyone is stuck",
       "bust": "assets/images/08_Father_Daughter/person_a_bust.png",
       "face": "assets/images/08_Father_Daughter/person_a_face.png",
-      "seated": "assets/images/08_Father_Daughter/person_a_seated.png"
+      "seated": "assets/images/08_Father_Daughter/person_a_seated.png",
+      "gender": "male"
     },
     "b": {
       "name": "Ananya",
-      "role": "Daughter",
       "his": "her",
       "style": "Emotional",
       "styleCell": "Emotional · 4 of 8",
@@ -81,7 +81,8 @@ window.REPORT = {
       "line": "Notices how everyone is really feeling",
       "bust": "assets/images/08_Father_Daughter/person_b_bust.png",
       "face": "assets/images/08_Father_Daughter/person_b_face.png",
-      "seated": "assets/images/08_Father_Daughter/person_b_seated.png"
+      "seated": "assets/images/08_Father_Daughter/person_b_seated.png",
+      "gender": "female"
     }
   },
   "overall": {
@@ -97,11 +98,7 @@ window.REPORT = {
       "b": 67,
       "together": 62,
       "status": "Mostly in tune",
-      "line": "You often meet in the middle, with a little room to grow.",
-      "reachA": "Rajesh reaching towards the other",
-      "reachB": "Ananya reaching towards the other",
       "tilt": "nicely balanced",
-      "citation": "Research: Laurenceau, Feldman Barrett & Pietromonaco (1998)",
       "icon": "assets/images/08_Father_Daughter/icon_talk.png",
       "scene": "assets/images/08_Father_Daughter/scene_talking.png",
       "sceneAlt": "Rajesh and Ananya — Talking & Understanding"
@@ -113,11 +110,7 @@ window.REPORT = {
       "b": 75,
       "together": 50,
       "status": "Mostly in tune",
-      "line": "You often meet in the middle, with a little room to grow.",
-      "reachA": "Rajesh reaching towards the other",
-      "reachB": "Ananya reaching towards the other",
       "tilt": "tilted towards Ananya",
-      "citation": "Research: Kim, Capaldi & Crosby (2007)",
       "icon": "assets/images/08_Father_Daughter/icon_conflict.png",
       "scene": "assets/images/08_Father_Daughter/scene_disagreements.png",
       "sceneAlt": "Rajesh and Ananya — Handling Disagreements"
@@ -129,11 +122,7 @@ window.REPORT = {
       "b": 67,
       "together": 79,
       "status": "Mostly in tune",
-      "line": "You often meet in the middle, with a little room to grow.",
-      "reachA": "Rajesh reaching towards the other",
-      "reachB": "Ananya reaching towards the other",
       "tilt": "tilted towards Rajesh",
-      "citation": "Research: Driver & Gottman (2004)",
       "icon": "assets/images/08_Father_Daughter/icon_care.png",
       "scene": "assets/images/08_Father_Daughter/scene_care.png",
       "sceneAlt": "Rajesh and Ananya — Care & Support"
@@ -290,7 +279,6 @@ window.REPORT = {
     "overallStatus": "Mostly in tune",
     "heroLine": "Like a duet still finding its harmony: lots of good notes, a few to practise.",
     "heartWords": "YOUR HEART",
-    "heartNote": "The more your heart fills, the more often you met each other in each other’s style.",
     "highlights": [
       {
         "label": "YOU CONNECT BEST IN",
@@ -309,7 +297,7 @@ window.REPORT = {
       "Your Style ",
       "Flowers"
     ],
-    "flowersLede": "Four petals, one per style. The bigger the petal, the more you lean on that style.",
+    "flowersLede": "Four petals, one per style. The more colour a petal has, the more you lean on that style.",
     "readingTitle": "Reading your flowers",
     "readingHtml": [
       "<b>Rajesh</b> leads with action: mostly <b>Assertive</b>, with a <b>Logical</b> side. He likes things clear and moving.",
@@ -360,33 +348,32 @@ window.REPORT = {
     "methodLede": "Your main results in numbers.",
     "tableHeaders": [
       "Area",
-      "Rajesh (Father)",
-      "Ananya (Daughter)",
-      "Together"
+      "Rajesh",
+      "Ananya"
     ],
     "tableRows": [
       [
         "Talking & Understanding",
         "58%",
-        "67%",
-        "62%"
+        "67%"
       ],
       [
         "Handling Disagreements",
         "25%",
-        "75%",
-        "50%"
+        "75%"
       ],
       [
         "Care & Support",
         "92%",
-        "67%",
-        "79%"
+        "67%"
       ],
       [
         "Overall",
         "58%",
-        "69%",
+        "69%"
+      ],
+      [
+        "Together",
         "64% · Mostly in tune"
       ]
     ],
@@ -441,8 +428,32 @@ window.REPORT = {
       "Good to know:",
       "these studies shaped the styles and areas in your report. This report can have different biases, such as your mood on the day, answering the way that sounds best, or questions that don’t fully fit your situation, so use it as a guide, not a final answer."
     ],
-    "footer": "A self-reflection tool. Biases may occur.",
-    "dragHint": "Drag to turn"
+    "footer": "A self-reflection tool. Biases may occur."
+  },
+  "genderSelectable": false,
+  "selectedGenderCode": "MF",
+  "allowedGenderCodes": [
+    "MF"
+  ],
+  "characterVariants": {
+    "MF": {
+      "code": "MF",
+      "genderA": "male",
+      "genderB": "female",
+      "coverPair": "assets/images/08_Father_Daughter/variants/MF/cover_pair.png",
+      "harmony": "assets/images/08_Father_Daughter/variants/MF/scene_harmony.png",
+      "bustA": "assets/images/08_Father_Daughter/variants/MF/person_a_bust.png",
+      "bustB": "assets/images/08_Father_Daughter/variants/MF/person_b_bust.png",
+      "faceA": "assets/images/08_Father_Daughter/variants/MF/person_a_face.png",
+      "faceB": "assets/images/08_Father_Daughter/variants/MF/person_b_face.png",
+      "seatedA": "assets/images/08_Father_Daughter/variants/MF/person_a_seated.png",
+      "seatedB": "assets/images/08_Father_Daughter/variants/MF/person_b_seated.png",
+      "scenes": [
+        "assets/images/08_Father_Daughter/variants/MF/scene_talking.png",
+        "assets/images/08_Father_Daughter/variants/MF/scene_disagreements.png",
+        "assets/images/08_Father_Daughter/variants/MF/scene_care.png"
+      ]
+    }
   }
 };
 </script>

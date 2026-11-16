@@ -29,6 +29,7 @@
     <label class="sr" for="rel-switcher">Switch relationship report</label>
     <select id="rel-switcher" class="rel-select" aria-label="Switch relationship report"></select>
   </div>
+  <div class="gender-bar" id="gender-bar" role="group" aria-label="Character gender selection"></div>
   <nav class="nav" id="nav" aria-label="Report pages"></nav>
 </header>
 <main id="report"></main>
@@ -61,7 +62,6 @@ window.REPORT = {
   "people": {
     "a": {
       "name": "Kabir",
-      "role": "Brother",
       "his": "his",
       "style": "Emotional",
       "styleCell": "Emotional · 5 of 8",
@@ -69,11 +69,11 @@ window.REPORT = {
       "line": "Notices how everyone is really feeling",
       "bust": "assets/images/03_Brother_Sister/person_a_bust.png",
       "face": "assets/images/03_Brother_Sister/person_a_face.png",
-      "seated": "assets/images/03_Brother_Sister/person_a_seated.png"
+      "seated": "assets/images/03_Brother_Sister/person_a_seated.png",
+      "gender": "male"
     },
     "b": {
       "name": "Isha",
-      "role": "Sister",
       "his": "her",
       "style": "Logical",
       "styleCell": "Logical · 5 of 8",
@@ -81,7 +81,8 @@ window.REPORT = {
       "line": "Sees the full picture and plans well",
       "bust": "assets/images/03_Brother_Sister/person_b_bust.png",
       "face": "assets/images/03_Brother_Sister/person_b_face.png",
-      "seated": "assets/images/03_Brother_Sister/person_b_seated.png"
+      "seated": "assets/images/03_Brother_Sister/person_b_seated.png",
+      "gender": "female"
     }
   },
   "overall": {
@@ -97,11 +98,7 @@ window.REPORT = {
       "b": 17,
       "together": 25,
       "status": "Learning each other",
-      "line": "This is where the most new learning can happen.",
-      "reachA": "Kabir reaching towards the other",
-      "reachB": "Isha reaching towards the other",
       "tilt": "tilted towards Kabir",
-      "citation": "Research: Laurenceau, Feldman Barrett & Pietromonaco (1998)",
       "icon": "assets/images/03_Brother_Sister/icon_talk.png",
       "scene": "assets/images/03_Brother_Sister/scene_talking.png",
       "sceneAlt": "Kabir and Isha — Talking & Understanding"
@@ -113,11 +110,7 @@ window.REPORT = {
       "b": 25,
       "together": 21,
       "status": "Learning each other",
-      "line": "This is where the most new learning can happen.",
-      "reachA": "Kabir reaching towards the other",
-      "reachB": "Isha reaching towards the other",
       "tilt": "nicely balanced",
-      "citation": "Research: Kim, Capaldi & Crosby (2007)",
       "icon": "assets/images/03_Brother_Sister/icon_conflict.png",
       "scene": "assets/images/03_Brother_Sister/scene_disagreements.png",
       "sceneAlt": "Kabir and Isha — Handling Disagreements"
@@ -129,11 +122,7 @@ window.REPORT = {
       "b": 17,
       "together": 8,
       "status": "Different wavelengths",
-      "line": "You’re each speaking your own language here, so it’s worth a gentle chat.",
-      "reachA": "Kabir reaching towards the other",
-      "reachB": "Isha reaching towards the other",
       "tilt": "tilted towards Isha",
-      "citation": "Research: Driver & Gottman (2004)",
       "icon": "assets/images/03_Brother_Sister/icon_care.png",
       "scene": "assets/images/03_Brother_Sister/scene_care.png",
       "sceneAlt": "Kabir and Isha — Care & Support"
@@ -290,7 +279,6 @@ window.REPORT = {
     "overallStatus": "Learning each other",
     "heroLine": "Still learning each other’s language, and that’s the fun part.",
     "heartWords": "YOUR HEART",
-    "heartNote": "The more your heart fills, the more often you met each other in each other’s style.",
     "highlights": [
       {
         "label": "YOU CONNECT BEST IN",
@@ -309,7 +297,7 @@ window.REPORT = {
       "Your Style ",
       "Flowers"
     ],
-    "flowersLede": "Four petals, one per style. The bigger the petal, the more you lean on that style.",
+    "flowersLede": "Four petals, one per style. The more colour a petal has, the more you lean on that style.",
     "readingTitle": "Reading your flowers",
     "readingHtml": [
       "<b>Kabir</b> leads with heart: mostly <b>Emotional</b>, with a <b>Logical</b> side. He likes feelings to be heard first.",
@@ -360,33 +348,32 @@ window.REPORT = {
     "methodLede": "Your main results in numbers.",
     "tableHeaders": [
       "Area",
-      "Kabir (Brother)",
-      "Isha (Sister)",
-      "Together"
+      "Kabir",
+      "Isha"
     ],
     "tableRows": [
       [
         "Talking & Understanding",
         "33%",
-        "17%",
-        "25%"
+        "17%"
       ],
       [
         "Handling Disagreements",
         "17%",
-        "25%",
-        "21%"
+        "25%"
       ],
       [
         "Care & Support",
         "0%",
-        "17%",
-        "8%"
+        "17%"
       ],
       [
         "Overall",
         "17%",
-        "19%",
+        "19%"
+      ],
+      [
+        "Together",
         "18% · Learning each other"
       ]
     ],
@@ -441,8 +428,32 @@ window.REPORT = {
       "Good to know:",
       "these studies shaped the styles and areas in your report. This report can have different biases, such as your mood on the day, answering the way that sounds best, or questions that don’t fully fit your situation, so use it as a guide, not a final answer."
     ],
-    "footer": "A self-reflection tool. Biases may occur.",
-    "dragHint": "Drag to turn"
+    "footer": "A self-reflection tool. Biases may occur."
+  },
+  "genderSelectable": false,
+  "selectedGenderCode": "MF",
+  "allowedGenderCodes": [
+    "MF"
+  ],
+  "characterVariants": {
+    "MF": {
+      "code": "MF",
+      "genderA": "male",
+      "genderB": "female",
+      "coverPair": "assets/images/03_Brother_Sister/variants/MF/cover_pair.png",
+      "harmony": "assets/images/03_Brother_Sister/variants/MF/scene_harmony.png",
+      "bustA": "assets/images/03_Brother_Sister/variants/MF/person_a_bust.png",
+      "bustB": "assets/images/03_Brother_Sister/variants/MF/person_b_bust.png",
+      "faceA": "assets/images/03_Brother_Sister/variants/MF/person_a_face.png",
+      "faceB": "assets/images/03_Brother_Sister/variants/MF/person_b_face.png",
+      "seatedA": "assets/images/03_Brother_Sister/variants/MF/person_a_seated.png",
+      "seatedB": "assets/images/03_Brother_Sister/variants/MF/person_b_seated.png",
+      "scenes": [
+        "assets/images/03_Brother_Sister/variants/MF/scene_talking.png",
+        "assets/images/03_Brother_Sister/variants/MF/scene_disagreements.png",
+        "assets/images/03_Brother_Sister/variants/MF/scene_care.png"
+      ]
+    }
   }
 };
 </script>

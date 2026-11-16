@@ -29,6 +29,7 @@
     <label class="sr" for="rel-switcher">Switch relationship report</label>
     <select id="rel-switcher" class="rel-select" aria-label="Switch relationship report"></select>
   </div>
+  <div class="gender-bar" id="gender-bar" role="group" aria-label="Character gender selection"></div>
   <nav class="nav" id="nav" aria-label="Report pages"></nav>
 </header>
 <main id="report"></main>
@@ -61,7 +62,6 @@ window.REPORT = {
   "people": {
     "a": {
       "name": "Sunita",
-      "role": "Mother",
       "his": "her",
       "style": "Emotional",
       "styleCell": "Emotional · 5 of 8",
@@ -69,11 +69,11 @@ window.REPORT = {
       "line": "Notices how everyone is really feeling",
       "bust": "assets/images/06_Mother_Daughter/person_a_bust.png",
       "face": "assets/images/06_Mother_Daughter/person_a_face.png",
-      "seated": "assets/images/06_Mother_Daughter/person_a_seated.png"
+      "seated": "assets/images/06_Mother_Daughter/person_a_seated.png",
+      "gender": "female"
     },
     "b": {
       "name": "Kavya",
-      "role": "Daughter",
       "his": "her",
       "style": "Thoughtful",
       "styleCell": "Thoughtful · 4 of 8",
@@ -81,7 +81,8 @@ window.REPORT = {
       "line": "Keeps the peace and remembers the small things",
       "bust": "assets/images/06_Mother_Daughter/person_b_bust.png",
       "face": "assets/images/06_Mother_Daughter/person_b_face.png",
-      "seated": "assets/images/06_Mother_Daughter/person_b_seated.png"
+      "seated": "assets/images/06_Mother_Daughter/person_b_seated.png",
+      "gender": "female"
     }
   },
   "overall": {
@@ -97,11 +98,7 @@ window.REPORT = {
       "b": 100,
       "together": 75,
       "status": "Mostly in tune",
-      "line": "You often meet in the middle, with a little room to grow.",
-      "reachA": "Sunita reaching towards the other",
-      "reachB": "Kavya reaching towards the other",
       "tilt": "tilted towards Kavya",
-      "citation": "Research: Laurenceau, Feldman Barrett & Pietromonaco (1998)",
       "icon": "assets/images/06_Mother_Daughter/icon_talk.png",
       "scene": "assets/images/06_Mother_Daughter/scene_talking.png",
       "sceneAlt": "Sunita and Kavya — Talking & Understanding"
@@ -113,11 +110,7 @@ window.REPORT = {
       "b": 58,
       "together": 67,
       "status": "Mostly in tune",
-      "line": "You often meet in the middle, with a little room to grow.",
-      "reachA": "Sunita reaching towards the other",
-      "reachB": "Kavya reaching towards the other",
       "tilt": "tilted towards Sunita",
-      "citation": "Research: Kim, Capaldi & Crosby (2007)",
       "icon": "assets/images/06_Mother_Daughter/icon_conflict.png",
       "scene": "assets/images/06_Mother_Daughter/scene_disagreements.png",
       "sceneAlt": "Sunita and Kavya — Handling Disagreements"
@@ -129,11 +122,7 @@ window.REPORT = {
       "b": 100,
       "together": 88,
       "status": "Speaking each other’s language",
-      "line": "You already reach each other here, so keep it up.",
-      "reachA": "Sunita reaching towards the other",
-      "reachB": "Kavya reaching towards the other",
       "tilt": "tilted towards Kavya",
-      "citation": "Research: Driver & Gottman (2004)",
       "icon": "assets/images/06_Mother_Daughter/icon_care.png",
       "scene": "assets/images/06_Mother_Daughter/scene_care.png",
       "sceneAlt": "Sunita and Kavya — Care & Support"
@@ -290,7 +279,6 @@ window.REPORT = {
     "overallStatus": "Mostly in tune",
     "heroLine": "Like a duet still finding its harmony: lots of good notes, a few to practise.",
     "heartWords": "YOUR HEART",
-    "heartNote": "The more your heart fills, the more often you met each other in each other’s style.",
     "highlights": [
       {
         "label": "YOU CONNECT BEST IN",
@@ -309,7 +297,7 @@ window.REPORT = {
       "Your Style ",
       "Flowers"
     ],
-    "flowersLede": "Four petals, one per style. The bigger the petal, the more you lean on that style.",
+    "flowersLede": "Four petals, one per style. The more colour a petal has, the more you lean on that style.",
     "readingTitle": "Reading your flowers",
     "readingHtml": [
       "<b>Sunita</b> leads with heart: mostly <b>Emotional</b>, with a <b>Logical</b> side. She likes feelings to be heard first.",
@@ -360,33 +348,32 @@ window.REPORT = {
     "methodLede": "Your main results in numbers.",
     "tableHeaders": [
       "Area",
-      "Sunita (Mother)",
-      "Kavya (Daughter)",
-      "Together"
+      "Sunita",
+      "Kavya"
     ],
     "tableRows": [
       [
         "Talking & Understanding",
         "50%",
-        "100%",
-        "75%"
+        "100%"
       ],
       [
         "Handling Disagreements",
         "75%",
-        "58%",
-        "67%"
+        "58%"
       ],
       [
         "Care & Support",
         "75%",
-        "100%",
-        "88%"
+        "100%"
       ],
       [
         "Overall",
         "67%",
-        "86%",
+        "86%"
+      ],
+      [
+        "Together",
         "76% · Mostly in tune"
       ]
     ],
@@ -441,8 +428,32 @@ window.REPORT = {
       "Good to know:",
       "these studies shaped the styles and areas in your report. This report can have different biases, such as your mood on the day, answering the way that sounds best, or questions that don’t fully fit your situation, so use it as a guide, not a final answer."
     ],
-    "footer": "A self-reflection tool. Biases may occur.",
-    "dragHint": "Drag to turn"
+    "footer": "A self-reflection tool. Biases may occur."
+  },
+  "genderSelectable": false,
+  "selectedGenderCode": "FF",
+  "allowedGenderCodes": [
+    "FF"
+  ],
+  "characterVariants": {
+    "FF": {
+      "code": "FF",
+      "genderA": "female",
+      "genderB": "female",
+      "coverPair": "assets/images/06_Mother_Daughter/variants/FF/cover_pair.png",
+      "harmony": "assets/images/06_Mother_Daughter/variants/FF/scene_harmony.png",
+      "bustA": "assets/images/06_Mother_Daughter/variants/FF/person_a_bust.png",
+      "bustB": "assets/images/06_Mother_Daughter/variants/FF/person_b_bust.png",
+      "faceA": "assets/images/06_Mother_Daughter/variants/FF/person_a_face.png",
+      "faceB": "assets/images/06_Mother_Daughter/variants/FF/person_b_face.png",
+      "seatedA": "assets/images/06_Mother_Daughter/variants/FF/person_a_seated.png",
+      "seatedB": "assets/images/06_Mother_Daughter/variants/FF/person_b_seated.png",
+      "scenes": [
+        "assets/images/06_Mother_Daughter/variants/FF/scene_talking.png",
+        "assets/images/06_Mother_Daughter/variants/FF/scene_disagreements.png",
+        "assets/images/06_Mother_Daughter/variants/FF/scene_care.png"
+      ]
+    }
   }
 };
 </script>

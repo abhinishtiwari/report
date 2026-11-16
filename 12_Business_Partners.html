@@ -29,6 +29,7 @@
     <label class="sr" for="rel-switcher">Switch relationship report</label>
     <select id="rel-switcher" class="rel-select" aria-label="Switch relationship report"></select>
   </div>
+  <div class="gender-bar" id="gender-bar" role="group" aria-label="Character gender selection"></div>
   <nav class="nav" id="nav" aria-label="Report pages"></nav>
 </header>
 <main id="report"></main>
@@ -61,7 +62,6 @@ window.REPORT = {
   "people": {
     "a": {
       "name": "Rahul",
-      "role": "Partner",
       "his": "his",
       "style": "Logical",
       "styleCell": "Logical · 5 of 8",
@@ -69,11 +69,11 @@ window.REPORT = {
       "line": "Sees the full picture and plans well",
       "bust": "assets/images/12_Business_Partners/person_a_bust.png",
       "face": "assets/images/12_Business_Partners/person_a_face.png",
-      "seated": "assets/images/12_Business_Partners/person_a_seated.png"
+      "seated": "assets/images/12_Business_Partners/person_a_seated.png",
+      "gender": "male"
     },
     "b": {
       "name": "Sameer",
-      "role": "Partner",
       "his": "his",
       "style": "Assertive",
       "styleCell": "Assertive · 5 of 8",
@@ -81,7 +81,8 @@ window.REPORT = {
       "line": "Gets things moving when everyone is stuck",
       "bust": "assets/images/12_Business_Partners/person_b_bust.png",
       "face": "assets/images/12_Business_Partners/person_b_face.png",
-      "seated": "assets/images/12_Business_Partners/person_b_seated.png"
+      "seated": "assets/images/12_Business_Partners/person_b_seated.png",
+      "gender": "male"
     }
   },
   "overall": {
@@ -97,11 +98,7 @@ window.REPORT = {
       "b": 58,
       "together": 46,
       "status": "Learning each other",
-      "line": "This is where the most new learning can happen.",
-      "reachA": "Rahul reaching towards the other",
-      "reachB": "Sameer reaching towards the other",
       "tilt": "tilted towards Sameer",
-      "citation": "Research: Laurenceau, Feldman Barrett & Pietromonaco (1998)",
       "icon": "assets/images/12_Business_Partners/icon_talk.png",
       "scene": "assets/images/12_Business_Partners/scene_talking.png",
       "sceneAlt": "Rahul and Sameer — Talking & Understanding"
@@ -113,11 +110,7 @@ window.REPORT = {
       "b": 100,
       "together": 88,
       "status": "Speaking each other’s language",
-      "line": "You already reach each other here, so keep it up.",
-      "reachA": "Rahul reaching towards the other",
-      "reachB": "Sameer reaching towards the other",
       "tilt": "tilted towards Sameer",
-      "citation": "Research: Kim, Capaldi & Crosby (2007)",
       "icon": "assets/images/12_Business_Partners/icon_conflict.png",
       "scene": "assets/images/12_Business_Partners/scene_disagreements.png",
       "sceneAlt": "Rahul and Sameer — Handling Disagreements"
@@ -129,11 +122,7 @@ window.REPORT = {
       "b": 100,
       "together": 100,
       "status": "Speaking each other’s language",
-      "line": "You already reach each other here, so keep it up.",
-      "reachA": "Rahul reaching towards the other",
-      "reachB": "Sameer reaching towards the other",
       "tilt": "nicely balanced",
-      "citation": "Research: Edmondson (1999)",
       "icon": "assets/images/12_Business_Partners/icon_care.png",
       "scene": "assets/images/12_Business_Partners/scene_care.png",
       "sceneAlt": "Rahul and Sameer — Support & Appreciation"
@@ -290,7 +279,6 @@ window.REPORT = {
     "overallStatus": "Mostly in tune",
     "heroLine": "Like a duet still finding its harmony: lots of good notes, a few to practise.",
     "heartWords": "YOUR HEART",
-    "heartNote": "The more your heart fills, the more often you met each other in each other’s style.",
     "highlights": [
       {
         "label": "YOU CONNECT BEST IN",
@@ -309,7 +297,7 @@ window.REPORT = {
       "Your Style ",
       "Flowers"
     ],
-    "flowersLede": "Four petals, one per style. The bigger the petal, the more you lean on that style.",
+    "flowersLede": "Four petals, one per style. The more colour a petal has, the more you lean on that style.",
     "readingTitle": "Reading your flowers",
     "readingHtml": [
       "<b>Rahul</b> leads with reason: mostly <b>Logical</b>, with a <b>Emotional</b> side. He likes things to make sense.",
@@ -360,33 +348,32 @@ window.REPORT = {
     "methodLede": "Your main results in numbers.",
     "tableHeaders": [
       "Area",
-      "Rahul (Partner)",
-      "Sameer (Partner)",
-      "Together"
+      "Rahul",
+      "Sameer"
     ],
     "tableRows": [
       [
         "Talking & Understanding",
         "33%",
-        "58%",
-        "46%"
+        "58%"
       ],
       [
         "Handling Disagreements",
         "75%",
-        "100%",
-        "88%"
+        "100%"
       ],
       [
         "Support & Appreciation",
-        "100%",
         "100%",
         "100%"
       ],
       [
         "Overall",
         "69%",
-        "86%",
+        "86%"
+      ],
+      [
+        "Together",
         "78% · Mostly in tune"
       ]
     ],
@@ -441,8 +428,89 @@ window.REPORT = {
       "Good to know:",
       "these studies shaped the styles and areas in your report. This report can have different biases, such as your mood on the day, answering the way that sounds best, or questions that don’t fully fit your situation, so use it as a guide, not a final answer."
     ],
-    "footer": "A self-reflection tool. Biases may occur.",
-    "dragHint": "Drag to turn"
+    "footer": "A self-reflection tool. Biases may occur."
+  },
+  "genderSelectable": true,
+  "selectedGenderCode": "MM",
+  "allowedGenderCodes": [
+    "MM",
+    "FF",
+    "MF",
+    "FM"
+  ],
+  "characterVariants": {
+    "MM": {
+      "code": "MM",
+      "genderA": "male",
+      "genderB": "male",
+      "coverPair": "assets/images/12_Business_Partners/variants/MM/cover_pair.png",
+      "harmony": "assets/images/12_Business_Partners/variants/MM/scene_harmony.png",
+      "bustA": "assets/images/12_Business_Partners/variants/MM/person_a_bust.png",
+      "bustB": "assets/images/12_Business_Partners/variants/MM/person_b_bust.png",
+      "faceA": "assets/images/12_Business_Partners/variants/MM/person_a_face.png",
+      "faceB": "assets/images/12_Business_Partners/variants/MM/person_b_face.png",
+      "seatedA": "assets/images/12_Business_Partners/variants/MM/person_a_seated.png",
+      "seatedB": "assets/images/12_Business_Partners/variants/MM/person_b_seated.png",
+      "scenes": [
+        "assets/images/12_Business_Partners/variants/MM/scene_talking.png",
+        "assets/images/12_Business_Partners/variants/MM/scene_disagreements.png",
+        "assets/images/12_Business_Partners/variants/MM/scene_care.png"
+      ]
+    },
+    "FF": {
+      "code": "FF",
+      "genderA": "female",
+      "genderB": "female",
+      "coverPair": "assets/images/12_Business_Partners/variants/FF/cover_pair.png",
+      "harmony": "assets/images/12_Business_Partners/variants/FF/scene_harmony.png",
+      "bustA": "assets/images/12_Business_Partners/variants/FF/person_a_bust.png",
+      "bustB": "assets/images/12_Business_Partners/variants/FF/person_b_bust.png",
+      "faceA": "assets/images/12_Business_Partners/variants/FF/person_a_face.png",
+      "faceB": "assets/images/12_Business_Partners/variants/FF/person_b_face.png",
+      "seatedA": "assets/images/12_Business_Partners/variants/FF/person_a_seated.png",
+      "seatedB": "assets/images/12_Business_Partners/variants/FF/person_b_seated.png",
+      "scenes": [
+        "assets/images/12_Business_Partners/variants/FF/scene_talking.png",
+        "assets/images/12_Business_Partners/variants/FF/scene_disagreements.png",
+        "assets/images/12_Business_Partners/variants/FF/scene_care.png"
+      ]
+    },
+    "MF": {
+      "code": "MF",
+      "genderA": "male",
+      "genderB": "female",
+      "coverPair": "assets/images/12_Business_Partners/variants/MF/cover_pair.png",
+      "harmony": "assets/images/12_Business_Partners/variants/MF/scene_harmony.png",
+      "bustA": "assets/images/12_Business_Partners/variants/MF/person_a_bust.png",
+      "bustB": "assets/images/12_Business_Partners/variants/MF/person_b_bust.png",
+      "faceA": "assets/images/12_Business_Partners/variants/MF/person_a_face.png",
+      "faceB": "assets/images/12_Business_Partners/variants/MF/person_b_face.png",
+      "seatedA": "assets/images/12_Business_Partners/variants/MF/person_a_seated.png",
+      "seatedB": "assets/images/12_Business_Partners/variants/MF/person_b_seated.png",
+      "scenes": [
+        "assets/images/12_Business_Partners/variants/MF/scene_talking.png",
+        "assets/images/12_Business_Partners/variants/MF/scene_disagreements.png",
+        "assets/images/12_Business_Partners/variants/MF/scene_care.png"
+      ]
+    },
+    "FM": {
+      "code": "FM",
+      "genderA": "female",
+      "genderB": "male",
+      "coverPair": "assets/images/12_Business_Partners/variants/FM/cover_pair.png",
+      "harmony": "assets/images/12_Business_Partners/variants/FM/scene_harmony.png",
+      "bustA": "assets/images/12_Business_Partners/variants/FM/person_a_bust.png",
+      "bustB": "assets/images/12_Business_Partners/variants/FM/person_b_bust.png",
+      "faceA": "assets/images/12_Business_Partners/variants/FM/person_a_face.png",
+      "faceB": "assets/images/12_Business_Partners/variants/FM/person_b_face.png",
+      "seatedA": "assets/images/12_Business_Partners/variants/FM/person_a_seated.png",
+      "seatedB": "assets/images/12_Business_Partners/variants/FM/person_b_seated.png",
+      "scenes": [
+        "assets/images/12_Business_Partners/variants/FM/scene_talking.png",
+        "assets/images/12_Business_Partners/variants/FM/scene_disagreements.png",
+        "assets/images/12_Business_Partners/variants/FM/scene_care.png"
+      ]
+    }
   }
 };
 </script>

@@ -29,6 +29,7 @@
     <label class="sr" for="rel-switcher">Switch relationship report</label>
     <select id="rel-switcher" class="rel-select" aria-label="Switch relationship report"></select>
   </div>
+  <div class="gender-bar" id="gender-bar" role="group" aria-label="Character gender selection"></div>
   <nav class="nav" id="nav" aria-label="Report pages"></nav>
 </header>
 <main id="report"></main>
@@ -61,7 +62,6 @@ window.REPORT = {
   "people": {
     "a": {
       "name": "Vikram",
-      "role": "Husband",
       "his": "his",
       "style": "Thoughtful",
       "styleCell": "Thoughtful · 4 of 8",
@@ -69,11 +69,11 @@ window.REPORT = {
       "line": "Keeps the peace and remembers the small things",
       "bust": "assets/images/02_Husband_Wife/person_a_bust.png",
       "face": "assets/images/02_Husband_Wife/person_a_face.png",
-      "seated": "assets/images/02_Husband_Wife/person_a_seated.png"
+      "seated": "assets/images/02_Husband_Wife/person_a_seated.png",
+      "gender": "male"
     },
     "b": {
       "name": "Neha",
-      "role": "Wife",
       "his": "her",
       "style": "Assertive",
       "styleCell": "Assertive · 4 of 8",
@@ -81,7 +81,8 @@ window.REPORT = {
       "line": "Gets things moving when everyone is stuck",
       "bust": "assets/images/02_Husband_Wife/person_b_bust.png",
       "face": "assets/images/02_Husband_Wife/person_b_face.png",
-      "seated": "assets/images/02_Husband_Wife/person_b_seated.png"
+      "seated": "assets/images/02_Husband_Wife/person_b_seated.png",
+      "gender": "female"
     }
   },
   "overall": {
@@ -97,11 +98,7 @@ window.REPORT = {
       "b": 17,
       "together": 29,
       "status": "Learning each other",
-      "line": "This is where the most new learning can happen.",
-      "reachA": "Vikram reaching towards the other",
-      "reachB": "Neha reaching towards the other",
       "tilt": "tilted towards Vikram",
-      "citation": "Research: Laurenceau, Feldman Barrett & Pietromonaco (1998)",
       "icon": "assets/images/02_Husband_Wife/icon_talk.png",
       "scene": "assets/images/02_Husband_Wife/scene_talking.png",
       "sceneAlt": "Vikram and Neha — Talking & Understanding"
@@ -113,11 +110,7 @@ window.REPORT = {
       "b": 67,
       "together": 75,
       "status": "Mostly in tune",
-      "line": "You often meet in the middle, with a little room to grow.",
-      "reachA": "Vikram reaching towards the other",
-      "reachB": "Neha reaching towards the other",
       "tilt": "tilted towards Vikram",
-      "citation": "Research: Kim, Capaldi & Crosby (2007)",
       "icon": "assets/images/02_Husband_Wife/icon_conflict.png",
       "scene": "assets/images/02_Husband_Wife/scene_disagreements.png",
       "sceneAlt": "Vikram and Neha — Handling Disagreements"
@@ -129,11 +122,7 @@ window.REPORT = {
       "b": 67,
       "together": 83,
       "status": "Speaking each other’s language",
-      "line": "You already reach each other here, so keep it up.",
-      "reachA": "Vikram reaching towards the other",
-      "reachB": "Neha reaching towards the other",
       "tilt": "tilted towards Vikram",
-      "citation": "Research: Driver & Gottman (2004)",
       "icon": "assets/images/02_Husband_Wife/icon_care.png",
       "scene": "assets/images/02_Husband_Wife/scene_care.png",
       "sceneAlt": "Vikram and Neha — Care & Support"
@@ -290,7 +279,6 @@ window.REPORT = {
     "overallStatus": "Mostly in tune",
     "heroLine": "Like a duet still finding its harmony: lots of good notes, a few to practise.",
     "heartWords": "YOUR HEART",
-    "heartNote": "The more your heart fills, the more often you met each other in each other’s style.",
     "highlights": [
       {
         "label": "YOU CONNECT BEST IN",
@@ -309,7 +297,7 @@ window.REPORT = {
       "Your Style ",
       "Flowers"
     ],
-    "flowersLede": "Four petals, one per style. The bigger the petal, the more you lean on that style.",
+    "flowersLede": "Four petals, one per style. The more colour a petal has, the more you lean on that style.",
     "readingTitle": "Reading your flowers",
     "readingHtml": [
       "<b>Vikram</b> leads with calm: mostly <b>Thoughtful</b>, with a <b>Emotional</b> side. He likes time, gentleness and peace.",
@@ -360,33 +348,32 @@ window.REPORT = {
     "methodLede": "Your main results in numbers.",
     "tableHeaders": [
       "Area",
-      "Vikram (Husband)",
-      "Neha (Wife)",
-      "Together"
+      "Vikram",
+      "Neha"
     ],
     "tableRows": [
       [
         "Talking & Understanding",
         "42%",
-        "17%",
-        "29%"
+        "17%"
       ],
       [
         "Handling Disagreements",
         "83%",
-        "67%",
-        "75%"
+        "67%"
       ],
       [
         "Care & Support",
         "100%",
-        "67%",
-        "83%"
+        "67%"
       ],
       [
         "Overall",
         "75%",
-        "50%",
+        "50%"
+      ],
+      [
+        "Together",
         "62% · Mostly in tune"
       ]
     ],
@@ -441,8 +428,32 @@ window.REPORT = {
       "Good to know:",
       "these studies shaped the styles and areas in your report. This report can have different biases, such as your mood on the day, answering the way that sounds best, or questions that don’t fully fit your situation, so use it as a guide, not a final answer."
     ],
-    "footer": "A self-reflection tool. Biases may occur.",
-    "dragHint": "Drag to turn"
+    "footer": "A self-reflection tool. Biases may occur."
+  },
+  "genderSelectable": false,
+  "selectedGenderCode": "MF",
+  "allowedGenderCodes": [
+    "MF"
+  ],
+  "characterVariants": {
+    "MF": {
+      "code": "MF",
+      "genderA": "male",
+      "genderB": "female",
+      "coverPair": "assets/images/02_Husband_Wife/variants/MF/cover_pair.png",
+      "harmony": "assets/images/02_Husband_Wife/variants/MF/scene_harmony.png",
+      "bustA": "assets/images/02_Husband_Wife/variants/MF/person_a_bust.png",
+      "bustB": "assets/images/02_Husband_Wife/variants/MF/person_b_bust.png",
+      "faceA": "assets/images/02_Husband_Wife/variants/MF/person_a_face.png",
+      "faceB": "assets/images/02_Husband_Wife/variants/MF/person_b_face.png",
+      "seatedA": "assets/images/02_Husband_Wife/variants/MF/person_a_seated.png",
+      "seatedB": "assets/images/02_Husband_Wife/variants/MF/person_b_seated.png",
+      "scenes": [
+        "assets/images/02_Husband_Wife/variants/MF/scene_talking.png",
+        "assets/images/02_Husband_Wife/variants/MF/scene_disagreements.png",
+        "assets/images/02_Husband_Wife/variants/MF/scene_care.png"
+      ]
+    }
   }
 };
 </script>

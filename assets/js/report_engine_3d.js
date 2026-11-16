@@ -16,13 +16,14 @@
     sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/>',
     sparkle: '<path d="M12 3.5c.6 3.9 2.2 5.5 6 6.1-3.8.6-5.4 2.2-6 6.1-.6-3.9-2.2-5.5-6-6.1 3.8-.6 5.4-2.2 6-6.1zM18.5 15c.3 1.8 1 2.5 2.7 2.8-1.7.3-2.4 1-2.7 2.7-.3-1.7-1-2.4-2.7-2.7 1.7-.3 2.4-1 2.7-2.8z"/>',
     book: '<path d="M4 5.5c2.6-1 5.3-1 8 .8 2.7-1.8 5.4-1.8 8-.8v13c-2.6-1-5.3-1-8 .8-2.7-1.8-5.4-1.8-8-.8z M12 6.3v13"/>',
-    users: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.6-3.4 2.8-5.2 5.5-5.2s4.9 1.8 5.5 5.2"/><circle cx="16.8" cy="9.4" r="2.5"/><path d="M15.6 13.9c2.5-.3 4.4 1.3 4.9 4.6"/>'
+    users: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.6-3.4 2.8-5.2 5.5-5.2s4.9 1.8 5.5 5.2"/><circle cx="16.8" cy="9.4" r="2.5"/><path d="M15.6 13.9c2.5-.3 4.4 1.3 4.9 4.6"/>',
+    lock: '<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/>'
   };
   const STYLE_LOOK = {
-    Emotional:  { color: "#d67090", soft: "#fbd9e7", angle: 135, icon: ICON.heart },
-    Assertive:  { color: "#de8658", soft: "#fbe3d4", angle: 45,  icon: ICON.bolt },
-    Thoughtful: { color: "#64a491", soft: "#dcf0ea", angle: 225, icon: ICON.sprout },
-    Logical:    { color: "#6b8dd0", soft: "#dde6f9", angle: 315, icon: ICON.brain }
+    Emotional:  { color: "#d96c91", throat: "#9e204e", ink: "#8f2249", soft: "#fbe4ec", angle: 135, icon: ICON.heart },
+    Assertive:  { color: "#e8895b", throat: "#b8471a", ink: "#a8461d", soft: "#fdf0e8", angle: 45,  icon: ICON.bolt },
+    Thoughtful: { color: "#5da594", throat: "#256e5e", ink: "#246b5b", soft: "#e4f4f0", angle: 225, icon: ICON.sprout },
+    Logical:    { color: "#668bd1", throat: "#2f54a0", ink: "#2d529e", soft: "#e6eefb", angle: 315, icon: ICON.brain }
   };
   const STONE_LOOK = {
     4: { color: "#784a9d", size: 1.0 },
@@ -34,7 +35,9 @@
 
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const fill = (tpl, map) => String(tpl).replace(/\{(\w+)\}/g, (m, k) => (k in map ? map[k] : m));
-  const pc = v => (Math.round(v * 10) / 10) + "%";
+  // A score of 0 is shown as a dash, never as "0%".
+  const pc = v => { const r = Math.round(v * 10) / 10; return r === 0 ? "–" : r + "%"; };
+  const noZero = s => String(s).replace(/(^|[^\d.])0(?:\.0+)?%/g, "$1–");
   const svg = (path, cls) => `<svg class="${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
   // Banker's rounding (round half to even) matches authoritative report PDF arithmetic
   const rEven = x => {
@@ -47,6 +50,282 @@
   const areaSums = k => [0, 1, 2].map(i => REPORT.stones[k].slice(i * 4, i * 4 + 4).reduce((x, y) => x + y, 0));
   const count4 = k => REPORT.stones[k].filter(v => v === 4).length;
   const levelOf = v => (v >= 4 ? 4 : v <= 1 ? 1 : Math.round(v));
+
+  /* ---------------------------------------------------------------- gender-based character selection & enforcement
+     Relationship type + user-selected genders work together to determine character illustrations.
+     Fixed family/romantic pairs enforce exact valid gender combinations; Friends, Best Friends,
+     Business Partners & Teammates dynamically support MF, FM, MM and FF. */
+  const GENDER_COMBOS = [
+    { code: "MF", short: "♂·♀", full: "Male · Female", gA: "male",   gB: "female" },
+    { code: "FM", short: "♀·♂", full: "Female · Male", gA: "female", gB: "male" },
+    { code: "MM", short: "♂·♂", full: "Male · Male",   gA: "male",   gB: "male" },
+    { code: "FF", short: "♀·♀", full: "Female · Female", gA: "female", gB: "female" }
+  ];
+  const TYPE_GENDER_RULES = {
+    "boyfriend & girlfriend":  { slug: "01_Boyfriend_Girlfriend", selectable: false, allowed: ["MF"], def: "MF" },
+    "girlfriend & boyfriend":  { slug: "01_Boyfriend_Girlfriend", selectable: false, allowed: ["FM"], def: "FM" },
+    "husband & wife":          { slug: "02_Husband_Wife",         selectable: false, allowed: ["MF"], def: "MF" },
+    "wife & husband":          { slug: "02_Husband_Wife",         selectable: false, allowed: ["FM"], def: "FM" },
+    "mother & father":         { slug: "02_Husband_Wife",         selectable: false, allowed: ["FM"], def: "FM" },
+    "father & mother":         { slug: "02_Husband_Wife",         selectable: false, allowed: ["MF"], def: "MF" },
+    "brother & sister":        { slug: "03_Brother_Sister",       selectable: false, allowed: ["MF"], def: "MF" },
+    "sister & brother":        { slug: "03_Brother_Sister",       selectable: false, allowed: ["FM"], def: "FM" },
+    "brother & brother":       { slug: "04_Brother_Brother",      selectable: false, allowed: ["MM"], def: "MM" },
+    "sister & sister":         { slug: "05_Sister_Sister",        selectable: false, allowed: ["FF"], def: "FF" },
+    "mother & daughter":       { slug: "06_Mother_Daughter",      selectable: false, allowed: ["FF"], def: "FF" },
+    "mother & son":            { slug: "07_Mother_Son",           selectable: false, allowed: ["FM"], def: "FM" },
+    "father & daughter":       { slug: "08_Father_Daughter",      selectable: false, allowed: ["MF"], def: "MF" },
+    "father & son":            { slug: "09_Father_Son",           selectable: false, allowed: ["MM"], def: "MM" },
+    "best friends":            { slug: "10_Best_Friends",         selectable: true,  allowed: ["FF", "MM", "MF", "FM"], def: "FF" },
+    "friends":                 { slug: "11_Friends",              selectable: true,  allowed: ["MM", "FF", "MF", "FM"], def: "MM" },
+    "business partners":       { slug: "12_Business_Partners",    selectable: true,  allowed: ["MM", "FF", "MF", "FM"], def: "MM" },
+    "teammates":               { slug: "13_Teammates",            selectable: true,  allowed: ["FM", "MF", "MM", "FF"], def: "FM" }
+  };
+
+  function normGenderChar(g) {
+    if (!g) return "";
+    const s = String(g).trim().toLowerCase();
+    if (s === "m" || s === "male" || s === "man" || s === "boy") return "M";
+    if (s === "f" || s === "female" || s === "woman" || s === "girl") return "F";
+    return "";
+  }
+  function getGenderRule() {
+    const normType = String(REPORT.type || "").trim().toLowerCase().replace(/\s*[–—-]\s*/g, " & ");
+    if (TYPE_GENDER_RULES[normType]) return TYPE_GENDER_RULES[normType];
+    const bySlug = Object.values(TYPE_GENDER_RULES).find(r => r.slug === REPORT.slug);
+    return bySlug || { slug: REPORT.slug || "11_Friends", selectable: true, allowed: ["MF", "FM", "MM", "FF"], def: "MF" };
+  }
+  function resolveValidGenderCode(requestedCode) {
+    const rule = getGenderRule();
+    const clean = String(requestedCode || "").toUpperCase();
+    if (rule.allowed.includes(clean)) return clean;
+    return rule.def;
+  }
+  function variantPathsFor(slug, code) {
+    const custom = REPORT.characterVariants && REPORT.characterVariants[code];
+    if (custom) return custom;
+    const base = `assets/images/${slug}/variants/${code}`;
+    return {
+      code,
+      coverPair: `${base}/cover_pair.png`,
+      harmony: `${base}/scene_harmony.png`,
+      bustA: `${base}/person_a_bust.png`,
+      bustB: `${base}/person_b_bust.png`,
+      faceA: `${base}/person_a_face.png`,
+      faceB: `${base}/person_b_face.png`,
+      seatedA: `${base}/person_a_seated.png`,
+      seatedB: `${base}/person_b_seated.png`,
+      scenes: [
+        `${base}/scene_talking.png`,
+        `${base}/scene_disagreements.png`,
+        `${base}/scene_care.png`
+      ]
+    };
+  }
+
+  let activeGenderCode = "";
+  function detectInitialGenderCode() {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const qCode = (sp.get("genders") || "").toUpperCase();
+      if (qCode.length === 2) return resolveValidGenderCode(qCode);
+      const qA = normGenderChar(sp.get("genderA")), qB = normGenderChar(sp.get("genderB"));
+      if (qA && qB) return resolveValidGenderCode(qA + qB);
+    } catch (_) {}
+    if (REPORT.selectedGenderCode) return resolveValidGenderCode(REPORT.selectedGenderCode);
+    const pA = normGenderChar(PPL.a && PPL.a.gender), pB = normGenderChar(PPL.b && PPL.b.gender);
+    if (pA && pB) return resolveValidGenderCode(pA + pB);
+    return getGenderRule().def;
+  }
+
+  function applyGenderCodeToData(code) {
+    const rule = getGenderRule();
+    const valid = resolveValidGenderCode(code);
+    activeGenderCode = valid;
+    const vp = variantPathsFor(rule.slug, valid);
+    REPORT.images.coverPair = vp.coverPair;
+    REPORT.images.harmony = vp.harmony;
+    PPL.a.gender = valid[0] === "M" ? "male" : "female";
+    PPL.b.gender = valid[1] === "M" ? "male" : "female";
+    PPL.a.his = valid[0] === "M" ? "his" : "her";
+    PPL.b.his = valid[1] === "M" ? "his" : "her";
+    PPL.a.bust = vp.bustA; PPL.b.bust = vp.bustB;
+    PPL.a.face = vp.faceA; PPL.b.face = vp.faceB;
+    PPL.a.seated = vp.seatedA; PPL.b.seated = vp.seatedB;
+    AREAS.forEach((ar, i) => { if (vp.scenes[i]) ar.scene = vp.scenes[i]; });
+    return valid;
+  }
+
+  function syncGenderDomImages() {
+    document.querySelectorAll('img[data-char-slot="cover"]').forEach(im => (im.src = REPORT.images.coverPair));
+    document.querySelectorAll('img[data-char-slot="harmony"]').forEach(im => (im.src = REPORT.images.harmony));
+    document.querySelectorAll('img[data-char-slot="bust-a"]').forEach(im => (im.src = PPL.a.bust));
+    document.querySelectorAll('img[data-char-slot="bust-b"]').forEach(im => (im.src = PPL.b.bust));
+    document.querySelectorAll('img[data-char-slot="face-a"]').forEach(im => (im.src = PPL.a.face));
+    document.querySelectorAll('img[data-char-slot="face-b"]').forEach(im => (im.src = PPL.b.face));
+    document.querySelectorAll('img[data-char-slot="seated-a"]').forEach(im => (im.src = PPL.a.seated));
+    document.querySelectorAll('img[data-char-slot="seated-b"]').forEach(im => (im.src = PPL.b.seated));
+    AREAS.forEach((ar, i) => {
+      document.querySelectorAll(`img[data-char-slot="scene-${i}"]`).forEach(im => (im.src = ar.scene));
+    });
+  }
+
+  function renderGenderBar() {
+    const topbar = document.querySelector(".topbar");
+    if (!topbar) return;
+    let barEl = document.getElementById("gender-bar");
+    if (!barEl) {
+      barEl = document.createElement("div");
+      barEl.id = "gender-bar";
+      barEl.className = "gender-bar";
+      barEl.setAttribute("role", "group");
+      barEl.setAttribute("aria-label", "Character gender selection");
+      const navEl = document.getElementById("nav");
+      topbar.insertBefore(barEl, navEl || null);
+    }
+    const rule = getGenderRule();
+    if (rule.selectable) {
+      barEl.innerHTML = `<span class="g-lbl">Genders:</span>` + GENDER_COMBOS.map(c => {
+        const on = c.code === activeGenderCode;
+        return `<button type="button" class="g-btn${on ? " on" : ""}" data-gcode="${c.code}" aria-pressed="${on}" title="${esc(PPL.a.name)}: ${c.gA}, ${esc(PPL.b.name)}: ${c.gB}"><span>${c.short}</span><span class="g-full">${c.full}</span></button>`;
+      }).join("");
+      barEl.querySelectorAll("button.g-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const next = btn.getAttribute("data-gcode");
+          window.setReportGenders(next[0], next[1]);
+        });
+      });
+    } else {
+      const cur = GENDER_COMBOS.find(c => c.code === activeGenderCode) || GENDER_COMBOS[0];
+      barEl.innerHTML = `<span class="g-lbl">Genders:</span>`
+        + `<span class="g-lock-pill" title="Automatically locked by ${esc(REPORT.type)}">${svg(ICON.lock)}<span>${cur.short} ${cur.full}</span></span>`;
+    }
+  }
+
+  window.setReportGenders = function (genderA, genderB) {
+    const code = (normGenderChar(genderA) || "M") + (normGenderChar(genderB) || "F");
+    const valid = applyGenderCodeToData(code);
+    syncGenderDomImages();
+    renderGenderBar();
+    try {
+      const u = new URL(window.location.href);
+      if (getGenderRule().selectable) u.searchParams.set("genders", valid);
+      else u.searchParams.delete("genders");
+      window.history.replaceState(null, "", u.toString());
+    } catch (_) {}
+    return valid;
+  };
+  window.getReportGenderState = function () {
+    const rule = getGenderRule();
+    return {
+      relationshipType: REPORT.type,
+      genderSelectable: rule.selectable,
+      allowedCodes: rule.allowed.slice(),
+      activeCode: activeGenderCode,
+      personA: PPL.a.gender,
+      personB: PPL.b.gender
+    };
+  };
+
+  applyGenderCodeToData(detectInitialGenderCode());
+
+  /* ---------------------------------------------------------------- line bank (wording from Line_Bank.pdf)
+     {A} = the person the line is about, {B} = the other person, {S} = B’s main style,
+     {H} / {L} = the person with the higher / lower %. Bands: 0–30, 31–45, 46–60, 61–75, 76–90, 91–100. */
+  const LINES = {
+    talk: [
+      "{A} mostly talks and listens in {A}’s own way. Trying {B}’s style more often will help {B} feel more understood.",
+      "{A} sometimes talks in {B}’s style. A few more of these moments will make conversations feel easier for {B}.",
+      "{A} talks in {B}’s style about half the time, so {B} often feels heard.",
+      "{A} often talks in {B}’s style, which helps {B} feel understood in most conversations.",
+      "{A} usually talks in {B}’s style, so {B} feels heard and understood most of the time.",
+      "{A} almost always talks in {B}’s style. {B} is likely to feel deeply understood."
+    ],
+    conflict: [
+      "When there’s a disagreement, {A} mostly responds in {A}’s own way. Trying {B}’s style will help disagreements settle sooner.",
+      "In disagreements, {A} sometimes responds in {B}’s style. A little more of this will help you find common ground faster.",
+      "In disagreements, {A} responds in {B}’s style about half the time, which helps many disagreements settle well.",
+      "In disagreements, {A} often responds in {B}’s style, so most disagreements calm down well.",
+      "In disagreements, {A} usually responds in {B}’s style, which helps {B} feel respected even when you don’t agree.",
+      "In disagreements, {A} almost always responds in {B}’s style. That’s a real strength when things get tense."
+    ],
+    care: [
+      "{A} mostly shows care in {A}’s own way. Showing it in {B}’s style will help {B} feel it more.",
+      "{A} sometimes shows care in {B}’s style. A few more of these moments will help {B} feel cared for.",
+      "{A} shows care in {B}’s style about half the time, so {B} often feels it.",
+      "{A} often shows care in {B}’s style, so {B} usually feels supported.",
+      "{A} usually shows care in exactly the way {B} values most.",
+      "{A} almost always shows care in {B}’s style, so {B} feels truly cared for."
+    ],
+    support: [
+      "{A} mostly supports {B} in {A}’s own way. Supporting {B} in {B}’s style will make it more noticeable to {B}.",
+      "{A} sometimes supports {B} in {B}’s style. A few more of these moments will help {B} feel backed up.",
+      "{A} supports {B} in {B}’s style about half the time, so {B} often feels backed up.",
+      "{A} often supports {B} in {B}’s style, so {B} usually feels valued at work.",
+      "{A} usually supports and appreciates {B} in the way {B} values most.",
+      "{A} almost always supports {B} in {B}’s style, so {B} feels fully backed up."
+    ],
+    together: [
+      "You each mostly use your own style here. This is the area with the most room to learn from each other.",
+      "You meet in each other’s style now and then. Small changes will show quickly here.",
+      "You meet in each other’s style about half the time.",
+      "You meet in each other’s style more often than not.",
+      "You meet in each other’s style most of the time. This area is a strength.",
+      "You almost always meet in each other’s style. This area is a real strength."
+    ],
+    gap: [
+      "You’re reaching towards each other about equally here.",
+      "{H} is reaching a little more here. When {L} meets {H} halfway, it will feel even more balanced.",
+      "Right now {H} is doing most of the reaching here. Small steps from {L} will make this area feel easier for both of you."
+    ],
+    overallTogether: [
+      "You each mostly respond in your own style for now. That’s a starting point, and every small step towards each other will show.",
+      "You’re starting to meet each other in each other’s style, a few moments at a time.",
+      "You meet each other in each other’s style about half the time.",
+      "You meet each other in each other’s style more often than not.",
+      "You meet each other in each other’s style most of the time.",
+      "You almost always meet each other in each other’s style."
+    ],
+    overallPerson: [
+      "{A} mostly answers in {A}’s own style, which is natural. Trying {B}’s style in one area is a good first step.",
+      "{A} answers in {B}’s style in some moments. A few more will make a clear difference.",
+      "{A} answers in {B}’s style about half the time.",
+      "{A} answers in {B}’s style more often than not.",
+      "{A} answers in {B}’s style most of the time, a real effort to meet {B} halfway.",
+      "{A} almost always answers in {B}’s style."
+    ],
+    barLabel: "How often {A} answered in {B}’s style ({S})",
+    tip: {
+      Assertive: "Be clear and brief, and end with a next step.",
+      Emotional: "Name the feeling first, then talk about solutions.",
+      Thoughtful: "Give {B} time, ask gently, and check in later.",
+      Logical: "Share your reasons calmly and clearly."
+    }
+  };
+  const lineBand = v => (v <= 30 ? 0 : v <= 45 ? 1 : v <= 60 ? 2 : v <= 75 ? 3 : v <= 90 ? 4 : 5);
+  const otherKey = k => (k === "a" ? "b" : "a");
+  const lineNames = k => ({ A: PPL[k].name, B: PPL[otherKey(k)].name, S: PPL[otherKey(k)].style });
+  const areaKind = (ar, i) => (/talk/i.test(ar.name) ? "talk" : /disagree|conflict/i.test(ar.name) ? "conflict"
+    : /apprec/i.test(ar.name) ? "support" : /care/i.test(ar.name) ? "care" : ["talk", "conflict", "care"][i] || "care");
+  const barLabel = k => fill(LINES.barLabel, lineNames(k));
+  const personLine = (ar, i, k) => fill(LINES[areaKind(ar, i)][lineBand(ar[k])], lineNames(k));
+  const togetherLine = ar => LINES.together[lineBand(ar.together)];
+  const gapLine = ar => {
+    const gap = Math.abs(ar.a - ar.b), hi = ar.a >= ar.b ? "a" : "b";
+    return fill(LINES.gap[gap < 15 ? 0 : gap < 35 ? 1 : 2], { H: PPL[hi].name, L: PPL[otherKey(hi)].name });
+  };
+  const overallTogetherLine = () => LINES.overallTogether[lineBand(REPORT.overall.together)];
+  const overallPersonLine = k => fill(LINES.overallPerson[lineBand(REPORT.overall[k])], lineNames(k));
+  // The lowest area has the lowest "together" % (a tie goes to the earlier area, matching "Room to grow").
+  // Its tip is for the person with the lower % there, based on the other person's main style.
+  function lowestArea() {
+    let index = 0;
+    AREAS.forEach((ar, i) => { if (ar.together < AREAS[index].together) index = i; });
+    const ar = AREAS[index];
+    const k = ar.a < ar.b ? "a" : ar.b < ar.a ? "b" : REPORT.overall.a <= REPORT.overall.b ? "a" : "b";
+    const tpl = LINES.tip[PPL[otherKey(k)].style];
+    return { index, k, tip: tpl ? fill(tpl, lineNames(k)) : "" };
+  }
 
   /* ---------------------------------------------------------------- data self-check */
   function checkData() {
@@ -86,11 +365,10 @@
     return `<div class="stage ${cls || ""}" data-stage="${kind}" style="--ar:${ar};--ar-m:${arMobile || ar}" role="img" tabindex="0"
       aria-label="${esc(label)} Use the left and right arrow keys, or drag sideways, to turn it.">
       <div class="ov" aria-hidden="true"></div>
-      <div class="fb" aria-hidden="true">${fallback}<span class="why">3D view unavailable.</span></div>
-      <span class="hint" aria-hidden="true">${esc(T.dragHint)}</span></div>`;
+      <div class="fb" aria-hidden="true">${fallback}<span class="why">3D view unavailable.</span></div></div>`;
   }
   function bar(k, labelText, v) {
-    return `<div class="bar ${k}"><span>${esc(labelText)}</span><i><b style="width:${Math.max(0, Math.min(100, v))}%"></b></i><em>${v}%</em></div>`;
+    return `<div class="bar ${k}"><span>${esc(labelText)}</span><i><b style="width:${Math.max(0, Math.min(100, v))}%"></b></i><em>${pc(v)}</em></div>`;
   }
   function venn(ar, i) {
     const r = 30, f = Math.max(0, Math.min(1, ar.together / 100));
@@ -99,14 +377,14 @@
     for (let n = 0; n < 50; n++) { const m = (lo + hi) / 2; if (lens(m) > f) lo = m; else hi = m; }
     const d = (lo + hi) / 2, ax = 70 - d / 2, bx = 70 + d / 2, id = "lens" + i;
     const heart = 2 * r - d > 15 ? `<path transform="translate(70 40) scale(.5) translate(-12 -12)" d="M12 20.5s-7.5-4.6-9.3-9.3C1.4 7.6 3.6 4.5 6.9 4.5c2.1 0 3.6 1.1 5.1 3 1.5-1.9 3-3 5.1-3 3.3 0 5.5 3.1 4.2 6.7-1.8 4.7-9.3 9.3-9.3 9.3z" fill="#fff"/>` : "";
-    return `<figure class="venn"><svg viewBox="0 0 140 80" role="img" aria-label="${esc(PPL.a.name)} and ${esc(PPL.b.name)} circles overlap ${ar.together} percent">
+    return `<figure class="venn"><svg viewBox="0 0 140 80" role="img" aria-label="${esc(PPL.a.name)} and ${esc(PPL.b.name)} circles overlapping">
       <defs><clipPath id="${id}"><circle cx="${ax.toFixed(2)}" cy="40" r="${r}"/></clipPath></defs>
       <circle cx="${ax.toFixed(2)}" cy="40" r="${r}" fill="${TH.a}" fill-opacity=".42"/>
       <circle cx="${bx.toFixed(2)}" cy="40" r="${r}" fill="${TH.b}" fill-opacity=".42"/>
       <circle cx="${bx.toFixed(2)}" cy="40" r="${r}" fill="${TH.deep}" clip-path="url(#${id})"/>${heart}
       <text x="${(ax - r + 4).toFixed(1)}" y="13" font-size="10" font-weight="800" fill="${TH.deep}">${esc(PPL.a.name[0])}</text>
       <text x="${(bx + r - 11).toFixed(1)}" y="13" font-size="10" font-weight="800" fill="${TH.deep}">${esc(PPL.b.name[0])}</text>
-    </svg><figcaption>Overlap ${ar.together}%</figcaption></figure>`;
+    </svg></figure>`;
   }
 
   /* ---------------------------------------------------------------- render report DOM */
@@ -125,6 +403,25 @@
       ).join("");
       switcher.addEventListener("change", e => { if (e.target.value) window.location.href = e.target.value; });
     }
+    renderGenderBar();
+
+    const pctAssetSlug = v => {
+      const snaps = [0, 10, 12.5, 20, 25, 30, 37.5, 40, 50, 60, 62.5, 70, 75, 80, 87.5, 90, 100];
+      let best = snaps[0];
+      for (const s of snaps) if (Math.abs(v - s) < Math.abs(v - best)) best = s;
+      return Math.abs(best - Math.round(best)) < 1e-6 ? String(Math.round(best)) : String(best).replace(".", "_");
+    };
+    const flowerFallbackHtml = k => {
+      const s = REPORT.styles[k];
+      return `<div class="flower-stack-fb">`
+        + `<img src="assets/flowers/components/foliage_backdrop.png" alt="">`
+        + STYLES.map(st => {
+          const sk = st.toLowerCase();
+          return `<img src="assets/flowers/components/quad_${sk}/quad_${sk}_${pctAssetSlug(s[st])}.png" alt="">`;
+        }).join("")
+        + `<img src="assets/flowers/components/stamen_center.png" alt="">`
+        + `</div>`;
+    };
 
     const html = [];
     if (issues.length) html.push(`<div class="check" role="status"><b>Data check: some numbers don’t agree</b>${issues.map(esc).join("<br>")}</div>`);
@@ -138,11 +435,12 @@
       <p class="lede">${esc(T.heroLine)}</p>
       <div class="hero-row">
         <div class="couple-wrap">
-          <img class="couple" src="${esc(REPORT.images.coverPair)}" width="580" height="460" alt="${esc(A.name)} and ${esc(B.name)} together">
+          <img class="couple" data-char-slot="cover" src="${esc(REPORT.images.coverPair)}" width="580" height="460" alt="${esc(A.name)} and ${esc(B.name)} together">
         </div>
-        ${stage("heart", `A 3D glass heart filled to ${REPORT.overall.together}%, with the words ${T.heartWords}.`, `<b style="font-size:2rem;font-family:var(--serif)">${REPORT.overall.together}%</b><br>${esc(T.heartWords)}`, "", "1/1")}
+        ${stage("heart", `A 3D glass heart filled to ${pc(REPORT.overall.together)}, with the words ${T.heartWords}.`, `<b style="font-size:2rem;font-family:var(--serif)">${pc(REPORT.overall.together)}</b><br>${esc(T.heartWords)}`, "", "1/1")}
       </div>
-      <p class="note">${esc(T.heartNote)}</p>
+      <p class="note">${esc(overallTogetherLine())}</p>
+      <div class="note-people">${KEYS.map(k => `<p>${esc(overallPersonLine(k))}</p>`).join("")}</div>
       <div class="chips">
         <div class="chip c1">${svg(ICON.sun)}<small>${esc(T.highlights[0].label)}</small><b>${esc(T.highlights[0].value)}</b></div>
         <div class="chip c2">${svg(ICON.sprout)}<small>${esc(T.highlights[1].label)}</small><b>${esc(T.highlights[1].value)}</b></div>
@@ -153,9 +451,9 @@
     const flowerCard = k => {
       const p = PPL[k], s = REPORT.styles[k];
       const label = `${p.name}’s style flower: ` + STYLES.map(x => `${x} ${pc(s[x])}`).join(", ") + ".";
-      return `<figure class="flower">${stage("flower-" + k, label, esc(label), "", "1/1")}
-        <figcaption class="person"><img src="${esc(p.bust)}" alt="${esc(p.name)} portrait" width="120" height="120">
-          <div><h3>${esc(p.name)} <span class="role-tag">(${esc(p.role)})</span> · ${esc(p.style)}</h3><p>${esc(p.line)}.</p></div>
+      return `<figure class="flower">${stage("flower-" + k, label, flowerFallbackHtml(k) + `<p>${esc(label)}</p>`, "", "1/1")}
+        <figcaption class="person"><img data-char-slot="bust-${k}" src="${esc(p.bust)}" alt="${esc(p.name)} portrait" width="120" height="120">
+          <div><h3>${esc(p.name)} · ${esc(p.style)}</h3><p>${esc(p.line)}.</p></div>
         </figcaption></figure>`;
     };
     html.push(`<section class="page" id="p2" aria-labelledby="p2-t"><span class="pg">2/7</span>
@@ -164,38 +462,41 @@
       <div class="box"><h3>${esc(T.readingTitle)}</h3><ul class="dots">${T.readingHtml.map(r => `<li><span>${r}</span></li>`).join("")}</ul></div>
     </section>`);
 
-    /* Page 3 — Overlap in Every Area (character emotion scenes + compact side Venn) */
+    /* Page 3 — Overlap in Every Area (character scenes, a line under each bar, together + gap lines next to the Venn, tip inside the lowest area's box) */
+    const low = lowestArea();
+    const tipHtml = low.tip ? `<p class="area-tip"><b>Tip for ${esc(PPL[low.k].name)}:</b> ${esc(low.tip)}</p>` : "";
     html.push(`<section class="page" id="p3" aria-labelledby="p3-t"><span class="pg">3/7</span>
       ${title(T.overlapTitle, "h2", "p3-t")}<p class="lede">${esc(T.overlapLede)}</p>
       ${AREAS.map((ar, i) => `<article class="area">
         <div class="scene-frame">
-          <img class="scene" src="${esc(ar.scene)}" alt="${esc(ar.sceneAlt)}" width="480" height="320" loading="lazy">
+          <img class="scene" data-char-slot="scene-${i}" src="${esc(ar.scene)}" alt="${esc(ar.sceneAlt)}" width="480" height="320">
         </div>
         <div class="area-body">
           <div class="area-head"><img class="icon" src="${esc(ar.icon)}" alt="" width="64" height="64"><div><h3>${esc(ar.name)}</h3><span class="status">${esc(ar.status)}</span></div></div>
-          <p>${esc(ar.line)}</p>
+          <div class="bars">${KEYS.map(k => `${bar(k, barLabel(k), ar[k])}<p class="bar-line">${esc(personLine(ar, i, k))}</p>`).join("")}</div>
           <div class="area-data">
-            <div class="bars">${bar("a", ar.reachA, ar.a)}${bar("b", ar.reachB, ar.b)}<span class="cite-mini">${esc(ar.citation)}</span></div>
             ${venn(ar, i)}
+            <div class="together"><p>${esc(togetherLine(ar))}</p><p>${esc(gapLine(ar))}</p></div>
           </div>
+          ${i === low.index ? tipHtml : ""}
         </div></article>`).join("")}
       <div class="know"><b>${esc(T.didYouKnowTitle)}</b><span>${esc(T.didYouKnow)}</span></div>
     </section>`);
 
     /* Page 4 — Three Mountains to Climb (flag ALWAYS at summit + circular face pins) */
-    const mLabel = "Three mountains. " + AREAS.map(ar => `${ar.name}: summit flag at top, ${A.name} at ${ar.a}%, ${B.name} at ${ar.b}%.`).join(" ");
+    const mLabel = "Three mountains. " + AREAS.map(ar => `${ar.name}: summit flag at top, ${A.name} at ${pc(ar.a)}, ${B.name} at ${pc(ar.b)}.`).join(" ");
     html.push(`<section class="page" id="p4" aria-labelledby="p4-t"><span class="pg">4/7</span>
       ${title(T.mountainsTitle, "h2", "p4-t")}<p class="lede">${esc(T.mountainsLede)}</p>
-      ${stage("mountains", mLabel, AREAS.map(ar => `<p><b>${esc(ar.name)}</b>: Together ${ar.together}% (${esc(A.name)} ${ar.a}%, ${esc(B.name)} ${ar.b}%)</p>`).join(""), "wide", "16/7.2", "3/5.6")}
-      <div class="cards3">${AREAS.map(ar => `<div class="card"><img src="${esc(ar.icon)}" alt="" width="64" height="64"><b>${esc(ar.name)}</b><span class="together-pill">Together · ${ar.together}%</span><span>${esc(ar.status)}</span></div>`).join("")}</div>
+      ${stage("mountains", mLabel, AREAS.map(ar => `<p><b>${esc(ar.name)}</b>: ${esc(A.name)} ${pc(ar.a)}, ${esc(B.name)} ${pc(ar.b)}</p>`).join(""), "wide", "16/7.2", "3/5.6")}
+      <div class="cards3">${AREAS.map(ar => `<div class="card"><img src="${esc(ar.icon)}" alt="" width="64" height="64"><b>${esc(ar.name)}</b><span>${esc(ar.status)}</span></div>`).join("")}</div>
       <div class="box"><h3>${esc(T.mountainsBox)}</h3><ul class="dots">${T.mountainsBulletsHtml.map(b => `<li><span>${b}</span></li>`).join("")}</ul></div>
     </section>`);
 
     /* Page 5 — Balance and Footsteps (both participants seated on 3D seesaws + 3D stepping stones) */
-    const sLabel = "Three seesaws. " + AREAS.map(ar => `${ar.name}: ${ar.tilt} (${A.name} ${ar.a}%, ${B.name} ${ar.b}%).`).join(" ");
+    const sLabel = "Three seesaws. " + AREAS.map(ar => `${ar.name}: ${ar.tilt} (${A.name} ${pc(ar.a)}, ${B.name} ${pc(ar.b)}).`).join(" ");
     html.push(`<section class="page" id="p5" aria-labelledby="p5-t"><span class="pg">5/7</span>
       ${title(T.balanceTitle, "h2", "p5-t")}<p class="lede">${esc(T.balanceLede)}</p>
-      ${stage("seesaws", sLabel, AREAS.map(ar => `<p><b>${esc(ar.name)}</b>: ${esc(ar.tilt)} (${esc(A.name)} ${ar.a}%, ${esc(B.name)} ${ar.b}%)</p>`).join(""), "wide", "16/6.6", "3/4.8")}
+      ${stage("seesaws", sLabel, AREAS.map(ar => `<p><b>${esc(ar.name)}</b>: ${esc(ar.tilt)} (${esc(A.name)} ${pc(ar.a)}, ${esc(B.name)} ${pc(ar.b)})</p>`).join(""), "wide", "16/6.6", "3/4.8")}
       <div class="cards3">${AREAS.map(ar => `<div class="card"><img src="${esc(ar.icon)}" alt="" width="64" height="64"><b>${esc(ar.name)}</b><span class="tilt">${esc(ar.tilt)}</span></div>`).join("")}</div>
       <h3 class="sub">${esc(T.stonesTitle)}</h3><p class="lede">${esc(T.stonesLede)}</p>
       <ul class="legend">${[4, 3, 2, 1].map(v => `<li><i style="background:${STONE_LOOK[v].color}"></i>${esc(T.levels[v])}</li>`).join("")}</ul>
@@ -203,14 +504,20 @@
       <div class="box"><h3>${esc(T.footstepsTitle)}</h3><ul class="dots">${T.footstepsBulletsHtml.map(b => `<li><span>${b}</span></li>`).join("")}</ul></div>
     </section>`);
 
-    /* Page 6 — How We Worked This Out (scoring table + colour key + disclaimer) */
+    /* Page 6 — How We Worked This Out (scoring table + colour key + disclaimer).
+       A row with fewer cells than the header (the "Together" row) stretches its last cell across the remaining columns. */
+    const cols = T.tableHeaders.length;
+    const rowCells = row => row.map((c, i) => {
+      const span = i === row.length - 1 ? cols - i : 1;
+      return `<td${span > 1 ? ` colspan="${span}"` : ""}>${esc(noZero(c))}</td>`;
+    }).join("");
     html.push(`<section class="page" id="p6" aria-labelledby="p6-t"><span class="pg">6/7</span>
       ${title(T.methodTitle, "h2", "p6-t")}<p class="lede">${esc(T.methodLede)}</p>
       <div class="table-wrap">
         <table class="score-table">
           <thead><tr>${T.tableHeaders.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
           <tbody>
-            ${T.tableRows.map(row => `<tr class="${row[0] === "Overall" ? "overall-row" : ""}">${row.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}
+            ${T.tableRows.map(row => `<tr class="${row[0] === "Overall" || row[0] === "Together" ? "overall-row" : ""}">${rowCells(row)}</tr>`).join("")}
           </tbody>
         </table>
       </div>
@@ -221,7 +528,7 @@
       </div>
       <div class="remember">
         <div><h3>${esc(T.rememberTitle)}</h3><p>${T.rememberHtml}</p></div>
-        <img class="harmony" src="${esc(REPORT.images.harmony)}" alt="${esc(A.name)} and ${esc(B.name)}" loading="lazy">
+        <img class="harmony" data-char-slot="harmony" src="${esc(REPORT.images.harmony)}" alt="${esc(A.name)} and ${esc(B.name)}">
       </div>
     </section>`);
 
@@ -344,11 +651,19 @@
       s.ov.appendChild(el);
       s.pins.push(Object.assign({ el, anchor, dx: 0, dy: 0 }, opts || {}));
     }
-    function link(s, from, to, color, bend) {
+    function link(s, from, to, color, bend, withDot) {
       const NS = "http://www.w3.org/2000/svg";
       if (!s.svg) { s.svg = document.createElementNS(NS, "svg"); s.svg.setAttribute("class", "links"); s.svg.setAttribute("aria-hidden", "true"); s.ov.prepend(s.svg); }
       const p = document.createElementNS(NS, "path"); p.setAttribute("stroke", color); s.svg.appendChild(p);
-      s.links.push({ from, to, p, bend });
+      let dot = null;
+      if (withDot) {
+        dot = document.createElementNS(NS, "circle");
+        dot.setAttribute("class", "link-dot");
+        dot.setAttribute("r", "3.4");
+        dot.setAttribute("fill", color);
+        s.svg.appendChild(dot);
+      }
+      s.links.push({ from, to, p, bend, dot });
     }
     function fitCamera(s, halfW, halfH, center, elev) {
       const cam = s.camera, t = Math.tan(cam.fov * Math.PI / 360);
@@ -377,6 +692,7 @@
       let drag = null;
       el.addEventListener("pointerdown", e => {
         if (e.pointerType === "mouse" && e.button !== 0) return;
+        if (s.press && s.press(e)) { kick(); return; }   // the scene used this press itself (a seesaw grab)
         drag = { id: e.pointerId, x: e.clientX, y: e.clientY, yaw: s.targetYaw, pitch: s.targetPitch, mouse: e.pointerType === "mouse" };
         try { el.setPointerCapture(e.pointerId); } catch (_) {}
         el.classList.add("grabbing"); kick();
@@ -445,6 +761,7 @@
         if (![x1, y1, x2, y2].every(isFinite)) continue;
         const b = 0.24 * L.bend, cx = (x1 + x2) / 2 - (y2 - y1) * b, cy = (y1 + y2) / 2 + (x2 - x1) * b;
         L.p.setAttribute("d", `M${x1.toFixed(1)} ${y1.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`);
+        if (L.dot) { L.dot.setAttribute("cx", x2.toFixed(1)); L.dot.setAttribute("cy", y2.toFixed(1)); }
       }
     }
 
@@ -457,7 +774,7 @@
         if (!s.cw) continue;
         if (!s.visible) {
           if (s.dirty) {
-            if (s.update) s.update(0, 1);
+            if (s.update) s.update(0, 1, 0);
             draw(s);
             s.dirty = false;
           }
@@ -468,7 +785,7 @@
         const moving = Math.abs(s.targetYaw - s.yaw) > 0.0005 || Math.abs(s.targetPitch - s.pitch) > 0.0005 || s.el.classList.contains("grabbing");
         const t = (now - s.started) / 1000;
         const intro = RM ? 1 : ease(t / 1.8);
-        if (s.update) s.update(RM ? 0 : t, intro);
+        if (s.update) s.update(RM ? 0 : t, intro, dt);
         if (s.dirty || moving || !RM) { draw(s); s.dirty = false; }
         if (moving || !RM) again = true;
       }
@@ -563,7 +880,7 @@
       const c = document.createElement("canvas"); c.width = 600; c.height = 420; const g = c.getContext("2d");
       g.textAlign = "center"; g.fillStyle = "#fff";
       g.shadowColor = `rgba(${TH.shadowRgb},0.72)`; g.shadowBlur = 18; g.shadowOffsetY = 3;
-      g.font = '400 190px "DM Serif Display", Georgia, serif'; g.fillText(pct + "%", 300, 205);
+      g.font = '400 190px "DM Serif Display", Georgia, serif'; g.fillText(pc(pct), 300, 205);
       g.font = '800 42px "Nunito Sans", system-ui, sans-serif';
       if ("letterSpacing" in g) g.letterSpacing = "5px";
       g.fillText(T.heartWords, 300, 272);
@@ -599,92 +916,240 @@
       };
     }
 
-    /* ---------- 2. 3D Watercolour Style Flowers ---------- */
-    function petalShape() {
-      const p = new THREE.Shape();
+    /* ---------- 2. Realistic Botanical 3D Style Flowers (percentage colour filling from centre outward) ---------- */
+    const PETAL_HALF = 0.87; // ~50 deg half-angle (~100 deg lush overlapping hibiscus petal fan)
+    function petalRim(u, phase) {
+      const prof = Math.pow(Math.max(0, Math.cos(u * Math.PI / 2)), 0.32);
+      const r = 1.03 * prof * (1 + 0.020 * Math.sin(u * Math.PI * 3.0 + phase) * prof + 0.010 * Math.cos(u * Math.PI * 5.0 - 0.4) * prof - 0.012 * Math.exp(-((u / 0.16) ** 2)));
+      return { x: r * Math.sin(u * PETAL_HALF), y: r * Math.cos(u * PETAL_HALF) };
+    }
+    function petalShape(phase) {
+      const p = new THREE.Shape(), N = 80;
       p.moveTo(0, 0);
-      p.bezierCurveTo(-0.46, 0.08, -0.62, 0.62, -0.34, 0.9);
-      p.bezierCurveTo(-0.2, 1.04, -0.05, 1.0, 0, 0.9);
-      p.bezierCurveTo(0.05, 1.0, 0.2, 1.04, 0.34, 0.9);
-      p.bezierCurveTo(0.62, 0.62, 0.46, 0.08, 0, 0);
+      for (let i = 1; i < N; i++) { const q = petalRim(i / N * 2 - 1, phase); p.lineTo(q.x, q.y); }
+      p.lineTo(0, 0);
+      p.rim = u => petalRim(u, phase);
       return p;
     }
     const rgbOf = hex => [hex >> 16 & 255, hex >> 8 & 255, hex & 255];
-    const mixRGB = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
-    const rgba = (c, a) => `rgba(${c.map(Math.round).join(",")},${a})`;
-    function washTexture(shape, hex, strength, seed, veins) {
-      const S = 256, M = 6, pts = shape.getPoints(48), xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+
+    // Serrated, herringbone-veined botanical hibiscus leaf shape & high-res procedural leaf texture
+    function botanicalLeafShape() {
+      const p = new THREE.Shape(), N = 64;
+      p.moveTo(0, 0);
+      for (let i = 1; i <= N; i++) {
+        const t = i / (N + 1);
+        const bw = 0.38 * Math.pow(Math.max(0, Math.sin(t * Math.PI)), 0.72) * (1 - 0.18 * t);
+        const ser = t > 0.15 && t < 0.96 ? 1 + 0.045 * Math.abs(Math.sin(t * Math.PI * 13)) - 0.022 : 1;
+        p.lineTo(-bw * ser, t);
+      }
+      p.lineTo(0, 1.0);
+      for (let i = N; i >= 1; i--) {
+        const t = i / (N + 1);
+        const bw = 0.38 * Math.pow(Math.max(0, Math.sin(t * Math.PI)), 0.72) * (1 - 0.18 * t);
+        const ser = t > 0.15 && t < 0.96 ? 1 + 0.045 * Math.abs(Math.sin(t * Math.PI * 13)) - 0.022 : 1;
+        p.lineTo(bw * ser, t);
+      }
+      p.lineTo(0, 0);
+      return p;
+    }
+    function botanicalLeafTexture(shape) {
+      const S = 320, M = 6, pts = shape.getPoints(64), xs = pts.map(p => p.x), ys = pts.map(p => p.y);
       const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-      const tx = x => M + (x - x0) / (x1 - x0) * (S - 2 * M), ty = y => S - M - (y - y0) / (y1 - y0) * (S - 2 * M);
-      const c = document.createElement("canvas"); c.width = c.height = S; const g = c.getContext("2d");
-      const paper = [253, 249, 246], full = rgbOf(hex);
-      const deep = mixRGB(paper, full, strength), mid = mixRGB(paper, full, strength * 0.5), tip = mixRGB(paper, full, strength * 0.78);
+      const kx = (S - 2 * M) / (x1 - x0), ky = (S - 2 * M) / (y1 - y0);
+      const tx = x => M + (x - x0) * kx, ty = y => S - M - (y - y0) * ky;
+      const c = document.createElement("canvas"); c.width = c.height = S;
+      const g = c.getContext("2d", { willReadFrequently: true });
       const outline = () => { g.beginPath(); pts.forEach((p, i) => (i ? g.lineTo(tx(p.x), ty(p.y)) : g.moveTo(tx(p.x), ty(p.y)))); g.closePath(); };
-      outline(); g.save(); g.clip();
-      const lg = g.createLinearGradient(0, S, 0, 0);
-      lg.addColorStop(0, rgba(deep, 1)); lg.addColorStop(0.5, rgba(mid, 1)); lg.addColorStop(1, rgba(tip, 1));
-      g.fillStyle = lg; g.fillRect(0, 0, S, S);
-      const r = rng(seed);
-      for (let i = 0; i < 16; i++) {
-        const x = r() * S, y = r() * S, rad = 18 + r() * 70, cc = r() < 0.55 ? deep : paper;
-        const rg = g.createRadialGradient(x, y, 0, x, y, rad); rg.addColorStop(0, rgba(cc, 0.14 + r() * 0.14)); rg.addColorStop(1, rgba(cc, 0));
-        g.fillStyle = rg; g.fillRect(0, 0, S, S);
+      outline(); g.fillStyle = "#000"; g.fill();
+      const mask = g.getImageData(0, 0, S, S).data, img = g.createImageData(S, S), o = img.data;
+      const cDeep = [52, 102, 36], cMid = [88, 148, 60], cLight = [138, 190, 92], cVein = [178, 216, 128];
+      for (let j = 0, n = 0; j < S; j++) for (let i = 0; i < S; i++, n++) {
+        const al = mask[n * 4 + 3];
+        if (!al) continue;
+        const X = x0 + (i + 0.5 - M) / kx, Y = clamp(y0 + (S - M - j - 0.5) / ky, 0, 1);
+        const hw = Math.max(1e-4, 0.38 * Math.pow(Math.max(0, Math.sin(Y * Math.PI)), 0.72) * (1 - 0.18 * Y));
+        const u = Math.min(1, Math.abs(X) / hw);
+        const midrib = Math.exp(-((X / 0.014) ** 2)) * clamp(1.05 - Y, 0, 1);
+        const lat = Math.pow(0.5 + 0.5 * Math.cos((Y * 9.5 - u * 2.15) * Math.PI * 2), 10) * (1 - 0.25 * u) * clamp(Y * 5, 0, 1);
+        const sl = clamp((X >= 0 ? 0.58 : 0.36) + 0.28 * Y - 0.18 * u * u, 0, 1);
+        const mg = clamp((u - 0.55) / 0.45, 0, 1) * 0.42;
+        const vm = clamp(0.72 * midrib + 0.36 * lat, 0, 0.82);
+        for (let ch = 0; ch < 3; ch++) {
+          let v = cDeep[ch] * (1 - sl) + cMid[ch] * sl;
+          v = v * (1 - mg) + cLight[ch] * mg;
+          v = v * (1 - vm) + cVein[ch] * vm;
+          o[n * 4 + ch] = v;
+        }
+        o[n * 4 + 3] = al;
       }
-      const sheen = g.createRadialGradient(S * 0.42, S * 0.36, 4, S * 0.42, S * 0.36, S * 0.42);
-      sheen.addColorStop(0, "rgba(255,255,255,0.32)"); sheen.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = sheen; g.fillRect(0, 0, S, S);
-      g.strokeStyle = rgba(mixRGB(deep, [70, 25, 60], 0.3), 0.2); g.lineWidth = 1.3;
-      for (let i = 0; i < veins; i++) {
-        const o = veins === 1 ? 0 : (i / (veins - 1) - 0.5) * 2;
-        g.beginPath(); g.moveTo(tx(0), ty(y0) - 2); g.quadraticCurveTo(tx(o * 0.12), S * 0.45, tx(o * 0.3), S * 0.14 + Math.abs(o) * 28); g.stroke();
+      g.putImageData(img, 0, 0);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+      return { t, uv: (x, y) => [tx(x) / S, 1 - ty(y) / S] };
+    }
+
+    // Realistic hibiscus petal texture: creamy-pearl veined white at 0%, smooth radial blush from centre outward to `frac`
+    function petalTexture(shape, baseHex, throatHex, frac, seed) {
+      const S = 400, M = 6, pts = shape.getPoints(80), xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      const kx = (S - 2 * M) / (x1 - x0), ky = (S - 2 * M) / (y1 - y0);
+      const tx = x => M + (x - x0) * kx, ty = y => S - M - (y - y0) * ky;
+      const c = document.createElement("canvas"); c.width = c.height = S;
+      const g = c.getContext("2d", { willReadFrequently: true });
+      const outline = () => { g.beginPath(); pts.forEach((p, i) => (i ? g.lineTo(tx(p.x), ty(p.y)) : g.moveTo(tx(p.x), ty(p.y)))); g.closePath(); };
+      outline(); g.fillStyle = "#000"; g.fill();
+      const mask = g.getImageData(0, 0, S, S).data;
+      const baseRGB = rgbOf(baseHex), throatRGB = rgbOf(throatHex);
+      const paperWarm = [253.5, 251.5, 250.5], pearlShadow = [231, 226, 225];
+      const veinCenters = Array.from({ length: 13 }, (_, v) => -0.84 + v / 12 * 1.68);
+      const img = g.createImageData(S, S), o = img.data, rnd = rng(seed);
+      const reach = frac > 0.0001 ? Math.pow(frac, 0.70) * 0.96 : 0;
+      const feather = Math.max(0.14, Math.min(0.32, 0.46 * reach + 0.08));
+
+      for (let j = 0, n = 0; j < S; j++) for (let i = 0; i < S; i++, n++) {
+        const al = mask[n * 4 + 3];
+        if (!al) continue;
+        const X = x0 + (i + 0.5 - M) / kx, Y = y0 + (S - M - j - 0.5) / ky;
+        const r = Math.hypot(X, Y);
+        const uc = clamp(Math.atan2(X, Math.max(Y, 1e-5)) / PETAL_HALF, -1, 1);
+        const rimPt = shape.rim(uc), rRim = Math.max(1e-4, Math.hypot(rimPt.x, rimPt.y));
+        const qn = clamp(r / rRim, 0, 1);
+
+        const pleat = 0.55 * Math.sin(uc * Math.PI * 4.5 + 0.25) * (0.25 + 0.75 * qn)
+          + 0.30 * Math.sin(uc * Math.PI * 9.5 - 0.6) * (0.35 + 0.65 * qn)
+          + 0.15 * Math.sin(uc * Math.PI * 22.0 + qn * 2.5);
+        let vf = 0;
+        for (let vi = 0; vi < 13; vi++) {
+          const bend = 0.05 * Math.sin(vi * 1.9) * Math.pow(qn, 1.4);
+          const du = (uc - (veinCenters[vi] + bend)) / (0.022 + 0.010 * qn);
+          vf += Math.exp(-0.5 * du * du) * (0.92 - 0.35 * qn);
+        }
+        const micro = 0.32 * Math.pow(0.5 + 0.5 * Math.sin(uc * Math.PI * 34.0 + 0.8 * Math.sin(qn * 6.0)), 4) * (0.85 - 0.3 * qn);
+        const vTot = Math.min(1.35, vf + micro);
+
+        const light = 1.0 + 0.042 * pleat * (1 - 0.25 * qn) - 0.055 * Math.pow(1 - qn, 2.2) - 0.032 * vTot - 0.045 * Math.pow(qn, 5) - 0.022 * uc;
+        const shT = clamp((1.02 - light) / 0.16, 0, 1);
+
+        let fw = 0;
+        if (frac >= 0.999) fw = 1;
+        else if (frac > 0.0001) {
+          const wick = 1 + 0.026 * vf + 0.014 * Math.sin(uc * 4.0 + 0.4);
+          const z = clamp((reach + feather * 0.52 - qn / wick) / feather, 0, 1);
+          fw = z * z * (3 - 2 * z);
+        }
+
+        const thT = Math.pow(clamp(1 - qn / Math.max(0.28, 0.55 * (frac + 0.15)), 0, 1), 1.55);
+        const spec = 0.14 * Math.exp(-(((uc + 0.24) / 0.38) ** 2 + ((qn - 0.56) / 0.28) ** 2));
+        const jit = (rnd() - 0.5) * 2.2;
+
+        for (let ch = 0; ch < 3; ch++) {
+          const wCol = paperWarm[ch] * (1 - shT) + pearlShadow[ch] * shT;
+          let pCol = baseRGB[ch] * (1 - 0.58 * thT) + throatRGB[ch] * (0.58 * thT);
+          pCol = pCol * (0.96 + 0.075 * pleat - 0.085 * vTot);
+          pCol = pCol + (255 - pCol) * spec;
+          o[n * 4 + ch] = clamp(wCol * (1 - fw) + pCol * fw + jit, 0, 255);
+        }
+        o[n * 4 + 3] = al;
       }
-      g.restore();
-      outline(); g.lineWidth = 6; g.strokeStyle = rgba(deep, 0.42); g.stroke();
+      g.putImageData(img, 0, 0);
+      outline(); g.globalCompositeOperation = "multiply"; g.lineWidth = 2.4; g.strokeStyle = "rgba(218,208,208,0.72)"; g.stroke();
+      g.globalCompositeOperation = "source-over";
       const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
       return { t, uv: (x, y) => [tx(x) / S, 1 - ty(y) / S] };
     }
     function washGeometry(shape, wash, cup) {
-      const g = new THREE.ShapeGeometry(shape, 28), p = g.attributes.position, uv = g.attributes.uv;
+      const g = new THREE.ShapeGeometry(shape, 30), p = g.attributes.position, uv = g.attributes.uv;
       for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), [u, v] = wash.uv(x, y); uv.setXY(i, u, v); p.setZ(i, cup * (x * x * 1.1 + y * y * 0.35)); }
       g.computeVertexNormals(); return g;
     }
+    function buildHibiscusBud3D() {
+      const g = new THREE.Group();
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.022, 0.55, 8), std(0x4f8636, { roughness: 0.75 }));
+      stem.position.y = 0.27; g.add(stem);
+      const calyx = new THREE.Mesh(new THREE.ConeGeometry(0.095, 0.22, 10), std(0x558f3b, { roughness: 0.7 }));
+      calyx.rotation.x = Math.PI; calyx.position.y = 0.58; g.add(calyx);
+      const budTip = new THREE.Mesh(new THREE.ConeGeometry(0.088, 0.34, 14), std(0xd96c91, { roughness: 0.55 }));
+      budTip.position.y = 0.72; g.add(budTip);
+      return g;
+    }
+
+    let sharedLeafGeo = null, sharedLeafMat = null;
+    function getSharedLeaf() {
+      if (!sharedLeafGeo) {
+        const ls = botanicalLeafShape(), lw = botanicalLeafTexture(ls);
+        sharedLeafGeo = washGeometry(ls, lw, 0.11);
+        sharedLeafMat = new THREE.MeshBasicMaterial({ map: lw.t, transparent: true, side: THREE.DoubleSide, depthWrite: false });
+      }
+      return { geo: sharedLeafGeo, mat: sharedLeafMat };
+    }
+
     function buildFlower(s, k) {
       s.maxYaw = 1.1; s.pad = 0.15;
       const root = new THREE.Group(); s.scene.add(root);
-      const flower = new THREE.Group(); flower.rotation.x = -0.36; root.add(flower);
+      const flower = new THREE.Group(); flower.rotation.x = -0.34; root.add(flower);
       const sh = blobShadow(4.4, 4.4, 0.12); sh.rotation.x = 0; sh.position.z = -0.3; flower.add(sh);
-      const vals = REPORT.styles[k], vmax = Math.max(1e-6, ...STYLES.map(st => vals[st])), seed0 = k === "a" ? 0 : 50;
-      const shape = petalShape(), L = 1.5, r0 = 0.12;
-      const leafShape = new THREE.Shape(); leafShape.moveTo(0, 0); leafShape.quadraticCurveTo(-0.3, 0.42, 0, 0.98); leafShape.quadraticCurveTo(0.3, 0.42, 0, 0);
-      const leafWash = washTexture(leafShape, 0x86ad72, 0.85, 11 + seed0, 1), leafGeo = washGeometry(leafShape, leafWash, 0.12);
-      const leafMat = new THREE.MeshBasicMaterial({ map: leafWash.t, transparent: true, side: THREE.DoubleSide, depthWrite: false });
+      const vals = REPORT.styles[k], seed0 = k === "a" ? 0 : 50;
+      const L = 1.52, r0 = 0.05;
+
+      // 4 cardinal veined serrated hibiscus leaves + 2 side leafy sprigs + 1 top-right unopened bud
+      const { geo: leafGeo, mat: leafMat } = getSharedLeaf();
       [0, 90, 180, 270].forEach((deg, i) => {
         const a = deg * Math.PI / 180, m = new THREE.Mesh(leafGeo, leafMat);
-        m.rotation.z = a - Math.PI / 2; m.position.set(Math.cos(a) * 0.55, Math.sin(a) * 0.55, -0.1); m.scale.setScalar(0.9 + (i % 2) * 0.15); m.renderOrder = 1; flower.add(m);
+        m.rotation.z = a - Math.PI / 2;
+        m.position.set(Math.cos(a) * 0.44, Math.sin(a) * 0.44, -0.11);
+        m.scale.setScalar(1.38 + (i % 2) * 0.08);
+        m.renderOrder = 1; flower.add(m);
       });
+      // Delicate side sprigs peeking behind left & right leaves
+      [-1, 1].forEach(side => {
+        [[-0.22, 0.52, 0.25], [0.18, 0.52, -0.22]].forEach(([dy, sc, tiltAng]) => {
+          const sp = new THREE.Mesh(leafGeo, leafMat);
+          const baseA = side < 0 ? Math.PI : 0;
+          sp.rotation.z = baseA - Math.PI / 2 + tiltAng * side;
+          sp.position.set(side * 1.32, dy - 0.16, -0.14);
+          sp.scale.setScalar(sc);
+          sp.renderOrder = 0; flower.add(sp);
+        });
+      });
+      // Unopened rose-tipped hibiscus bud peeking out at top-right (~65 deg)
+      const topBud = buildHibiscusBud3D();
+      topBud.position.set(0.56, 1.12, -0.09);
+      topBud.rotation.z = -0.42;
+      flower.add(topBud);
+
       const order = STYLES.slice().sort((x, y) => vals[x] - vals[y]);
       STYLES.forEach((st, si) => {
-        const look = STYLE_LOOK[st], rel = clamp(vals[st] / vmax, 0, 1), a = look.angle * Math.PI / 180, rank = order.indexOf(st);
-        const size = 0.55 + 0.45 * rel, wash = washTexture(shape, hexInt(look.color), 0.3 + 0.62 * rel, 3 + si * 7 + seed0, 5);
+        const look = STYLE_LOOK[st], a = look.angle * Math.PI / 180, rank = order.indexOf(st);
+        const shape = petalShape(0.4 + si * 1.4 + seed0 * 0.02);
+        const fill = petalTexture(shape, hexInt(look.color), hexInt(look.throat), clamp(vals[st] / 100, 0, 1), 3 + si * 7 + seed0);
         const arm = new THREE.Group(); arm.rotation.z = a - Math.PI / 2; flower.add(arm);
-        const tilt = new THREE.Group(); tilt.position.y = r0; tilt.rotation.x = 0.22; arm.add(tilt);
-        const petal = new THREE.Mesh(washGeometry(shape, wash, 0.3), new THREE.MeshBasicMaterial({ map: wash.t, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthWrite: false }));
-        petal.scale.setScalar(L * size); petal.position.z = 0.02 + rank * 0.03; petal.renderOrder = 2 + rank; tilt.add(petal);
-        const tipAt = new THREE.Object3D(); tipAt.position.set(0, L * size * 0.84, 0.06 + rank * 0.03); tilt.add(tipAt);
-        const labAt = new THREE.Object3D(); labAt.position.set(Math.cos(a) * 2.2, Math.sin(a) * 2.2, 0.2); flower.add(labAt);
-        link(s, labAt, tipAt, TH.deep, look.angle === 45 || look.angle === 225 ? 1 : -1);
-        pin(s, labAt, `<div class="lab">${svg(look.icon)}<b>${st}</b><span>${pc(vals[st])}</span></div>`, "mid");
+        const tilt = new THREE.Group(); tilt.position.y = r0; tilt.rotation.x = 0.20; arm.add(tilt);
+        const petal = new THREE.Mesh(washGeometry(shape, fill, 0.26), new THREE.MeshBasicMaterial({ map: fill.t, transparent: true, opacity: 0.99, side: THREE.DoubleSide, depthWrite: false }));
+        petal.scale.setScalar(L); petal.position.z = 0.02 + rank * 0.025; petal.renderOrder = 2 + rank; tilt.add(petal);
+        const tipAt = new THREE.Object3D(); tipAt.position.set(0, L * 0.78, 0.06 + rank * 0.025); tilt.add(tipAt);
+        const labAt = new THREE.Object3D(); labAt.position.set(Math.cos(a) * 2.24, Math.sin(a) * 2.24, 0.2); flower.add(labAt);
+        link(s, labAt, tipAt, look.ink, look.angle === 45 || look.angle === 225 ? 1 : -1, true);
+        pin(s, labAt, `<div class="lab"><span class="lab-ic" style="color:${look.color};font-size:1em">${svg(look.icon)}</span><b>${st}</b><span style="color:${look.ink}">${pc(vals[st])}</span></div>`, "mid");
       });
-      const r = rng(21 + seed0), fil = new THREE.CylinderGeometry(0.006, 0.009, 1, 5), dot = new THREE.SphereGeometry(0.03, 10, 8), up = new V3(0, 1, 0);
+
+      // Realistic golden hibiscus stamen cluster & central stigma tip
+      const r = rng(21 + seed0), fil = new THREE.CylinderGeometry(0.006, 0.009, 1, 5), dot = new THREE.SphereGeometry(0.032, 10, 8), up = new V3(0, 1, 0);
       fil.translate(0, 0.5, 0);
-      const stalk = std(0xe6c56c, { roughness: 0.6 }), gold = std(0xcf9a35, { roughness: 0.45 });
-      for (let n = 0; n < 26; n++) {
-        const ang = n / 26 * Math.PI * 2 + r() * 0.2, len = 0.22 + r() * 0.2, dir = new V3(Math.cos(ang) * len, Math.sin(ang) * len, 0.1 + r() * 0.12), l = dir.length();
+      const stalk = std(0xebb844, { roughness: 0.55 }), gold = std(0xe07b1c, { roughness: 0.42 });
+      for (let n = 0; n < 28; n++) {
+        const ang = n / 28 * Math.PI * 2 + r() * 0.18, len = 0.22 + r() * 0.21, dir = new V3(Math.cos(ang) * len, Math.sin(ang) * len, 0.11 + r() * 0.12), l = dir.length();
         dir.normalize();
         const m = new THREE.Mesh(fil, stalk); m.scale.y = l; m.quaternion.setFromUnitVectors(up, dir); m.position.z = 0.14; flower.add(m);
         const d = new THREE.Mesh(dot, gold); d.position.copy(dir).multiplyScalar(l); d.position.z += 0.14; flower.add(d);
       }
-      const bud = new THREE.Mesh(new THREE.SphereGeometry(0.1, 20, 14), std(0xf0d78a, { roughness: 0.7 })); bud.scale.z = 0.6; bud.position.z = 0.14; flower.add(bud);
-      s.layout = () => fitCamera(s, 2.35, 2.3, new V3(0, 0, 0), 0.05);
+      const bud = new THREE.Mesh(new THREE.SphereGeometry(0.095, 20, 14), std(0xf2c64b, { roughness: 0.6 })); bud.scale.z = 0.65; bud.position.z = 0.15; flower.add(bud);
+      for (let pIdx = 0; pIdx < 5; pIdx++) {
+        const pa = pIdx * Math.PI * 2 / 5;
+        const pad = new THREE.Mesh(new THREE.SphereGeometry(0.028, 10, 8), std(0xd9681e, { roughness: 0.5 }));
+        pad.position.set(Math.cos(pa) * 0.055, Math.sin(pa) * 0.055, 0.20);
+        flower.add(pad);
+      }
+      s.layout = () => fitCamera(s, 2.38, 2.34, new V3(0, 0.02, 0), 0.05);
       s.update = t => { root.rotation.y = s.yaw + (t ? Math.sin(t * 0.6 + (k === "a" ? 0 : 1.7)) * 0.18 : 0); root.rotation.x = s.pitch; flower.rotation.z = t ? Math.sin(t * 0.4) * 0.04 : 0; };
     }
 
@@ -774,7 +1239,7 @@
         // Participant circular face portraits climbing along the trail at exact %
         KEYS.forEach(k => {
           const pp = pathPoint(ar[k] / 100, seed, 0.12), at = new THREE.Object3D(); at.position.copy(pp.p); g.add(at);
-          pin(s, at, `<img src="${esc(PPL[k].face)}" alt="${esc(PPL[k].name)}"><span class="t ${k}">${esc(PPL[k].name)} ${ar[k]}%</span>`, "face-pin", { normal: pp.n, dy: 8, group: i, key: k });
+          pin(s, at, `<img data-char-slot="face-${k}" src="${esc(PPL[k].face)}" alt="${esc(PPL[k].name)}"><span class="t ${k}">${esc(PPL[k].name)} ${pc(ar[k])}</span>`, "face-pin", { normal: pp.n, dy: 8, group: i, key: k });
         });
       });
       const spread = () => { declutter(s, groups, flags); s.dirty = true; kick(); };
@@ -794,7 +1259,14 @@
     /* ---------- 5a. Three 3D Seesaws (both participants actually sitting on the seesaw ends) ---------- */
     function buildSeesaws(s) {
       s.maxYaw = 0.7;
-      const groups = [], pivots = [];
+      /* Interactive: grab either side (the rider, or that half of the plank) and lift or push it.
+         Only the dragged person's % changes and the other person's stays fixed, so the plank angle always
+         matches the two numbers shown. On release a damped spring takes the plank back to its real angle and
+         the real results come back. The riders feel gravity, so a quick flick makes them hop off the seat.
+         This is only a temporary interaction: nothing in REPORT changes. */
+      const TILT = 0.42, ARM = 1.38, HALF = 1.675, GROUND = 0.55;   // angle per 100 points, seat, plank end, ground contact
+      const G = 16, VMAX = 2.4, SUB = 1 / 240;                       // rider gravity, top launch speed, physics step
+      const groups = [], rigs = [];
       AREAS.forEach((ar, i) => {
         const g = new THREE.Group(); s.scene.add(g); groups.push(g);
         const ground = new THREE.Mesh(new THREE.CircleGeometry(1.9, 40), std(hexInt(TH.soft), { roughness: 1 })); ground.rotation.x = -Math.PI / 2; g.add(ground);
@@ -811,25 +1283,176 @@
         const tri = new THREE.Shape(); tri.moveTo(-0.42, 0); tri.lineTo(0.42, 0); tri.lineTo(0.07, 0.86); tri.lineTo(-0.07, 0.86); tri.lineTo(-0.42, 0);
         const ful = new THREE.Mesh(new THREE.ExtrudeGeometry(tri, { depth: 0.42, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 }), std(0x9c6a45, { roughness: 0.85 }));
         ful.position.z = -0.21; g.add(ful);
-        const pv = new THREE.Group(); pv.position.y = 0.93; g.add(pv); pivots.push(pv);
+        const pv = new THREE.Group(); pv.position.y = 0.93; g.add(pv);
         const plank = new THREE.Mesh(new THREE.BoxGeometry(3.35, 0.12, 0.52), std(0xcc8f59, { roughness: 0.8 })); pv.add(plank);
         [-1, 1].forEach(sd => {
           const hd = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.28, 8), std(0x8a5a3a)); hd.position.set(sd * 1.02, 0.19, 0); pv.add(hd);
           const barM = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.34, 8), std(0x8a5a3a)); barM.rotation.x = Math.PI / 2; barM.position.set(sd * 1.02, 0.33, 0); pv.add(barM);
         });
+        const rig = { g, pv, ar, rest: -clamp((ar.a - ar.b) / 100, -1, 1) * TILT, ang: 0, vel: 0, mode: "intro", drag: null, key: null, riders: {} };
+        rig.ang = rig.rest;
         KEYS.forEach(k => {
-          const at = new THREE.Object3D(); at.position.set(k === "a" ? -1.38 : 1.38, 0.07, 0.04); pv.add(at);
-          pin(s, at, `<span class="t ${k}">${esc(PPL[k].name)} ${ar[k]}%</span><img class="sitter" src="${esc(PPL[k].seated)}" alt="${esc(PPL[k].name)} sitting on seesaw">`, "rider-pin");
+          const sx = k === "a" ? -ARM : ARM, at = new THREE.Object3D(); at.position.set(sx, 0.07, 0.04); pv.add(at);
+          pin(s, at, `<span class="t ${k}">${esc(PPL[k].name)} ${pc(ar[k])}</span><img class="sitter" data-char-slot="seated-${k}" src="${esc(PPL[k].seated)}" alt="${esc(PPL[k].name)} sitting on seesaw">`, "rider-pin");
+          const el = s.pins[s.pins.length - 1].el;
+          rig.riders[k] = { k, at, sx, el, box: el.firstElementChild, label: el.querySelector(".t"), shown: ar[k], y: 0, v: 0, sy: 0 };
         });
-        pv.userData.target = -clamp((ar.a - ar.b) / 100, -1, 1) * 0.42;
+        rigs.push(rig);
       });
       s.layout = aspect => {
         if (aspect < 0.95) { groups.forEach((g, i) => g.position.set(0, (1 - i) * 2.95 - 0.55, 0)); fitCamera(s, 2.2, 4.65, new V3(0, 0.35, 0), 0.2); }
         else { groups.forEach((g, i) => g.position.set((i - 1) * 4.2, 0, 0)); fitCamera(s, 6.15, 1.72, new V3(0, 1.02, 0), 0.2); }
       };
-      s.update = t => {
+      // The angle where person k has value v (the other person keeps their real value), and the reverse.
+      const angleFor = (rig, k, v) => -clamp(((k === "a" ? v : rig.ar.a) - (k === "b" ? v : rig.ar.b)) / 100, -1, 1) * TILT;
+      const valueAt = (rig, k, ang) => clamp(Math.round(k === "b" ? rig.ar.a + ang / TILT * 100 : rig.ar.b - ang / TILT * 100), 0, 100);
+      const limitOf = v => (v >= 100 ? 100 : v <= 0 ? 0 : null);
+      const soft = x => 0.07 * (1 - Math.exp(-x / 0.07));          // gentle resistance past 0% or 100%
+      function show(R, v) { if (R.shown !== v) { R.shown = v; R.label.textContent = `${PPL[R.k].name} ${pc(v)}`; } }
+      function seat(rig, R) { R.sy = R.y = R.sx * Math.sin(rig.ang) + 0.07 * Math.cos(rig.ang); R.v = 0; }
+      function settle(rig) {
+        rig.ang = rig.rest; rig.vel = 0; rig.mode = "rest"; rig.key = null; rig.pv.rotation.z = rig.ang;
+        KEYS.forEach(k => { const R = rig.riders[k]; show(R, rig.ar[k]); R.at.position.set(R.sx, 0.07, 0.04); });
+      }
+      function bump(R) {
+        R.label.classList.remove("pop"); void R.label.offsetWidth; R.label.classList.add("pop");
+        if (!RM && navigator.vibrate) try { navigator.vibrate(8); } catch (_) {}
+      }
+
+      // Hit test in screen space: a rider (label + picture), or the plank between the middle and one end.
+      const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(), hp = new V3(), hn = new V3(), sp = new V3();
+      const P0 = { x: 0, y: 0 }, P1 = { x: 0, y: 0 };
+      const origin = () => { const r = s.el.getBoundingClientRect(); return { x: r.left + s.el.clientLeft, y: r.top + s.el.clientTop }; };
+      const screenOf = (obj, x, out) => { sp.set(x, 0, 0); obj.localToWorld(sp).project(s.camera); out.x = (sp.x * 0.5 + 0.5) * s.cw; out.y = (-sp.y * 0.5 + 0.5) * s.ch; };
+      function hitTest(cx, cy, coarse) {
+        const o = origin(), px = cx - o.x, py = cy - o.y, pad = coarse ? 10 : 4, tol = coarse ? 20 : 11;
+        let best = null;
+        rigs.forEach(rig => KEYS.forEach(k => {
+          const b = rig.riders[k].box.getBoundingClientRect();
+          if (cx >= b.left - pad && cx <= b.right + pad && cy >= b.top - pad && cy <= b.bottom + pad) {
+            const d = 0.01 * Math.hypot(cx - (b.left + b.right) / 2, cy - (b.top + b.bottom) / 2);
+            if (!best || d < best.d) best = { rig, k, d };
+          }
+          screenOf(rig.pv, 0, P0); screenOf(rig.pv, k === "a" ? -HALF : HALF, P1);
+          const ex = P1.x - P0.x, ey = P1.y - P0.y, u = ((px - P0.x) * ex + (py - P0.y) * ey) / (ex * ex + ey * ey || 1);
+          if (u < 0.18 || u > 1.08) return;
+          const d = Math.hypot(px - P0.x - u * ex, py - P0.y - u * ey);
+          if (d <= tol && (!best || d < best.d)) best = { rig, k, d };
+        }));
+        return best;
+      }
+      // Where the pointer is in the seesaw's own plane, relative to the pivot (world units).
+      function inPlane(rig, cx, cy) {
+        const o = origin();
+        ndc.set((cx - o.x) / Math.max(1, s.cw) * 2 - 1, 1 - (cy - o.y) / Math.max(1, s.ch) * 2);
+        s.camera.updateMatrixWorld(); ray.setFromCamera(ndc, s.camera);
+        rig.g.updateMatrixWorld(true); hn.set(0, 0, 1).transformDirection(rig.g.matrixWorld);
+        rig.pv.getWorldPosition(hp); plane.setFromNormalAndCoplanarPoint(hn, hp);
+        if (!ray.ray.intersectPlane(plane, hp)) return null;
+        rig.g.worldToLocal(hp);
+        return { x: hp.x - rig.pv.position.x, y: hp.y - rig.pv.position.y };
+      }
+
+      let hot = null, touchDrags = 0;
+      function hover(hit) {
+        const R = hit ? hit.rig.riders[hit.k] : null;
+        if (R === hot) return;
+        if (hot) hot.el.classList.remove("hot");
+        hot = R; if (hot) hot.el.classList.add("hot");
+      }
+      s.press = e => {                                   // called by the stage before its own drag-to-turn
+        const hit = hitTest(e.clientX, e.clientY, e.pointerType !== "mouse");
+        if (!hit) return false;
+        const rig = hit.rig;
+        if (rig.drag) return true;                       // already held by another finger
+        const p = inPlane(rig, e.clientX, e.clientY);
+        if (!p) return false;
+        const sg = hit.k === "b" ? 1 : -1, r = clamp(Math.abs(p.x), 0.7, HALF), a0 = angleFor(rig, hit.k, 0), a1 = angleFor(rig, hit.k, 100);
+        if (rig.mode === "intro" || rig.mode === "rest") KEYS.forEach(k => seat(rig, rig.riders[k]));
+        if (rig.key && rig.key !== hit.k) show(rig.riders[rig.key], rig.ar[rig.key]);
+        rig.drag = { id: e.pointerId, k: hit.k, sg, r, y0: p.y, h0: sg * r * Math.sin(rig.ang), lo: Math.min(a0, a1), hi: Math.max(a0, a1),
+          cx: e.clientX, cy: e.clientY, goal: rig.ang, touch: e.pointerType === "touch", limit: limitOf(valueAt(rig, hit.k, rig.ang)) };
+        rig.key = hit.k; rig.mode = "drag";
+        if (rig.drag.touch) touchDrags++;
+        try { s.el.setPointerCapture(e.pointerId); } catch (_) {}
+        s.el.classList.add("grabbing");
+        rig.riders[hit.k].el.classList.add("held");
+        return true;
+      };
+      s.el.addEventListener("pointermove", e => {
+        const rig = rigs.find(r => r.drag && r.drag.id === e.pointerId);
+        if (rig) { rig.drag.cx = e.clientX; rig.drag.cy = e.clientY; kick(); }
+        else if (e.pointerType === "mouse" && !e.buttons) hover(hitTest(e.clientX, e.clientY, false));
+      });
+      s.el.addEventListener("pointerleave", () => hover(null));
+      const release = e => {
+        const rig = rigs.find(r => r.drag && r.drag.id === e.pointerId);
+        if (!rig) return;
+        if (rig.drag.touch) touchDrags = Math.max(0, touchDrags - 1);
+        rig.riders[rig.drag.k].el.classList.remove("held");
+        rig.drag = null; rig.mode = "spring";
+        if (!rigs.some(r => r.drag)) s.el.classList.remove("grabbing");
+        if (RM) settle(rig);
+        s.dirty = true; kick();
+      };
+      ["pointerup", "pointercancel", "lostpointercapture"].forEach(n => s.el.addEventListener(n, release));
+      // While a finger holds a seesaw, stop the page scrolling under it. Some browsers send touchstart
+      // before pointerdown, so a touch that lands on a seesaw side is also caught here.
+      const noScroll = e => {
+        if (!e.cancelable) return;
+        const t = e.type === "touchstart" && e.changedTouches[0];
+        if (touchDrags > 0 || (t && hitTest(t.clientX, t.clientY, true))) e.preventDefault();
+      };
+      s.el.addEventListener("touchstart", noScroll, { passive: false });
+      s.el.addEventListener("touchmove", noScroll, { passive: false });
+
+      // A rider sits on the seat but is pulled down by gravity, so they leave it when it drops or stops fast.
+      function fly(rig, R, h) {
+        const sy = R.sx * Math.sin(rig.ang) + 0.07 * Math.cos(rig.ang), sv = (sy - R.sy) / h; R.sy = sy;
+        R.v -= G * h; R.y += R.v * h;
+        if (R.y <= sy) { R.y = sy; R.v = Math.min(sv, VMAX); }
+      }
+      function step(rig, dt) {
+        const D = rig.drag;
+        let goal = rig.rest, k = 55, c = 5.4;            // released: a lively spring back to the real angle
+        if (D) {
+          const p = inPlane(rig, D.cx, D.cy);
+          if (p) {
+            const raw = D.sg * Math.asin(clamp((D.h0 + p.y - D.y0) / D.r, -0.96, 0.96));
+            D.goal = raw > D.hi ? D.hi + soft(raw - D.hi) : raw < D.lo ? D.lo - soft(D.lo - raw) : raw;
+          }
+          goal = D.goal; k = 700; c = 50;                // held: follow the pointer closely
+        }
+        if (RM) { if (D) { rig.ang = goal; rig.vel = 0; } else settle(rig); }
+        else {
+          const n = Math.max(1, Math.ceil(dt / SUB)), h = dt / n;
+          for (let j = 0; j < n; j++) {
+            rig.vel += (-k * (rig.ang - goal) - c * rig.vel) * h;
+            rig.ang += rig.vel * h;
+            if (Math.abs(rig.ang) > GROUND) { rig.ang = Math.sign(rig.ang) * GROUND; if (rig.ang * rig.vel > 0) rig.vel *= -0.35; }  // the plank end bumps the ground
+            fly(rig, rig.riders.a, h); fly(rig, rig.riders.b, h);
+          }
+          KEYS.forEach(kk => { const R = rig.riders[kk], hop = R.y - R.sy; R.at.position.set(R.sx + hop * Math.sin(rig.ang), 0.07 + hop * Math.cos(rig.ang), 0.04); });
+          if (!D && Math.abs(rig.ang - goal) < 0.002 && Math.abs(rig.vel) < 0.02 && KEYS.every(kk => rig.riders[kk].y - rig.riders[kk].sy < 0.002)) settle(rig);
+        }
+        if (D) {                                         // a small pop when the dragged person reaches 0% or 100%
+          const lim = limitOf(valueAt(rig, D.k, rig.ang));
+          if (lim !== null && lim !== D.limit) bump(rig.riders[D.k]);
+          D.limit = lim;
+        }
+      }
+
+      s.update = (t, intro, dt) => {                   // dt comes from the shared animation loop
+        dt = dt || 0;
         groups.forEach((g, i) => { g.rotation.y = s.yaw + (t ? Math.sin(t * 0.4 + i) * 0.06 : 0); g.rotation.x = s.pitch * 0.4; });
-        pivots.forEach((pv, i) => { const spring = t ? 1 - Math.exp(-3 * t) * Math.cos(5.5 * t + i * 0.3) : 1; pv.rotation.z = pv.userData.target * (RM ? 1 : spring); });
+        rigs.forEach((rig, i) => {
+          if (rig.mode === "intro" || rig.mode === "rest") {
+            const ang = rig.mode === "intro" && t && !RM ? rig.rest * (1 - Math.exp(-3 * t) * Math.cos(5.5 * t + i * 0.3)) : rig.rest;
+            rig.vel = dt ? clamp((ang - rig.ang) / dt, -6, 6) : 0; rig.ang = ang;
+          } else if (dt || RM) step(rig, dt);
+          rig.pv.rotation.z = rig.ang;
+          if (rig.key) show(rig.riders[rig.key], valueAt(rig, rig.key, rig.ang));
+        });
       };
     }
 
@@ -851,7 +1474,7 @@
         const ln = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: hexInt(TH.deep), dashSize: 0.12, gapSize: 0.1 }));
         root.add(ln); lines[k] = ln;
         const at = new THREE.Object3D(); root.add(at);
-        pin(s, at, `<img src="${esc(PPL[k].face)}" alt="${esc(PPL[k].name)}"><span class="t ${k}">${esc(PPL[k].name)}</span>`, "face-pin stone-face mid");
+        pin(s, at, `<img data-char-slot="face-${k}" src="${esc(PPL[k].face)}" alt="${esc(PPL[k].name)}"><span class="t ${k}">${esc(PPL[k].name)}</span>`, "face-pin stone-face mid");
         labels.push({ k, at });
       });
       const areaPins = [];

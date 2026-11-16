@@ -78,6 +78,75 @@ p{margin:0}
 }
 .rel-select:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
 
+/* Gender-based character selection bar (auto-locked for family/romantic pairs, interactive for Friends/Business/Teammates) */
+.gender-bar{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 7px 4px 11px;
+  background:rgba(255,253,252,.9);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);
+  border-radius:999px;
+  box-shadow:0 10px 24px -18px var(--shadow-tint);
+}
+.gender-bar .g-lbl{
+  font-size:.73rem;
+  font-weight:800;
+  color:var(--muted);
+  margin-right:2px;
+  white-space:nowrap;
+}
+.gender-bar button.g-btn{
+  appearance:none;
+  border:1px solid transparent;
+  background:var(--pink-soft);
+  color:var(--ink);
+  font:800 .75rem/1.15 var(--sans);
+  padding:5px 10px;
+  border-radius:999px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  white-space:nowrap;
+  transition:background .16s ease,color .16s ease,transform .12s ease;
+}
+.gender-bar button.g-btn:hover:not(:disabled){
+  border-color:var(--pink);
+  color:var(--pink);
+  background:#fff;
+}
+.gender-bar button.g-btn:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+.gender-bar button.g-btn.on{
+  background:var(--pink);
+  color:#fff;
+  border-color:var(--pink);
+}
+.gender-bar button.g-btn:disabled{
+  opacity:.38;
+  cursor:not-allowed;
+  background:transparent;
+  color:var(--muted);
+}
+.gender-bar .g-lock-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:var(--pink);
+  color:#fff;
+  font:800 .75rem/1.15 var(--sans);
+  padding:5px 11px;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.gender-bar .g-lock-pill svg{width:12px;height:12px;flex:none}
+@media (max-width:700px){
+  .gender-bar{flex-wrap:wrap;justify-content:center;border-radius:18px;padding:5px 8px}
+  .gender-bar button.g-btn .g-full{display:none}
+}
+
 .nav{
   display:flex;
   gap:4px;
@@ -195,24 +264,11 @@ ul.dots li::before{
 .stage:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
 .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .stage .ov{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
-.stage .hint{
-  position:absolute;
-  right:10px;
-  bottom:8px;
-  font-size:.72rem;
-  font-weight:700;
-  color:var(--muted);
-  background:rgba(255,255,255,.88);
-  border:1px solid var(--line);
-  padding:2px 10px;
-  border-radius:999px;
-  pointer-events:none;
-}
 .stage .fb{display:none;position:absolute;inset:0;overflow:auto;padding:18px;font-size:.92rem;color:var(--ink);text-align:center;align-content:center}
 .stage .fb .why{display:block;margin-top:8px;font-size:.78rem;color:var(--muted)}
 .no3d .stage{cursor:default;aspect-ratio:auto;min-height:150px}
 .no3d .stage .fb{display:grid;position:relative}
-.no3d .stage canvas,.no3d .stage .hint,.no3d .stage .ov{display:none}
+.no3d .stage canvas,.no3d .stage .ov{display:none}
 
 /* 3D HTML overlay pins */
 .pin{position:absolute;left:0;top:0;will-change:transform;transition:opacity .25s}
@@ -248,6 +304,12 @@ ul.dots li::before{
   height:auto;
   filter:drop-shadow(0 5px 7px rgba(40,20,35,.3));
 }
+/* Seesaw play: the label lifts a little on hover, more while held, and pops at 0% or 100% */
+.pin.rider-pin .t{transition:transform .18s ease,box-shadow .18s ease}
+.pin.rider-pin.hot .t{transform:translateY(-2px) scale(1.06)}
+.pin.rider-pin.held .t{transform:translateY(-3px) scale(1.12);box-shadow:0 8px 16px -8px rgba(45,20,35,.55)}
+.pin.rider-pin .t.pop{animation:seesaw-pop .34s ease-out}
+@keyframes seesaw-pop{40%{transform:translateY(-4px) scale(1.24)}}
 
 .pin .t{
   font-size:clamp(.62rem,1.85cqw,.79rem);
@@ -270,17 +332,21 @@ ul.dots li::before{
   font-size:clamp(.64rem,2.6cqw,.9rem);
   line-height:1.12;
   color:var(--muted);
-  background:rgba(255,253,252,.88);
+  background:rgba(255,253,252,.92);
   border:1px solid var(--line);
-  padding:4px 10px 5px;
-  border-radius:14px;
+  padding:5px 12px 6px;
+  border-radius:16px;
+  box-shadow:0 8px 18px -12px rgba(45,20,35,.35);
   white-space:nowrap;
 }
 .pin .lab svg{width:1.45em;height:1.45em;margin-bottom:2px}
-.pin .lab b{font-family:var(--serif);font-weight:400;font-size:1.18em;color:var(--ink)}
-.pin .lab span{font-weight:800;color:var(--ink)}
+.pin .lab b{font-family:var(--sans);font-weight:800;font-size:.96em;color:var(--ink)}
+.pin .lab span{font-family:var(--serif);font-weight:400;font-size:1.38em;line-height:1.05;color:var(--ink)}
 .stage .ov svg.links{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.links path{fill:none;stroke-width:1.35;stroke-linecap:round;opacity:.72}
+.links path{fill:none;stroke-width:1.55;stroke-linecap:round;opacity:.85}
+.links circle.link-dot{stroke:#fff;stroke-width:1.6}
+.flower-stack-fb{position:relative;width:min(320px,100%);aspect-ratio:1/1;margin:0 auto}
+.flower-stack-fb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 
 /* Page 1 — Overview & 3D Glass Heart */
 .hero-row{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(0,1fr);align-items:center;gap:14px}
@@ -301,6 +367,7 @@ ul.dots li::before{
 }
 .hero-row .stage{background:radial-gradient(60% 55% at 50% 50%,rgba(255,255,255,.94),rgba(255,255,255,0))}
 .note{text-align:center;font-family:var(--serif);font-style:italic;font-size:1.2rem;max-width:48ch;margin:0 auto;text-wrap:balance;color:var(--ink)}
+.note-people{display:flex;flex-direction:column;gap:4px;max-width:62ch;margin:-12px auto 0;text-align:center;color:var(--muted);text-wrap:balance}
 .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .chip{
   border-radius:26px;
@@ -343,7 +410,6 @@ ul.dots li::before{
   border-radius:16px;
 }
 .person h3{font-size:1.38rem}
-.person .role-tag{font-family:var(--sans);font-size:.8rem;font-weight:700;color:var(--muted)}
 .person p{color:var(--muted);font-size:.94rem;margin-top:2px}
 
 /* Page 3 — Overlap in Every Area (emotional character scenes + compact side Venn) */
@@ -392,9 +458,11 @@ ul.dots li::before{
   border-radius:999px;
 }
 .area-body{display:flex;flex-direction:column;gap:8px;min-width:0}
-.area-body>p{color:var(--muted)}
 .area-data{display:flex;gap:16px;align-items:center}
-.bars{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.bars{min-width:0;display:flex;flex-direction:column;gap:8px}
+.bar-line{font-size:.9rem;color:var(--ink);margin:-4px 0 4px}
+.together{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:.95rem;color:var(--muted)}
+.together p:first-child{font-weight:700;color:var(--ink)}
 .bar{display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:2px 10px;align-items:center}
 .bar span{grid-column:1/-1;font-size:.84rem;color:var(--muted);font-weight:600}
 .bar i{display:block;height:13px;border-radius:99px;background:var(--bar-track);overflow:hidden}
@@ -402,10 +470,10 @@ ul.dots li::before{
 .bar.a i b{background:linear-gradient(90deg,var(--pink),var(--a))}
 .bar.b i b{background:linear-gradient(90deg,var(--b),var(--pink-mid))}
 .bar em{font-style:normal;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
-.cite-mini{font-size:.75rem;color:var(--muted);margin-top:2px}
 .venn{margin:0;flex:none;width:136px;text-align:center}
 .venn svg{display:block;width:100%;height:auto}
-.venn figcaption{font-size:.78rem;font-weight:800;color:var(--muted)}
+.area-tip{background:var(--pink-soft);border-radius:14px;padding:10px 14px;color:var(--ink);font-size:.95rem}
+.area-tip b{color:var(--pink)}
 .know{
   display:flex;
   gap:16px;
@@ -435,7 +503,6 @@ ul.dots li::before{
 .cards3 .card img{width:40px;height:40px;object-fit:contain}
 .cards3 .card b{font-family:var(--serif);font-weight:400;font-size:clamp(1.02rem,2.4vw,1.28rem);line-height:1.12}
 .cards3 .card span{font-size:.84rem;color:var(--muted)}
-.cards3 .card span.together-pill{font-weight:800;color:var(--pink);font-size:.79rem}
 .cards3 .card span.tilt{background:var(--pink-soft);color:var(--pink);font-weight:800;padding:2px 11px;border-radius:999px}
 .sub{font-size:clamp(1.45rem,4vw,2.05rem);text-align:center;margin-top:4px}
 .legend{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;font-size:.88rem;color:var(--muted);margin:0;padding:0;list-style:none}
