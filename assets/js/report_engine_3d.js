@@ -633,7 +633,8 @@
   // Teammates page 3 diagram: the two circles overlap by the together score, and a sign with that score and the
   // word "together" hangs from the white box on two chains. The whole diagram floats a little and the sign swings
   // gently (CSS animation). H is the drawing's height: a taller picture card gets longer chains (see fitHangs).
-  const HANG_H0 = 204, HANG_HMAX = 380;
+  // HANG_HMAX caps the chain length on wide screens; a taller card centres the diagram instead of lengthening it.
+  const HANG_H0 = 204, HANG_HMAX = 290;
   function hangVenn(ar, i, H) {
     H = Math.round(Math.max(HANG_H0, Math.min(HANG_HMAX, H || HANG_H0)));
     const r = 34, cx = 80, cy = 56, f = Math.max(0, Math.min(1, ar.together / 100)), n1 = v => v.toFixed(1);

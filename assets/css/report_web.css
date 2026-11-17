@@ -583,10 +583,12 @@ figure.hang svg{display:block;width:100%;height:100%;overflow:visible}
 .trio-text p{font-size:.9rem;line-height:1.55;color:var(--ink);text-align:justify;hyphens:auto;-webkit-hyphens:auto}
 /* A one-item stage is a third as wide, so its pins use three times the cqw to keep their usual size */
 .stage.solo .pin.face-pin img{width:clamp(38px,16.8cqw,56px);height:clamp(38px,16.8cqw,56px)}
-.stage.solo .pin.rider-pin img.sitter{width:clamp(48px,22.8cqw,78px)}
+/* Both riders get the same height, so they look the same size even though one picture is narrower than the other */
+.stage.solo .pin.rider-pin img.sitter{width:auto;height:clamp(84px,38cqw,118px)}
 .stage.solo .pin .t{font-size:clamp(.62rem,5.55cqw,.79rem)}
-/* "Where to start": the try-this-week ideas are plain dot points */
-ul.dots li.dot::before{width:7px;height:7px;margin-top:9px;justify-self:center;background:var(--pink)}
+/* "Where to start": the try-this-week ideas are plain dot points. In the Teammates report every list uses
+   these dots instead of the tick circles. */
+ul.dots li.dot::before,.team ul.dots li::before{width:7px;height:7px;margin-top:9px;justify-self:center;background:var(--pink)}
 /* Teammates: box headings sit on the left above a thin rule, and the points are justified (straight on both
    sides). The footsteps half of page 5 starts below a divider so it reads as its own section. */
 .team .box>h3{text-align:left;padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid var(--line)}
