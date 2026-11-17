@@ -35,8 +35,12 @@
 
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const fill = (tpl, map) => String(tpl).replace(/\{(\w+)\}/g, (m, k) => (k in map ? map[k] : m));
-  // A score of 0 is shown as a dash, never as "0%".
-  const pc = v => { const r = Math.round(v * 10) / 10; return r === 0 ? "–" : r + "%"; };
+  // A score of 0 is shown as a dash, never as "0%". The Teammates report shows every % with two decimals
+  // (37.5 → 37.50%, 46.875 → 46.88%, 75 → 75.00%); the other reports keep at most one decimal.
+  const pc = v => {
+    if (REPORT.pool === "teammates") { const r = Math.round(v * 100) / 100; return r === 0 ? "–" : `${r.toFixed(2)}%`; }
+    const r = Math.round(v * 10) / 10; return r === 0 ? "–" : r + "%";
+  };
   const noZero = s => String(s).replace(/(^|[^\d.])0(?:\.0+)?%/g, "$1–");
   const svg = (path, cls) => `<svg class="${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
   // Banker's rounding (round half to even) matches authoritative report PDF arithmetic
@@ -207,6 +211,7 @@
     const valid = applyGenderCodeToData(code);
     syncGenderDomImages();
     renderGenderBar();
+    if (POOL) refreshPool();
     try {
       const u = new URL(window.location.href);
       if (getGenderRule().selectable) u.searchParams.set("genders", valid);
@@ -327,6 +332,244 @@
     return { index, k, tip: tpl ? fill(tpl, lineNames(k)) : "" };
   }
 
+  /* ---------------------------------------------------------------- Teammates line pool (Line Pool: Teammates PDF)
+     Used only when REPORT.pool is "teammates"; every other report keeps the wording above.
+     Scores come from the answers: area = points ÷ 16, overall = points ÷ 48 (so 25% to 100%), together = the
+     average of you both, heart = the average of the two overall scores as a whole number.
+     Every % is rounded to a whole number before its range is looked up. */
+  const POOL = REPORT.pool === "teammates" ? "teammates" : "";
+  const TEAM = {
+    levels: ["Getting started", "Starting to connect", "Growing together", "Mostly in tune", "In sync"],
+    headline: [
+      "You’re early in learning each other’s working style as teammates, and every good team starts here.",
+      "You’re starting to work in each other’s style as teammates.",
+      "You’re growing as teammates, meeting each other’s style more often than not.",
+      "You’re mostly in tune as teammates: you usually work in a way the other appreciates.",
+      "You’re in sync as teammates: you understand each other’s working style almost every time."
+    ],
+    chips: {
+      best: { label: "YOU CONNECT BEST IN", c: "c1", ic: "sun" },
+      next: { label: "YOUR NEXT STEP TOGETHER", c: "c2", ic: "sprout" },
+      well: { label: "GOING WELL", c: "c3", ic: "sparkle" }
+    },
+    flowers: {
+      Assertive: { leads: "leads with action", strength: "Gets things moving when everyone is stuck", need: "people are clear and direct", gift: "energy and decisiveness" },
+      Emotional: { leads: "leads with heart", strength: "Notices how everyone is really feeling", need: "feelings are heard first", gift: "warmth and openness" },
+      Thoughtful: { leads: "leads with calm", strength: "Keeps the peace and remembers the small things", need: "people are patient and gentle", gift: "calm and kindness" },
+      Logical: { leads: "leads with reason", strength: "Sees the full picture and plans well", need: "things are explained with reasons", gift: "clear thinking and good plans" }
+    },
+    areaLine: {
+      talk: [
+        "Teammates often communicate differently. Agreeing how you’ll share updates is a great first step.",
+        "You’re starting to understand how your teammate likes to share ideas and feedback.",
+        "You often understand each other in stand-ups, chats and quick calls.",
+        "You usually communicate in a way your teammate finds clear and easy.",
+        "You understand each other quickly. Work flows smoothly between you."
+      ],
+      conflict: [
+        "Teammates will disagree about priorities and approach. Talking it through openly is the first step.",
+        "You’re starting to handle work disagreements without tension lingering.",
+        "You often settle disagreements well and get back on track quickly.",
+        "Most disagreements end with a plan you’re both happy with.",
+        "You handle disagreements constructively, and they make your work better."
+      ],
+      support: [
+        "You both work hard. Recognising each other’s effort in the right way is the next step.",
+        "You’re starting to notice what kind of support your teammate values.",
+        "Your support often reaches your teammate in the way they value.",
+        "You usually back and appreciate your teammate in their style.",
+        "You support and appreciate each other in exactly the way each of you values."
+      ]
+    },
+    // tips[area][the other person's main style] = [own score 25–55%, 56–85%, 86–100%]
+    tips: {
+      talk: {
+        Assertive: ["Get to the point first, then add detail if asked.", "End your chats with one clear next step.", "Keep being clear and brief; it’s working."],
+        Emotional: ["Ask how they feel before sharing your view.", "Name the feeling you hear: “That sounds frustrating.”", "Keep making room for feelings; it’s noticed."],
+        Thoughtful: ["Slow down and leave pauses so they can speak.", "Ask one gentle question and wait for the answer.", "Keep giving them time; it helps them open up."],
+        Logical: ["Give the reason behind what you say.", "Share facts and examples, not just impressions.", "Keep explaining your thinking; they value it."]
+      },
+      conflict: {
+        Assertive: ["Say clearly what you want, instead of hinting.", "Agree on a decision and a deadline together.", "Keep being direct and fair; it settles things fast."],
+        Emotional: ["Acknowledge their feelings before arguing your point.", "Start with “I can see this matters to you.”", "Keep putting feelings first; it calms things down."],
+        Thoughtful: ["Lower your voice and give them time to respond.", "Suggest a short break, then come back calmly.", "Keep your calm approach; it helps them feel safe."],
+        Logical: ["Explain your reasons instead of repeating your point.", "Look at the options together, pros and cons.", "Keep being reasonable; they trust it."]
+      },
+      support: {
+        Assertive: ["Recognise their results, briefly and directly.", "Help clear their blockers so they can move fast.", "Keep backing their decisions."],
+        Emotional: ["Thank them warmly, and say how their work helped.", "Check in on how they’re doing, not just the task.", "Keep appreciating them personally."],
+        Thoughtful: ["Thank them privately for steady, behind-the-scenes work.", "Offer help quietly, before they have to ask.", "Keep your thoughtful support."],
+        Logical: ["Appreciate the quality of their thinking, with specifics.", "Give them clear information and time to do it well.", "Keep giving clear, specific recognition."]
+      }
+    },
+    didYouKnow: [
+      "Even the best teams start out learning each other’s habits. Try this: share one ‘how I like to work’ tip each this week.",
+      "Most teams find their rhythm only after a few projects together. Try this: after your next task, ask each other ‘What worked well for us?’",
+      "Knowing each other’s working style can save a lot of back-and-forth messages. Try this: agree on one thing to keep and one thing to change in how you work.",
+      "Saying ‘thank you’ takes about two seconds, and it’s one of the easiest ways to brighten a teammate’s day. Try this: thank each other for one specific thing this Friday.",
+      "Great pairs work like a relay team: the baton rarely drops. Try this: celebrate one shared win together this week."
+    ],
+    mountainsLede: "The goal is the flag at the top of each mountain. You climb together: wherever you are now, every step towards each other’s style takes you both higher.",
+    opening: [
+      "This mountain has the most room to grow, and that’s a good thing: small steps here will feel big.",
+      "You’re well on your way up this one. Keep climbing side by side.",
+      "You’re close to the top here. The aim now is to stay there together."
+    ],
+    // climb[area] = rows for together 25–55%, 56–85%, 86–100%: [step 1, step 2, try this week]
+    climb: {
+      talk: [
+        ["Agree on one channel and a fixed time for daily updates.", "Repeat back the key point before replying, so nothing gets lost.", "Agree on one channel and time for quick daily updates."],
+        ["Confirm next steps at the end of each discussion.", "Ask questions before giving feedback.", "Ask your teammate: “How do you like to get feedback?”"],
+        ["Share how you two like to work with new teammates.", "Keep a quick weekly catch-up, even when things are smooth.", "Keep communicating the way you do; it works."]
+      ],
+      conflict: [
+        ["Write down both views before deciding.", "Agree that you can disagree about the work, never the person.", "When you disagree, write down both options and their pros and cons."],
+        ["Keep disagreements about the work, never the person.", "Agree on who decides when you can’t agree.", "Ask “What would make this work for you?” before pushing your view."],
+        ["Use your disagreements to test ideas; you do it well.", "Share with the wider team how you two settle things.", "Keep disagreeing openly and kindly."]
+      ],
+      support: [
+        ["Notice one thing your teammate did well each day.", "Offer help on small tasks before big deadlines.", "Ask: “What’s one thing I could do that would help your work?”"],
+        ["Offer help before a deadline, not after.", "Thank your teammate in front of others.", "Give one specific shout-out this week for your teammate’s work."],
+        ["Keep recognising each other in team meetings.", "Pass the habit on: thank others in the team too.", "Keep celebrating each other’s wins."]
+      ]
+    },
+    whereToStart: [
+      "Every mountain is close to the top. Keep doing what you’re doing, and check in again in a few months.",
+      "Your three mountains are at a similar height. Pick the one that matters most to you both right now, and climb it together.",
+      "<b>Start with {AREA}.</b> It has the most room to grow, so small steps there will make the biggest difference, and they’ll lift the other two areas as well."
+    ],
+    balanceLede: "Each seesaw tips towards the person who is doing more of the reaching in that area. A level seesaw means you both reach equally.",
+    balanceLabel: ["perfectly balanced", "nearly balanced", "leaning towards {H}", "mostly {H} reaching"],
+    scoreSentence: [
+      "This is where small steps will make the biggest difference for you both.",
+      "You already meet in the middle here quite often.",
+      "This is one of your strongest areas."
+    ],
+    balanceEven: "You reach towards each other {EQ} here, so neither of you is carrying this area alone. {A} brings {GA}, {B} brings {GB}, and you’re both making room for the other’s way {WHERE}. To keep it balanced, notice when the other adjusts for you, and say so.",
+    balanceLean: "{H} is doing {MORE} of the reaching {WHERE}, often answering the way {L} likes: {LIKES}. {L} tend{LS} to stay closer to {LHIS} own {LSTYLE} way here, which is completely natural. To level the seesaw, {L} can {STEP}; {H}’s {HSTYLE} style values {VALUES}. One or two moments like that will make this area feel more even.",
+    where: { talk: "in conversations", conflict: "when you don’t agree", support: "in how you back each other up at work" },
+    style: {
+      Assertive: { gift: "energy and decisiveness", likes: "clear, direct and to the point", values: "clarity and action", step: "be clear and brief, and end with a next step." },
+      Emotional: { gift: "warmth and openness", likes: "warm and feelings-first", values: "warmth and being heard", step: "name the feeling first, then talk about solutions." },
+      Thoughtful: { gift: "calm and kindness", likes: "gentle and patient", values: "patience and kindness", step: "give {NAME} time, ask gently, and check in later." },
+      Logical: { gift: "clear thinking and good plans", likes: "calm and well reasoned", values: "reasons and fairness", step: "share your reasons calmly and clearly." }
+    },
+    footstepsLede: "Each stone is one of your answers. Bigger, deeper-purple stones = closer to the other person’s style; small, pale stones = you answered in your own comfortable way.",
+    footVerb: { talk: ["talks and listens", "talk and listen"], conflict: ["handles disagreements", "handle disagreements"], support: ["offers support and thanks", "offer support and thanks"] },
+    scoreNote: "<b>How the scores work:</b> in Section 2, each answer that fits the other person’s style earns the most points, and an answer in your own style earns the fewest. Each area score shows how much of the top score you reached, so it can go from 25% to 100%. ‘Together’ is the average of you both, and ‘Overall’ uses all your answers. Style flowers come from your Section 1 choices."
+  };
+  const KEY_ORDER = ["Assertive", "Emotional", "Thoughtful", "Logical"];
+  const band5 = v => { const r = Math.round(v); return r <= 40 ? 0 : r <= 55 ? 1 : r <= 70 ? 2 : r <= 85 ? 3 : 4; };
+  const band3 = v => { const r = Math.round(v); return r <= 55 ? 0 : r <= 85 ? 1 : 2; };
+  const diffBand = d => { const r = Math.round(d); return r === 0 ? 0 : r <= 10 ? 1 : r <= 25 ? 2 : 3; };
+  const howOften = n => (n >= 10 ? "almost always" : n >= 7 ? "usually" : n >= 5 ? "often" : n >= 3 ? "sometimes" : "now and then");
+  const picksOf = k => Object.fromEntries(STYLES.map(st => [st, Math.round((REPORT.styles[k][st] || 0) / 100 * (REPORT.picksTotal || 8))]));
+  // Petal %: (times picked in Section 1 + 1) ÷ 12, so no style shows 0%. Shown with two decimals (41.67%).
+  const petalPct = (k, st) => (POOL ? (picksOf(k)[st] + 1) / 12 * 100 : REPORT.styles[k][st]);
+  const splitTitle = s => { const i = s.lastIndexOf(" "); return i > 0 ? [s.slice(0, i + 1), s.slice(i + 1)] : ["", s]; };
+  function pro(k) {
+    const g = String(PPL[k].gender || "").toLowerCase(), h = String(PPL[k].his || "").toLowerCase();
+    if (g === "male" || (!g && h === "his")) return { He: "He", he: "he", His: "His", his: "his", s: "s" };
+    if (g === "female" || (!g && h === "her")) return { He: "She", he: "she", His: "Her", his: "her", s: "s" };
+    return { He: "They", he: "they", His: "Their", his: "their", s: "" };
+  }
+  if (POOL) {
+    const area = k => areaSums(k).map(x => x / 16 * 100), A = area("a"), B = area("b");
+    AREAS.forEach((ar, i) => { ar.a = A[i]; ar.b = B[i]; ar.together = (A[i] + B[i]) / 2; });
+    const overall = k => REPORT.stones[k].reduce((x, y) => x + y, 0) / 48 * 100;
+    REPORT.overall.a = overall("a"); REPORT.overall.b = overall("b");
+    REPORT.overall.together = Math.round((REPORT.overall.a + REPORT.overall.b) / 2);
+  }
+  const stepFor = k => TEAM.style[PPL[k].style].step.replace("{NAME}", PPL[k].name);
+  const higherOf = ar => (ar.a >= ar.b ? "a" : "b");
+  const balanceLabel = ar => fill(TEAM.balanceLabel[diffBand(Math.abs(ar.a - ar.b))], { H: PPL[higherOf(ar)].name });
+  const teamTip = (ar, i, k) => TEAM.tips[areaKind(ar, i)][PPL[otherKey(k)].style][band3(ar[k])];
+  function teamChips() {
+    const tg = AREAS.map(ar => ar.together), max = Math.max(...tg), min = Math.min(...tg);
+    const hi = tg.indexOf(max), lo = tg.indexOf(min), flat = max - min < 5;
+    return AREAS.map((ar, i) => {
+      const c = TEAM.chips[flat ? "well" : i === hi ? "best" : i === lo ? "next" : "well"];
+      return { c: c.c, ic: ICON[c.ic], label: c.label, value: ar.name };
+    });
+  }
+  function whereToStart() {
+    const tg = AREAS.map(ar => ar.together), min = Math.min(...tg);
+    if (tg.every(v => Math.round(v) >= 86)) return esc(TEAM.whereToStart[0]);
+    if (Math.max(...tg) - min < 5) return esc(TEAM.whereToStart[1]);
+    return TEAM.whereToStart[2].replace("{AREA}", esc(AREAS[tg.indexOf(min)].name));
+  }
+  function teamReading(k) {
+    const p = PPL[k], st = p.style, F = TEAM.flowers[st], pk = picksOf(k), n = pk[st], pr = pro(k);
+    const how = n >= 6 ? "strongly" : n >= 4 ? "mostly" : "a blend, leaning towards";
+    const rest = KEY_ORDER.filter(x => x !== st).sort((x, y) => pk[y] - pk[x] || KEY_ORDER.indexOf(x) - KEY_ORDER.indexOf(y));
+    const [n1, n2, n3] = rest.map(x => pk[x]), art = x => (x === "Assertive" || x === "Emotional" ? "an" : "a");
+    const side = n1 === n3 ? "with a little of every other style"
+      : n1 === n2 ? `with <b>${rest[0]}</b> and <b>${rest[1]}</b> sides`
+      : `with ${art(rest[0])} <b>${rest[0]}</b> side`;
+    return `<b>${esc(p.name)}</b> ${F.leads}: ${how} <b>${st}</b>, ${side}. ${F.strength}. ${pr.He} feel${pr.s} most understood when ${F.need}, and bring${pr.s} ${F.gift} to your teamwork.`;
+  }
+  // Page 3 card (Teammates): heading and area line on top; the picture with the hanging overlap diagram on the
+  // left; each person's bar (name in a hand-drawn oval, exact %) with their line, then a tip for each person.
+  // The line under each bar keeps the Line Bank wording, picked from the 0–100% answer scale as before.
+  const lineBankScore = (k, i) => rEven((areaSums(k)[i] - 4) / 12 * 100);
+  const teamPersonLine = (ar, i, k) => fill(LINES[areaKind(ar, i)][lineBand(lineBankScore(k, i))], lineNames(k));
+  const OVAL = {
+    a: "M20 8C46 1 92 2 110 13C121 21 110 37 72 40C38 42 6 35 5 22C4 12 24 5 52 4",
+    b: "M16 11C40 2 88 1 108 10C120 17 114 35 76 39C40 43 8 37 6 24C4 13 20 6 46 5"
+  };
+  const hangBar = (ar, i, k) => `<div class="bar ${k}"><span class="who"><svg viewBox="0 0 120 44" preserveAspectRatio="none" aria-hidden="true"><path d="${OVAL[k]}"/></svg>${esc(PPL[k].name)}</span><i><b style="width:${Math.max(0, Math.min(100, ar[k]))}%"></b></i><em>${pc(ar[k])}</em></div>
+            <p class="bar-line">${esc(teamPersonLine(ar, i, k))}</p>`;
+  function teamOverlapCard(ar, i) {
+    return `<article class="area hang" data-i="${i}">
+        <div class="area-head"><img class="icon" src="${esc(ar.icon)}" alt="" width="64" height="64"><div><h3>${esc(ar.name)}</h3><span class="status">${esc(TEAM.levels[band5(ar.together)])}</span></div></div>
+        <p class="area-line">${esc(TEAM.areaLine[areaKind(ar, i)][band5(ar.together)])}</p>
+        <div class="area-visual">
+          <div class="scene-frame"><img class="scene" data-char-slot="scene-${i}" src="${esc(ar.scene)}" alt="${esc(ar.sceneAlt)}" width="480" height="320"></div>
+          ${hangVenn(ar, i)}
+        </div>
+        <div class="area-body">
+          <div class="bars">${KEYS.map(k => hangBar(ar, i, k)).join("")}</div>
+          <div class="tips">${KEYS.map(k => `<p class="area-tip"><b>Tip for ${esc(PPL[k].name)}:</b> ${esc(teamTip(ar, i, k))}</p>`).join("")}</div>
+        </div>
+      </article>`;
+  }
+  // The text under each mountain; its "try this week" idea is listed under "Where to start" instead.
+  function teamClimb(ar, i) {
+    const b = band3(ar.together), [s1, s2] = TEAM.climb[areaKind(ar, i)][b];
+    return `<p class="climb">${esc(TEAM.opening[b])} ${esc(s1)} ${esc(s2)}</p>`;
+  }
+  const teamTryThisWeek = (ar, i) => TEAM.climb[areaKind(ar, i)][band3(ar.together)][2];
+  function teamBalance(ar, i) {
+    const kind = areaKind(ar, i), db = diffBand(Math.abs(ar.a - ar.b)), hk = higherOf(ar), lk = otherKey(hk), H = PPL[hk], L = PPL[lk];
+    const main = db <= 1
+      ? fill(TEAM.balanceEven, { EQ: db === 0 ? "equally" : "almost equally", A: esc(PPL.a.name), B: esc(PPL.b.name), GA: TEAM.style[PPL.a.style].gift, GB: TEAM.style[PPL.b.style].gift, WHERE: TEAM.where[kind] })
+      : fill(TEAM.balanceLean, { H: esc(H.name), L: esc(L.name), MORE: db === 3 ? "most" : "a little more", WHERE: TEAM.where[kind], LIKES: TEAM.style[L.style].likes,
+          LS: pro(lk).s, LHIS: pro(lk).his, LSTYLE: L.style, STEP: esc(stepFor(hk)).replace(/\.$/, ""), HSTYLE: H.style, VALUES: TEAM.style[H.style].values });
+    return `<b>${esc(ar.name)}: ${esc(balanceLabel(ar))}.</b> ${TEAM.scoreSentence[band3(ar.together)]} ${main}`;
+  }
+  function teamFootsteps() {
+    const out = KEYS.map(k => {
+      const o = otherKey(k), p = PPL[k], q = PPL[o], st = REPORT.stones[k], pr = pro(k);
+      const sc = AREAS.map(ar => ar[k]), hiI = sc.indexOf(Math.max(...sc));
+      const ones = [0, 1, 2].map(i => st.slice(i * 4, i * 4 + 4).filter(v => v === 1).length), loI = ones.indexOf(Math.max(...ones));
+      const verb = TEAM.footVerb[areaKind(AREAS[hiI], hiI)][pr.s ? 0 : 1];
+      const comfort = Math.max(...ones) > 0
+        ? `${pr.His} comfort-zone moments came mostly in ${esc(AREAS[loI].name)}, which is the most natural place to stretch next.`
+        : `${pr.He} never fell back on ${pr.his} own style, which shows real effort.`;
+      return `<b>${esc(p.name)}</b> ${howOften(st.filter(v => v >= 3).length)} met ${esc(q.name)}’s style or came close to it. ${pr.His} biggest steps were in <b>${esc(AREAS[hiI].name)}</b>, where ${pr.he} usually ${verb} the way ${esc(q.name)} likes. ${comfort} A simple next step: ${esc(stepFor(o))}`;
+    });
+    const fours = (REPORT.stones.a.filter(v => v === 4).length + REPORT.stones.b.filter(v => v === 4).length) / 2;
+    out.push(`<b>Together:</b> you ${howOften(Math.round(fours))} answered fully in each other’s style. Pale stones aren’t mistakes; they simply show where a small stretch would mean the most.`);
+    return out;
+  }
+  // Sentences with he/she change when the genders are switched, so they are redrawn in place.
+  function refreshPool() {
+    const put = (sel, items) => document.querySelectorAll(sel).forEach(el => (el.innerHTML = items.map(h => `<li><span>${h}</span></li>`).join("")));
+    put('[data-pool="reading"]', KEYS.map(teamReading));
+    put('[data-pool="balance"]', AREAS.map((ar, i) => teamBalance(ar, i)));
+    put('[data-pool="footsteps"]', teamFootsteps());
+  }
+
   /* ---------------------------------------------------------------- data self-check */
   function checkData() {
     const out = [], totals = {};
@@ -335,12 +578,14 @@
       if (st.length !== 12 || st.some(v => ![1, 2, 3, 4].includes(v)))
         out.push(`${p.name}: stepping stones must be 12 answers, each 1, 2, 3 or 4.`);
       const sums = areaSums(k); totals[k] = sums.reduce((x, y) => x + y, 0);
-      AREAS.forEach((ar, i) => {
-        const c = rEven((sums[i] - 4) / 12 * 100);
-        if (Math.abs(c - ar[k]) > 1) out.push(`${p.name}, ${ar.name}: shown as ${ar[k]}%, but stones give ${c}%.`);
-      });
-      const ov = rEven((totals[k] - 12) / 36 * 100);
-      if (Math.abs(ov - REPORT.overall[k]) > 1) out.push(`${p.name}: overall shown as ${REPORT.overall[k]}%, but stones give ${ov}%.`);
+      if (!POOL) {                                 // pool scores are worked out from the stones, so they always agree
+        AREAS.forEach((ar, i) => {
+          const c = rEven((sums[i] - 4) / 12 * 100);
+          if (Math.abs(c - ar[k]) > 1) out.push(`${p.name}, ${ar.name}: shown as ${ar[k]}%, but stones give ${c}%.`);
+        });
+        const ov = rEven((totals[k] - 12) / 36 * 100);
+        if (Math.abs(ov - REPORT.overall[k]) > 1) out.push(`${p.name}: overall shown as ${REPORT.overall[k]}%, but stones give ${ov}%.`);
+      }
       if (count4(k) !== REPORT.inStyle[k])
         out.push(`${p.name}: “answers in the other’s style” shown as ${REPORT.inStyle[k]} of 12, but ${count4(k)} stones are level 4.`);
       const sum = STYLES.reduce((x, s) => x + REPORT.styles[k][s], 0);
@@ -349,6 +594,7 @@
       if (REPORT.styles[k][p.style] < maxVal - 0.01)
         out.push(`${p.name}: style is “${p.style}” but a bigger petal exists.`);
     }
+    if (POOL) return out;
     AREAS.forEach((ar, i) => {
       const t = rEven((areaSums("a")[i] + areaSums("b")[i] - 8) / 24 * 100);
       if (Math.abs(t - ar.together) > 1) out.push(`${ar.name}: together shown as ${ar.together}%, but stones give ${t}%.`);
@@ -361,6 +607,20 @@
 
   /* ---------------------------------------------------------------- 2D helpers */
   const title = (parts, tag, id) => `<${tag} id="${id}">${esc(parts[0])}<em>${esc(parts[1])}</em></${tag}>`;
+  // A centred lede shown as two lines, broken after its semicolon (the text itself is unchanged).
+  function twoLines(text) {
+    const at = text.indexOf("; ");
+    if (at < 0) return `<p class="lede">${esc(text)}</p>`;
+    return `<p class="lede two-line"><span>${esc(text.slice(0, at + 1))}</span> <span>${esc(text.slice(at + 2))}</span></p>`;
+  }
+  // Teammates page 6: the overall Together score in a small box filled to that score, with two slowly moving
+  // waves in the page 1 heart's liquid colours. The waves stop when reduced motion is on (CSS).
+  function waveChip(v) {
+    const fill = Math.max(0, Math.min(100, v));
+    const wave = cls => `<svg class="wave ${cls}" viewBox="0 0 1600 40" preserveAspectRatio="none"><path d="M0 20Q100 4 200 20T400 20T600 20T800 20T1000 20T1200 20T1400 20T1600 20V40H0Z"/></svg>`;
+    return `<span class="wave-chip" style="--fill:${fill}%;--w-top:${TH.heartTop};--w-light:${TH.heartLight}">`
+      + `<span class="wave-clip" aria-hidden="true"><span class="wave-water">${wave("back")}${wave("front")}</span></span>${pc(v)}</span>`;
+  }
   function stage(kind, label, fallback, cls, ar, arMobile) {
     return `<div class="stage ${cls || ""}" data-stage="${kind}" style="--ar:${ar};--ar-m:${arMobile || ar}" role="img" tabindex="0"
       aria-label="${esc(label)} Use the left and right arrow keys, or drag sideways, to turn it.">
@@ -369,6 +629,81 @@
   }
   function bar(k, labelText, v) {
     return `<div class="bar ${k}"><span>${esc(labelText)}</span><i><b style="width:${Math.max(0, Math.min(100, v))}%"></b></i><em>${pc(v)}</em></div>`;
+  }
+  // Teammates page 3 diagram: the two circles overlap by the together score, and a sign with that score and the
+  // word "together" hangs from the white box on two chains. The whole diagram floats a little and the sign swings
+  // gently (CSS animation). H is the drawing's height: a taller picture card gets longer chains (see fitHangs).
+  const HANG_H0 = 204, HANG_HMAX = 380;
+  function hangVenn(ar, i, H) {
+    H = Math.round(Math.max(HANG_H0, Math.min(HANG_HMAX, H || HANG_H0)));
+    const r = 34, cx = 80, cy = 56, f = Math.max(0, Math.min(1, ar.together / 100)), n1 = v => v.toFixed(1);
+    const lens = d => (d >= 2 * r ? 0 : (2 * r * r * Math.acos(d / (2 * r)) - (d / 2) * Math.sqrt(4 * r * r - d * d)) / (Math.PI * r * r));
+    let lo = 0, hi = 2 * r;
+    for (let n = 0; n < 50; n++) { const m = (lo + hi) / 2; if (lens(m) > f) lo = m; else hi = m; }
+    const d = (lo + hi) / 2, ax = cx - d / 2, bx = cx + d / 2, id = "hang" + i;
+    const pillW = 112, pillH = 50, pillY = H - pillH - 6, spread = 24;
+    const panelH = cy + r + 12, edge = 2 + panelH;   // the white box behind the circles, and its bottom edge
+    // Each chain hooks onto a small ring on the white box's bottom edge, 24 units either side of the middle,
+    // and hangs down into the sign. A chain always starts and ends with a ring link.
+    const chains = [cx - spread, cx + spread].map(x => {
+      const y0 = edge + 2.5, y1 = pillY + 3;
+      let n = Math.max(5, Math.round((y1 - y0) / 8)); if (n % 2 === 0) n++;
+      const step = (y1 - y0) / n;
+      let links = "";
+      for (let j = 0; j < n; j++) {
+        const y = y0 + step * (j + 0.5);
+        links += j % 2
+          ? `<rect x="${n1(x - 1.2)}" y="${n1(y - step * 0.6)}" width="2.4" height="${n1(step * 1.2)}" rx="1.2"/>`
+          : `<ellipse cx="${n1(x)}" cy="${n1(y)}" rx="3.3" ry="${n1(step * 0.62)}"/>`;
+      }
+      return { x, links, L: y1 - (y0 - step * 0.12) };   // from the top of the first link (where it swings) to the sign
+    });
+    const L = (chains[0].L + chains[1].L) / 2;
+    // The sign sways about 12 units either way (at most 10°), and each swing takes about 2.4 s. Longer chains
+    // swing through a smaller angle and a little more slowly, like a real pendulum.
+    const swing = Math.min(10, Math.asin(Math.min(1, 12 / L)) * 180 / Math.PI), period = 2.4 * Math.pow(L / 40, 0.25);
+    const heart = 2 * r - d > 16 ? `<path transform="translate(${n1(cx)} ${cy}) scale(.55) translate(-12 -12)" d="M12 20.5s-7.5-4.6-9.3-9.3C1.4 7.6 3.6 4.5 6.9 4.5c2.1 0 3.6 1.1 5.1 3 1.5-1.9 3-3 5.1-3 3.3 0 5.5 3.1 4.2 6.7-1.8 4.7-9.3 9.3-9.3 9.3z" fill="#fff"/>` : "";
+    return `<figure class="hang" data-h="${H}" style="--hang:${TH.deep};--sw:${swing.toFixed(2)}deg;--sx:${n1(L * Math.sin(swing * Math.PI / 180))}px;--st:${period.toFixed(2)}s;--d:${n1(-i * 0.9)}s">
+      <svg viewBox="0 0 160 ${H}" role="img" aria-label="${esc(PPL.a.name)} and ${esc(PPL.b.name)}: ${pc(ar.together)} together">
+        <defs><clipPath id="${id}"><circle cx="${n1(ax)}" cy="${cy}" r="${r}"/></clipPath></defs>
+        <g class="hang-float">
+          <rect class="hang-panel" x="6" y="2" width="148" height="${panelH}" rx="18"/>
+          <text class="hang-ini" x="${n1(ax - r * 0.55)}" y="${cy - r - 5}">${esc(PPL.a.name[0])}</text>
+          <text class="hang-ini" x="${n1(bx + r * 0.55)}" y="${cy - r - 5}">${esc(PPL.b.name[0])}</text>
+          <circle cx="${n1(ax)}" cy="${cy}" r="${r}" fill="${TH.a}" fill-opacity=".42"/>
+          <circle cx="${n1(bx)}" cy="${cy}" r="${r}" fill="${TH.b}" fill-opacity=".42"/>
+          <circle cx="${n1(bx)}" cy="${cy}" r="${r}" fill="${TH.deep}" clip-path="url(#${id})"/>${heart}
+          ${chains.map(c => `<circle class="hang-eye" cx="${n1(c.x)}" cy="${n1(edge + 0.5)}" r="3"/>`).join("")}
+          ${chains.map(c => `<g class="hang-chain">${c.links}</g>`).join("")}
+          <g class="hang-sign">
+            <rect class="hang-pill" x="${cx - pillW / 2}" y="${pillY}" width="${pillW}" height="${pillH}" rx="18"/>
+            <text class="hang-num" x="${cx}" y="${pillY + 24}">${pc(ar.together)}</text>
+            <text class="hang-cap" x="${cx}" y="${pillY + 40}">together</text>
+          </g>
+        </g>
+      </svg></figure>`;
+  }
+  // On wide screens the Teammates picture card is as tall as the text beside it (CSS), so each diagram is redrawn
+  // with chains long enough for the sign to hang near the card's bottom. Below 960px the picture sits above the
+  // text (CSS) and the diagram keeps its own size.
+  function fitHangs() {
+    if (!POOL) return;
+    const phone = () => window.matchMedia && matchMedia("(max-width:959px)").matches;
+    const fit = () => document.querySelectorAll("#p3 .area.hang").forEach(card => {
+      const i = +card.dataset.i, fig = card.querySelector("figure.hang");
+      if (!fig || !AREAS[i]) return;
+      const w = fig.clientWidth, h = fig.clientHeight;
+      const H = phone() || !w || !h ? HANG_H0 : Math.round(Math.max(HANG_H0, Math.min(HANG_HMAX, 160 * h / w)));
+      if (H !== +fig.dataset.h) fig.outerHTML = hangVenn(AREAS[i], i, H);
+    });
+    let raf = 0;
+    const soon = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; fit(); }); };
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(soon);
+      document.querySelectorAll("#p3 .area.hang .area-visual").forEach(el => ro.observe(el));
+    } else window.addEventListener("resize", soon);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(soon);
+    soon();
   }
   function venn(ar, i) {
     const r = 30, f = Math.max(0, Math.min(1, ar.together / 100));
@@ -391,9 +726,11 @@
   function render() {
     const A = PPL.a, B = PPL.b;
     const issues = checkData();
+    document.documentElement.classList.toggle("team", !!POOL);   // Teammates-only layout rules in the CSS
     const fallbackStones = k => AREAS.map((ar, i) => `${ar.short}: ${REPORT.stones[k].slice(i * 4, i * 4 + 4).map(v => T.levels[levelOf(v)]).join(", ")}`).join(". ");
 
-    const nav = [["p1", "Heart"], ["p2", "Flowers"], ["p3", "Overlap"], ["p4", "Mountains"], ["p5", "Balance"], ["p6", "Method"], ["p7", "Research"]];
+    const nav = [["p1", "Heart"], ["p2", "Flowers"], ["p3", "Overlap"], ["p4", "Mountains"], ["p5", "Balance"], ["p6", POOL ? "Scores" : "Method"], ["p7", "Research"]];
+    const heart = REPORT.overall.together, level = TEAM.levels[band5(heart)];
     document.getElementById("nav").innerHTML = nav.map(([id, l], i) => `<a href="#${id}" aria-label="${i + 1}/7 ${l}"><b>${i + 1}</b><span>${l}</span></a>`).join("");
 
     const switcher = document.getElementById("rel-switcher");
@@ -412,12 +749,11 @@
       return Math.abs(best - Math.round(best)) < 1e-6 ? String(Math.round(best)) : String(best).replace(".", "_");
     };
     const flowerFallbackHtml = k => {
-      const s = REPORT.styles[k];
       return `<div class="flower-stack-fb">`
         + `<img src="assets/flowers/components/foliage_backdrop.png" alt="">`
         + STYLES.map(st => {
           const sk = st.toLowerCase();
-          return `<img src="assets/flowers/components/quad_${sk}/quad_${sk}_${pctAssetSlug(s[st])}.png" alt="">`;
+          return `<img src="assets/flowers/components/quad_${sk}/quad_${sk}_${pctAssetSlug(petalPct(k, st))}.png" alt="">`;
         }).join("")
         + `<img src="assets/flowers/components/stamen_center.png" alt="">`
         + `</div>`;
@@ -431,43 +767,45 @@
       <p class="kicker">${esc(T.kicker)}</p>
       <p class="pill"><img class="emblem" src="${esc(REPORT.images.emblem)}" alt="">${esc(REPORT.type)}</p>
       <p class="names">${esc(A.name)} &amp; ${esc(B.name)}</p>
-      ${title(T.heroTitle, "h1", "p1-t")}
-      <p class="lede">${esc(T.heroLine)}</p>
+      ${title(POOL ? splitTitle(level) : T.heroTitle, "h1", "p1-t")}
+      <p class="lede">${esc(POOL ? TEAM.headline[band5(heart)] : T.heroLine)}</p>
       <div class="hero-row">
         <div class="couple-wrap">
           <img class="couple" data-char-slot="cover" src="${esc(REPORT.images.coverPair)}" width="580" height="460" alt="${esc(A.name)} and ${esc(B.name)} together">
         </div>
         ${stage("heart", `A 3D glass heart filled to ${pc(REPORT.overall.together)}, with the words ${T.heartWords}.`, `<b style="font-size:2rem;font-family:var(--serif)">${pc(REPORT.overall.together)}</b><br>${esc(T.heartWords)}`, "", "1/1")}
       </div>
-      <p class="note">${esc(overallTogetherLine())}</p>
-      <div class="note-people">${KEYS.map(k => `<p>${esc(overallPersonLine(k))}</p>`).join("")}</div>
-      <div class="chips">
-        <div class="chip c1">${svg(ICON.sun)}<small>${esc(T.highlights[0].label)}</small><b>${esc(T.highlights[0].value)}</b></div>
+      ${POOL ? "" : `<p class="note">${esc(overallTogetherLine())}</p>
+      <div class="note-people">${KEYS.map(k => `<p>${esc(overallPersonLine(k))}</p>`).join("")}</div>`}
+      <div class="chips">${POOL
+        ? teamChips().map(c => `<div class="chip ${c.c}">${svg(c.ic)}<small>${esc(c.label)}</small><b>${esc(c.value)}</b></div>`).join("")
+        : `<div class="chip c1">${svg(ICON.sun)}<small>${esc(T.highlights[0].label)}</small><b>${esc(T.highlights[0].value)}</b></div>
         <div class="chip c2">${svg(ICON.sprout)}<small>${esc(T.highlights[1].label)}</small><b>${esc(T.highlights[1].value)}</b></div>
-        <div class="chip c3">${svg(ICON.sparkle)}<small>${esc(T.highlights[2].label)}</small><b>${esc(T.highlights[2].value)}</b></div>
+        <div class="chip c3">${svg(ICON.sparkle)}<small>${esc(T.highlights[2].label)}</small><b>${esc(T.highlights[2].value)}</b></div>`}
       </div></section>`);
 
     /* Page 2 — Your Style Flowers */
     const flowerCard = k => {
-      const p = PPL[k], s = REPORT.styles[k];
-      const label = `${p.name}’s style flower: ` + STYLES.map(x => `${x} ${pc(s[x])}`).join(", ") + ".";
+      const p = PPL[k];
+      const label = `${p.name}’s style flower: ` + STYLES.map(x => `${x} ${pc(petalPct(k, x))}`).join(", ") + ".";
       return `<figure class="flower">${stage("flower-" + k, label, flowerFallbackHtml(k) + `<p>${esc(label)}</p>`, "", "1/1")}
         <figcaption class="person"><img data-char-slot="bust-${k}" src="${esc(p.bust)}" alt="${esc(p.name)} portrait" width="120" height="120">
-          <div><h3>${esc(p.name)} · ${esc(p.style)}</h3><p>${esc(p.line)}.</p></div>
+          <div><h3>${esc(p.name)} · ${esc(p.style)}</h3><p>${esc(POOL ? TEAM.flowers[p.style].strength : p.line + ".")}</p></div>
         </figcaption></figure>`;
     };
     html.push(`<section class="page" id="p2" aria-labelledby="p2-t"><span class="pg">2/7</span>
-      ${title(T.flowersTitle, "h2", "p2-t")}<p class="lede">${esc(T.flowersLede)}</p>
+      ${title(T.flowersTitle, "h2", "p2-t")}${POOL ? "" : `<p class="lede">${esc(T.flowersLede)}</p>`}
       <div class="flowers">${flowerCard("a")}${flowerCard("b")}</div>
-      <div class="box"><h3>${esc(T.readingTitle)}</h3><ul class="dots">${T.readingHtml.map(r => `<li><span>${r}</span></li>`).join("")}</ul></div>
+      <div class="box"><h3>${esc(T.readingTitle)}</h3><ul class="dots"${POOL ? ' data-pool="reading"' : ""}>${(POOL ? KEYS.map(teamReading) : T.readingHtml).map(r => `<li><span>${r}</span></li>`).join("")}</ul></div>
     </section>`);
 
-    /* Page 3 — Overlap in Every Area (character scenes, a line under each bar, together + gap lines next to the Venn, tip inside the lowest area's box) */
+    /* Page 3 — Overlap in Every Area. Teammates: teamOverlapCard (hanging diagram layout).
+       Other reports: character scene, a line under each bar, together + gap lines next to the Venn, tip inside the lowest area's box. */
     const low = lowestArea();
     const tipHtml = low.tip ? `<p class="area-tip"><b>Tip for ${esc(PPL[low.k].name)}:</b> ${esc(low.tip)}</p>` : "";
     html.push(`<section class="page" id="p3" aria-labelledby="p3-t"><span class="pg">3/7</span>
-      ${title(T.overlapTitle, "h2", "p3-t")}<p class="lede">${esc(T.overlapLede)}</p>
-      ${AREAS.map((ar, i) => `<article class="area">
+      ${title(T.overlapTitle, "h2", "p3-t")}${POOL ? "" : `<p class="lede">${esc(T.overlapLede)}</p>`}
+      ${AREAS.map((ar, i) => POOL ? teamOverlapCard(ar, i) : `<article class="area">
         <div class="scene-frame">
           <img class="scene" data-char-slot="scene-${i}" src="${esc(ar.scene)}" alt="${esc(ar.sceneAlt)}" width="480" height="320">
         </div>
@@ -480,50 +818,77 @@
           </div>
           ${i === low.index ? tipHtml : ""}
         </div></article>`).join("")}
-      <div class="know"><b>${esc(T.didYouKnowTitle)}</b><span>${esc(T.didYouKnow)}</span></div>
+      <div class="know"><b>${esc(T.didYouKnowTitle)}</b><span>${esc(POOL ? TEAM.didYouKnow[band5(heart)] : T.didYouKnow)}</span></div>
     </section>`);
 
-    /* Page 4 — Three Mountains to Climb (flag ALWAYS at summit + circular face pins) */
+    /* Page 4 — Three Mountains to Climb (flag ALWAYS at summit + circular face pins).
+       Teammates: every mountain has its own small stage with its name and text right below it, in its own panel
+       (.trio-item), and the "try this week" ideas are plain dot points under "Where to start". */
     const mLabel = "Three mountains. " + AREAS.map(ar => `${ar.name}: summit flag at top, ${A.name} at ${pc(ar.a)}, ${B.name} at ${pc(ar.b)}.`).join(" ");
+    const oneMountain = ar => `${ar.name} mountain: summit flag at the top, ${A.name} at ${pc(ar.a)}, ${B.name} at ${pc(ar.b)}.`;
     html.push(`<section class="page" id="p4" aria-labelledby="p4-t"><span class="pg">4/7</span>
-      ${title(T.mountainsTitle, "h2", "p4-t")}<p class="lede">${esc(T.mountainsLede)}</p>
-      ${stage("mountains", mLabel, AREAS.map(ar => `<p><b>${esc(ar.name)}</b>: ${esc(A.name)} ${pc(ar.a)}, ${esc(B.name)} ${pc(ar.b)}</p>`).join(""), "wide", "16/7.2", "3/5.6")}
+      ${title(T.mountainsTitle, "h2", "p4-t")}<p class="lede">${esc(POOL ? TEAM.mountainsLede : T.mountainsLede)}</p>
+      ${POOL ? `<div class="trio">${AREAS.map((ar, i) => `<div class="trio-item">
+          ${stage("mountain-" + i, oneMountain(ar), `<p><b>${esc(ar.name)}</b></p>`, "solo", "1/1.08")}
+          <div class="trio-text"><h3>${esc(ar.name)}</h3>${teamClimb(ar, i)}</div>
+        </div>`).join("")}</div>
+      <div class="box"><h3>Where to start</h3><ul class="dots"><li><span>${whereToStart()}</span></li>${AREAS.map((ar, i) => `<li class="dot"><span>${esc(teamTryThisWeek(ar, i))}</span></li>`).join("")}</ul></div>`
+      : `${stage("mountains", mLabel, AREAS.map(ar => `<p><b>${esc(ar.name)}</b>: ${esc(A.name)} ${pc(ar.a)}, ${esc(B.name)} ${pc(ar.b)}</p>`).join(""), "wide", "16/7.2", "3/5.6")}
       <div class="cards3">${AREAS.map(ar => `<div class="card"><img src="${esc(ar.icon)}" alt="" width="64" height="64"><b>${esc(ar.name)}</b><span>${esc(ar.status)}</span></div>`).join("")}</div>
-      <div class="box"><h3>${esc(T.mountainsBox)}</h3><ul class="dots">${T.mountainsBulletsHtml.map(b => `<li><span>${b}</span></li>`).join("")}</ul></div>
+      <div class="box"><h3>${esc(T.mountainsBox)}</h3><ul class="dots">${T.mountainsBulletsHtml.map(b => `<li><span>${b}</span></li>`).join("")}</ul></div>`}
     </section>`);
 
-    /* Page 5 — Balance and Footsteps (both participants seated on 3D seesaws + 3D stepping stones) */
+    /* Page 5 — Balance and Footsteps (both participants seated on 3D seesaws + 3D stepping stones).
+       Teammates: the same layout as the mountains, with the area name right below each seesaw, and the
+       footsteps text split into two lines at its semicolon. */
+    const tiltOf = ar => (POOL ? balanceLabel(ar) : ar.tilt);
     const sLabel = "Three seesaws. " + AREAS.map(ar => `${ar.name}: ${ar.tilt} (${A.name} ${pc(ar.a)}, ${B.name} ${pc(ar.b)}).`).join(" ");
+    const oneSeesaw = ar => `${ar.name} seesaw: ${tiltOf(ar)}. ${A.name} sits on the left and ${B.name} on the right.`;
     html.push(`<section class="page" id="p5" aria-labelledby="p5-t"><span class="pg">5/7</span>
-      ${title(T.balanceTitle, "h2", "p5-t")}<p class="lede">${esc(T.balanceLede)}</p>
-      ${stage("seesaws", sLabel, AREAS.map(ar => `<p><b>${esc(ar.name)}</b>: ${esc(ar.tilt)} (${esc(A.name)} ${pc(ar.a)}, ${esc(B.name)} ${pc(ar.b)})</p>`).join(""), "wide", "16/6.6", "3/4.8")}
-      <div class="cards3">${AREAS.map(ar => `<div class="card"><img src="${esc(ar.icon)}" alt="" width="64" height="64"><b>${esc(ar.name)}</b><span class="tilt">${esc(ar.tilt)}</span></div>`).join("")}</div>
-      <h3 class="sub">${esc(T.stonesTitle)}</h3><p class="lede">${esc(T.stonesLede)}</p>
+      ${title(T.balanceTitle, "h2", "p5-t")}<p class="lede">${esc(POOL ? TEAM.balanceLede : T.balanceLede)}</p>
+      ${POOL ? `<div class="trio">${AREAS.map((ar, i) => `<div class="trio-item">
+          ${stage("seesaw-" + i, oneSeesaw(ar), `<p><b>${esc(ar.name)}</b>: ${esc(tiltOf(ar))}</p>`, "solo", "21/20")}
+          <div class="trio-text"><h3>${esc(ar.name)}</h3></div>
+        </div>`).join("")}</div>
+      <div class="box"><h3>What your balance means</h3><ul class="dots" data-pool="balance">${AREAS.map((ar, i) => `<li><span>${teamBalance(ar, i)}</span></li>`).join("")}</ul></div>`
+      : `${stage("seesaws", sLabel, AREAS.map(ar => `<p><b>${esc(ar.name)}</b>: ${esc(ar.tilt)} (${esc(A.name)} ${pc(ar.a)}, ${esc(B.name)} ${pc(ar.b)})</p>`).join(""), "wide", "16/6.6", "3/4.8")}
+      <div class="cards3">${AREAS.map(ar => `<div class="card"><img src="${esc(ar.icon)}" alt="" width="64" height="64"><b>${esc(ar.name)}</b><span class="tilt">${esc(ar.tilt)}</span></div>`).join("")}</div>`}
+      <h3 class="sub">${esc(POOL ? "Footsteps" : T.stonesTitle)}</h3>${POOL ? twoLines(TEAM.footstepsLede) : `<p class="lede">${esc(T.stonesLede)}</p>`}
       <ul class="legend">${[4, 3, 2, 1].map(v => `<li><i style="background:${STONE_LOOK[v].color}"></i>${esc(T.levels[v])}</li>`).join("")}</ul>
       ${stage("stones", `Stepping stones. ${A.name}: ${fallbackStones("a")}. ${B.name}: ${fallbackStones("b")}.`, KEYS.map(k => `<p><b>${esc(PPL[k].name)}</b>: ${esc(fallbackStones(k))}</p>`).join(""), "wide", "16/6.6", "3/3.9")}
-      <div class="box"><h3>${esc(T.footstepsTitle)}</h3><ul class="dots">${T.footstepsBulletsHtml.map(b => `<li><span>${b}</span></li>`).join("")}</ul></div>
+      <div class="box"><h3>${esc(T.footstepsTitle)}</h3><ul class="dots"${POOL ? ' data-pool="footsteps"' : ""}>${(POOL ? teamFootsteps() : T.footstepsBulletsHtml).map(b => `<li><span>${b}</span></li>`).join("")}</ul></div>
     </section>`);
 
     /* Page 6 — How We Worked This Out (scoring table + colour key + disclaimer).
-       A row with fewer cells than the header (the "Together" row) stretches its last cell across the remaining columns. */
-    const cols = T.tableHeaders.length;
+       Teammates: Area | person A | person B | Together, with the overall scores in the last row; the overall
+       Together score there sits in a small box with slowly moving waves filled to that score (like the page 1 heart).
+       A row with fewer cells than the header stretches its last cell across the remaining columns.
+       A cell given as { html } is inserted as it is; every other cell is text. */
+    const headers = POOL ? [T.tableHeaders[0] || "Area", A.name, B.name, "Together"] : T.tableHeaders;
+    const cols = headers.length;
     const rowCells = row => row.map((c, i) => {
       const span = i === row.length - 1 ? cols - i : 1;
-      return `<td${span > 1 ? ` colspan="${span}"` : ""}>${esc(noZero(c))}</td>`;
+      const content = c !== null && typeof c === "object" ? c.html : esc(noZero(c));
+      return `<td${span > 1 ? ` colspan="${span}"` : ""}>${content}</td>`;
     }).join("");
+    const tableRows = POOL
+      ? [...AREAS.map(ar => [ar.name, pc(ar.a), pc(ar.b), pc(ar.together)]), ["Overall", pc(REPORT.overall.a), pc(REPORT.overall.b), { html: waveChip(heart) }]]
+      : T.tableRows;
     html.push(`<section class="page" id="p6" aria-labelledby="p6-t"><span class="pg">6/7</span>
-      ${title(T.methodTitle, "h2", "p6-t")}<p class="lede">${esc(T.methodLede)}</p>
+      ${title(POOL ? ["Your ", "Scores"] : T.methodTitle, "h2", "p6-t")}${POOL ? "" : `<p class="lede">${esc(T.methodLede)}</p>`}
       <div class="table-wrap">
         <table class="score-table">
-          <thead><tr>${T.tableHeaders.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
+          <thead><tr>${headers.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
           <tbody>
-            ${T.tableRows.map(row => `<tr class="${row[0] === "Overall" || row[0] === "Together" ? "overall-row" : ""}">${rowCells(row)}</tr>`).join("")}
+            ${tableRows.map(row => `<tr class="${row[0] === "Overall" || row[0] === "Together" ? "overall-row" : ""}">${rowCells(row)}</tr>`).join("")}
           </tbody>
         </table>
       </div>
+      ${POOL ? `<p class="lede score-note">${TEAM.scoreNote}</p>` : ""}
       <div class="box keys"><b>${esc(T.keyTitle)}</b>
         <ul class="legend">${["Assertive", "Emotional", "Thoughtful", "Logical"].map(x => `<li><span class="ic" style="background:${STYLE_LOOK[x].color}">${svg(STYLE_LOOK[x].icon)}</span>${x}</li>`).join("")}</ul>
-        <span></span><ul class="legend">${[4, 3, 2, 1].map(v => `<li><i style="background:${STONE_LOOK[v].color}"></i>${esc(T.levels[v])}</li>`).join("")}</ul>
+        ${POOL ? "" /* Teammates: the stone colours are explained on page 5 only */
+          : `<span></span><ul class="legend">${[4, 3, 2, 1].map(v => `<li><i style="background:${STONE_LOOK[v].color}"></i>${esc(T.levels[v])}</li>`).join("")}</ul>`}
         ${T.sameStyleNote ? `<p class="same-note">${esc(T.sameStyleNote)}</p>` : ""}
       </div>
       <div class="remember">
@@ -880,7 +1245,12 @@
       const c = document.createElement("canvas"); c.width = 600; c.height = 420; const g = c.getContext("2d");
       g.textAlign = "center"; g.fillStyle = "#fff";
       g.shadowColor = `rgba(${TH.shadowRgb},0.72)`; g.shadowBlur = 18; g.shadowOffsetY = 3;
-      g.font = '400 190px "DM Serif Display", Georgia, serif'; g.fillText(pc(pct), 300, 205);
+      // Longer numbers (e.g. "70.00%") get a smaller font so they still fit inside the heart.
+      const num = pc(pct); let size = 190;
+      g.font = `400 ${size}px "DM Serif Display", Georgia, serif`;
+      const wide = g.measureText(num).width;
+      if (wide > 430) { size = Math.floor(size * 430 / wide); g.font = `400 ${size}px "DM Serif Display", Georgia, serif`; }
+      g.fillText(num, 300, 205);
       g.font = '800 42px "Nunito Sans", system-ui, sans-serif';
       if ("letterSpacing" in g) g.letterSpacing = "5px";
       g.fillText(T.heartWords, 300, 272);
@@ -1121,7 +1491,7 @@
       STYLES.forEach((st, si) => {
         const look = STYLE_LOOK[st], a = look.angle * Math.PI / 180, rank = order.indexOf(st);
         const shape = petalShape(0.4 + si * 1.4 + seed0 * 0.02);
-        const fill = petalTexture(shape, hexInt(look.color), hexInt(look.throat), clamp(vals[st] / 100, 0, 1), 3 + si * 7 + seed0);
+        const fill = petalTexture(shape, hexInt(look.color), hexInt(look.throat), clamp(petalPct(k, st) / 100, 0, 1), 3 + si * 7 + seed0);
         const arm = new THREE.Group(); arm.rotation.z = a - Math.PI / 2; flower.add(arm);
         const tilt = new THREE.Group(); tilt.position.y = r0; tilt.rotation.x = 0.20; arm.add(tilt);
         const petal = new THREE.Mesh(washGeometry(shape, fill, 0.26), new THREE.MeshBasicMaterial({ map: fill.t, transparent: true, opacity: 0.99, side: THREE.DoubleSide, depthWrite: false }));
@@ -1129,7 +1499,7 @@
         const tipAt = new THREE.Object3D(); tipAt.position.set(0, L * 0.78, 0.06 + rank * 0.025); tilt.add(tipAt);
         const labAt = new THREE.Object3D(); labAt.position.set(Math.cos(a) * 2.24, Math.sin(a) * 2.24, 0.2); flower.add(labAt);
         link(s, labAt, tipAt, look.ink, look.angle === 45 || look.angle === 225 ? 1 : -1, true);
-        pin(s, labAt, `<div class="lab"><span class="lab-ic" style="color:${look.color};font-size:1em">${svg(look.icon)}</span><b>${st}</b><span style="color:${look.ink}">${pc(vals[st])}</span></div>`, "mid");
+        pin(s, labAt, `<div class="lab"><span class="lab-ic" style="color:${look.color};font-size:1em">${svg(look.icon)}</span><b>${st}</b><span style="color:${look.ink}">${pc(petalPct(k, st))}</span></div>`, "mid");
       });
 
       // Realistic golden hibiscus stamen cluster & central stigma tip
@@ -1212,11 +1582,13 @@
       }
       ps.forEach(p => { p.x = clamp(p.x, p.w / 2 + 2, s.cw - p.w / 2 - 2); p.dx = p.x - p.bx; p.dy = p.y - p.by; });
     }
-    function buildMountains(s) {
+    // All three mountains in one stage, or (only = area index) just that area's mountain in its own stage.
+    function buildMountains(s, only) {
       s.maxYaw = 0.75;
-      const groups = [], flags = [];
+      const solo = only !== undefined, groups = [], flags = [], phase = [];
       AREAS.forEach((ar, i) => {
-        const seed = 1.3 + i * 2.1, g = new THREE.Group(); s.scene.add(g); groups.push(g);
+        if (solo && i !== only) return;
+        const gi = groups.length, seed = 1.3 + i * 2.1, g = new THREE.Group(); s.scene.add(g); groups.push(g); phase.push(i);
         g.add(new THREE.Mesh(mountainGeometry(seed), std(0xffffff, { vertexColors: true, flatShading: true, roughness: 0.95 })));
         const ground = new THREE.Mesh(new THREE.CircleGeometry(1.75, 40), std(hexInt(TH.soft), { roughness: 1 })); ground.rotation.x = -Math.PI / 2; ground.position.y = -H_M / 2 - 0.005; g.add(ground);
         const sh = blobShadow(3.6, 3.6, 0.18); sh.position.y = -H_M / 2; g.add(sh);
@@ -1239,25 +1611,27 @@
         // Participant circular face portraits climbing along the trail at exact %
         KEYS.forEach(k => {
           const pp = pathPoint(ar[k] / 100, seed, 0.12), at = new THREE.Object3D(); at.position.copy(pp.p); g.add(at);
-          pin(s, at, `<img data-char-slot="face-${k}" src="${esc(PPL[k].face)}" alt="${esc(PPL[k].name)}"><span class="t ${k}">${esc(PPL[k].name)} ${pc(ar[k])}</span>`, "face-pin", { normal: pp.n, dy: 8, group: i, key: k });
+          pin(s, at, `<img data-char-slot="face-${k}" src="${esc(PPL[k].face)}" alt="${esc(PPL[k].name)}"><span class="t ${k}">${esc(PPL[k].name)}${POOL ? "" : " " + pc(ar[k])}</span>`, "face-pin", { normal: pp.n, dy: 8, group: gi, key: k });
         });
       });
       const spread = () => { declutter(s, groups, flags); s.dirty = true; kick(); };
       s.layout = aspect => {
-        if (aspect < 0.95) { groups.forEach((g, i) => g.position.set(0, (1 - i) * 3.45, 0)); fitCamera(s, 2.05, 6.0, new V3(0, 0.75, 0), 0.1); }
+        if (solo) { groups[0].position.set(0, 0, 0); fitCamera(s, 1.9, 2.2, new V3(0, 0.1, 0), 0.1); }   // flag to base clouds in view
+        else if (aspect < 0.95) { groups.forEach((g, i) => g.position.set(0, (1 - i) * 3.45, 0)); fitCamera(s, 2.05, 6.0, new V3(0, 0.75, 0), 0.1); }
         else { groups.forEach((g, i) => g.position.set((i - 1) * 3.75, 0, 0)); fitCamera(s, 6.0, 2.05, new V3(0, 0.25, 0), 0.1); }
         declutter(s, groups, flags);
       };
       s.ov.querySelectorAll("img").forEach(im => { if (!im.complete) im.addEventListener("load", spread); });
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(spread);
       s.update = t => {
-        groups.forEach((g, i) => { g.rotation.y = s.yaw + (t ? Math.sin(t * 0.45 + i) * 0.08 : 0); g.rotation.x = s.pitch * 0.5; });
-        flags.forEach((f, i) => { f.userData.cloth.rotation.y = t ? Math.sin(t * 3 + i) * 0.35 : 0; });
+        groups.forEach((g, i) => { g.rotation.y = s.yaw + (t ? Math.sin(t * 0.45 + phase[i]) * 0.08 : 0); g.rotation.x = s.pitch * 0.5; });
+        flags.forEach((f, i) => { f.userData.cloth.rotation.y = t ? Math.sin(t * 3 + phase[i]) * 0.35 : 0; });
       };
     }
 
     /* ---------- 5a. Three 3D Seesaws (both participants actually sitting on the seesaw ends) ---------- */
-    function buildSeesaws(s) {
+    // All three seesaws in one stage, or (only = area index) just that area's seesaw in its own stage.
+    function buildSeesaws(s, only) {
       s.maxYaw = 0.7;
       /* Interactive: grab either side (the rider, or that half of the plank) and lift or push it.
          Only the dragged person's % changes and the other person's stays fixed, so the plank angle always
@@ -1265,10 +1639,14 @@
          the real results come back. The riders feel gravity, so a quick flick makes them hop off the seat.
          This is only a temporary interaction: nothing in REPORT changes. */
       const TILT = 0.42, ARM = 1.38, HALF = 1.675, GROUND = 0.55;   // angle per 100 points, seat, plank end, ground contact
+      // Teammates pool: the seesaw dips towards the person reaching more (no numbers at rest; scores run 25%–100%).
+      // Other reports: whoever reaches more sits higher (scores run 0%–100%).
+      const SGN = POOL ? 1 : -1, MINV = POOL ? 25 : 0;
       const G = 16, VMAX = 2.4, SUB = 1 / 240;                       // rider gravity, top launch speed, physics step
-      const groups = [], rigs = [];
+      const solo = only !== undefined, groups = [], rigs = [], phase = [];
       AREAS.forEach((ar, i) => {
-        const g = new THREE.Group(); s.scene.add(g); groups.push(g);
+        if (solo && i !== only) return;
+        const g = new THREE.Group(); s.scene.add(g); groups.push(g); phase.push(i);
         const ground = new THREE.Mesh(new THREE.CircleGeometry(1.9, 40), std(hexInt(TH.soft), { roughness: 1 })); ground.rotation.x = -Math.PI / 2; g.add(ground);
         const sh = blobShadow(3.4, 1.6, 0.22); sh.position.y = 0.005; g.add(sh);
         const r = rng(31 + i);
@@ -1289,26 +1667,34 @@
           const hd = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.28, 8), std(0x8a5a3a)); hd.position.set(sd * 1.02, 0.19, 0); pv.add(hd);
           const barM = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.34, 8), std(0x8a5a3a)); barM.rotation.x = Math.PI / 2; barM.position.set(sd * 1.02, 0.33, 0); pv.add(barM);
         });
-        const rig = { g, pv, ar, rest: -clamp((ar.a - ar.b) / 100, -1, 1) * TILT, ang: 0, vel: 0, mode: "intro", drag: null, key: null, riders: {} };
+        const rig = { g, pv, ar, rest: SGN * clamp((ar.a - ar.b) / 100, -1, 1) * TILT, ang: 0, vel: 0, mode: "intro", drag: null, key: null, riders: {} };
         rig.ang = rig.rest;
         KEYS.forEach(k => {
           const sx = k === "a" ? -ARM : ARM, at = new THREE.Object3D(); at.position.set(sx, 0.07, 0.04); pv.add(at);
-          pin(s, at, `<span class="t ${k}">${esc(PPL[k].name)} ${pc(ar[k])}</span><img class="sitter" data-char-slot="seated-${k}" src="${esc(PPL[k].seated)}" alt="${esc(PPL[k].name)} sitting on seesaw">`, "rider-pin");
+          const text = POOL ? PPL[k].name : `${PPL[k].name} ${pc(ar[k])}`;
+          pin(s, at, `<span class="t ${k}">${esc(text)}</span><img class="sitter" data-char-slot="seated-${k}" src="${esc(PPL[k].seated)}" alt="${esc(PPL[k].name)} sitting on seesaw">`, "rider-pin");
           const el = s.pins[s.pins.length - 1].el;
-          rig.riders[k] = { k, at, sx, el, box: el.firstElementChild, label: el.querySelector(".t"), shown: ar[k], y: 0, v: 0, sy: 0 };
+          rig.riders[k] = { k, at, sx, el, box: el.firstElementChild, label: el.querySelector(".t"), shown: text, y: 0, v: 0, sy: 0 };
         });
         rigs.push(rig);
       });
       s.layout = aspect => {
-        if (aspect < 0.95) { groups.forEach((g, i) => g.position.set(0, (1 - i) * 2.95 - 0.55, 0)); fitCamera(s, 2.2, 4.65, new V3(0, 0.35, 0), 0.2); }
+        if (solo) { groups[0].position.set(0, 0, 0); fitCamera(s, 2.1, 1.9, new V3(0, 1.2, 0), 0.2); }    // room above for a lifted rider's label
+        else if (aspect < 0.95) { groups.forEach((g, i) => g.position.set(0, (1 - i) * 2.95 - 0.55, 0)); fitCamera(s, 2.2, 4.65, new V3(0, 0.35, 0), 0.2); }
         else { groups.forEach((g, i) => g.position.set((i - 1) * 4.2, 0, 0)); fitCamera(s, 6.15, 1.72, new V3(0, 1.02, 0), 0.2); }
       };
       // The angle where person k has value v (the other person keeps their real value), and the reverse.
-      const angleFor = (rig, k, v) => -clamp(((k === "a" ? v : rig.ar.a) - (k === "b" ? v : rig.ar.b)) / 100, -1, 1) * TILT;
-      const valueAt = (rig, k, ang) => clamp(Math.round(k === "b" ? rig.ar.a + ang / TILT * 100 : rig.ar.b - ang / TILT * 100), 0, 100);
-      const limitOf = v => (v >= 100 ? 100 : v <= 0 ? 0 : null);
-      const soft = x => 0.07 * (1 - Math.exp(-x / 0.07));          // gentle resistance past 0% or 100%
-      function show(R, v) { if (R.shown !== v) { R.shown = v; R.label.textContent = `${PPL[R.k].name} ${pc(v)}`; } }
+      const angleFor = (rig, k, v) => SGN * clamp(((k === "a" ? v : rig.ar.a) - (k === "b" ? v : rig.ar.b)) / 100, -1, 1) * TILT;
+      // Teammates shows the live value with two decimals; the other reports round it to a whole number.
+      const valueAt = (rig, k, ang) => { const v = k === "b" ? rig.ar.a - SGN * ang / TILT * 100 : rig.ar.b + SGN * ang / TILT * 100; return clamp(POOL ? v : Math.round(v), MINV, 100); };
+      const limitOf = v => (v >= 100 ? 100 : v <= MINV ? MINV : null);
+      const soft = x => 0.07 * (1 - Math.exp(-x / 0.07));          // gentle resistance past the lowest or highest score
+      // Teammates: the label above each rider shows the name only, never a %, even while it is moved.
+      // Other reports: the name and the live % (the real % at rest).
+      function show(R, v) {
+        const text = POOL ? PPL[R.k].name : `${PPL[R.k].name} ${pc(v)}`;
+        if (R.shown !== text) { R.shown = text; R.label.textContent = text; }
+      }
       function seat(rig, R) { R.sy = R.y = R.sx * Math.sin(rig.ang) + 0.07 * Math.cos(rig.ang); R.v = 0; }
       function settle(rig) {
         rig.ang = rig.rest; rig.vel = 0; rig.mode = "rest"; rig.key = null; rig.pv.rotation.z = rig.ang;
@@ -1367,7 +1753,7 @@
         if (rig.drag) return true;                       // already held by another finger
         const p = inPlane(rig, e.clientX, e.clientY);
         if (!p) return false;
-        const sg = hit.k === "b" ? 1 : -1, r = clamp(Math.abs(p.x), 0.7, HALF), a0 = angleFor(rig, hit.k, 0), a1 = angleFor(rig, hit.k, 100);
+        const sg = hit.k === "b" ? 1 : -1, r = clamp(Math.abs(p.x), 0.7, HALF), a0 = angleFor(rig, hit.k, MINV), a1 = angleFor(rig, hit.k, 100);
         if (rig.mode === "intro" || rig.mode === "rest") KEYS.forEach(k => seat(rig, rig.riders[k]));
         if (rig.key && rig.key !== hit.k) show(rig.riders[rig.key], rig.ar[rig.key]);
         rig.drag = { id: e.pointerId, k: hit.k, sg, r, y0: p.y, h0: sg * r * Math.sin(rig.ang), lo: Math.min(a0, a1), hi: Math.max(a0, a1),
@@ -1444,10 +1830,10 @@
 
       s.update = (t, intro, dt) => {                   // dt comes from the shared animation loop
         dt = dt || 0;
-        groups.forEach((g, i) => { g.rotation.y = s.yaw + (t ? Math.sin(t * 0.4 + i) * 0.06 : 0); g.rotation.x = s.pitch * 0.4; });
+        groups.forEach((g, i) => { g.rotation.y = s.yaw + (t ? Math.sin(t * 0.4 + phase[i]) * 0.06 : 0); g.rotation.x = s.pitch * 0.4; });
         rigs.forEach((rig, i) => {
           if (rig.mode === "intro" || rig.mode === "rest") {
-            const ang = rig.mode === "intro" && t && !RM ? rig.rest * (1 - Math.exp(-3 * t) * Math.cos(5.5 * t + i * 0.3)) : rig.rest;
+            const ang = rig.mode === "intro" && t && !RM ? rig.rest * (1 - Math.exp(-3 * t) * Math.cos(5.5 * t + phase[i] * 0.3)) : rig.rest;
             rig.vel = dt ? clamp((ang - rig.ang) / dt, -6, 6) : 0; rig.ang = ang;
           } else if (dt || RM) step(rig, dt);
           rig.pv.rotation.z = rig.ang;
@@ -1516,10 +1902,15 @@
       heart: buildHeart,
       "flower-a": s => buildFlower(s, "a"),
       "flower-b": s => buildFlower(s, "b"),
-      mountains: buildMountains,
-      seesaws: buildSeesaws,
+      mountains: s => buildMountains(s),
+      seesaws: s => buildSeesaws(s),
       stones: buildStones
     };
+    // Teammates pages 4 and 5: one small stage per area ("mountain-0", "seesaw-2", …)
+    AREAS.forEach((_, i) => {
+      builders["mountain-" + i] = s => buildMountains(s, i);
+      builders["seesaw-" + i] = s => buildSeesaws(s, i);
+    });
     document.querySelectorAll(".stage[data-stage]").forEach(el => {
       const b = builders[el.dataset.stage];
       if (b) makeStage(el, b);
@@ -1535,6 +1926,7 @@
   }
 
   render();
+  fitHangs();
   watchNav();
   start3D();
 })();

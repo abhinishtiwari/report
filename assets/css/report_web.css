@@ -472,8 +472,65 @@ ul.dots li::before{
 .bar em{font-style:normal;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
 .venn{margin:0;flex:none;width:136px;text-align:center}
 .venn svg{display:block;width:100%;height:auto}
+.venn figcaption{font-size:.78rem;font-weight:700;color:var(--muted)}
+.venn figcaption b{display:block;font-size:1.05rem;font-weight:800;color:var(--pink)}
+.area-line{color:var(--muted)}
+.tips{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
 .area-tip{background:var(--pink-soft);border-radius:14px;padding:10px 14px;color:var(--ink);font-size:.95rem}
 .area-tip b{color:var(--pink)}
+
+/* Page 3 (Teammates): heading and area line on top; picture + hanging overlap diagram on the left; bars and tips on the right */
+.area.hang{
+  grid-template-columns:minmax(0,5.8fr) minmax(0,6.2fr);
+  grid-template-areas:"head head" "line line" "visual body";
+  align-items:start;
+  row-gap:10px;
+}
+.area.hang .area-head{grid-area:head}
+.area.hang .area-line{grid-area:line;font-size:clamp(1rem,2.2vw,1.18rem);margin:-2px 0 2px}
+.area.hang .area-body{grid-area:body;gap:10px}
+.area-visual{
+  grid-area:visual;
+  align-self:stretch;   /* as tall as the bars, lines and tips beside it */
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(0,1fr);
+  align-items:center;
+  gap:2px;
+  border-radius:20px;
+  border:1px solid var(--line);
+  background:radial-gradient(85% 85% at 35% 35%,#ffffff 0%,var(--pink-soft) 100%);
+  padding:10px 8px 8px 4px;
+  overflow:hidden;
+}
+.area-visual .scene-frame{border:0;background:none;padding:0;min-height:0;align-self:end;overflow:visible}
+.area-visual .scene{max-height:none}
+figure.hang{margin:0;min-width:0}
+/* The diagram fills the full height of the picture card; fitHangs() lengthens its chains to match */
+.area-visual figure.hang{contain:size;align-self:stretch}
+figure.hang svg{display:block;width:100%;height:100%;overflow:visible}
+.hang-panel{fill:#fff;fill-opacity:.62;stroke:var(--line);stroke-width:1}
+.hang-eye{fill:none;stroke:var(--hang);stroke-width:2.2}
+.hang-ini{font-size:13px;font-weight:800;text-anchor:middle;fill:var(--hang)}
+.hang-chain ellipse{fill:none;stroke:var(--hang);stroke-width:2}
+.hang-chain rect{fill:var(--hang)}
+.hang-pill{fill:#fff;stroke:var(--hang);stroke-width:3}
+.hang-num{font:800 17px var(--sans);text-anchor:middle;fill:var(--hang)}
+.hang-cap{font:800 11px var(--sans);text-anchor:middle;fill:var(--muted)}
+/* Motion: the diagram floats a little and the sign swings on its chains (off when reduced motion is on) */
+.hang-float{animation:hang-float 4.4s ease-in-out var(--d,0s) infinite}
+.hang-chain{transform-box:fill-box;transform-origin:50% 0;animation:hang-chain var(--st,3.2s) ease-in-out var(--d,0s) infinite alternate}
+.hang-sign{animation:hang-sign var(--st,3.2s) ease-in-out var(--d,0s) infinite alternate}
+@keyframes hang-float{50%{transform:translateY(-2.5px)}}
+@keyframes hang-chain{from{transform:rotate(var(--sw))}to{transform:rotate(calc(var(--sw) * -1))}}
+@keyframes hang-sign{from{transform:translateX(calc(var(--sx) * -1))}to{transform:translateX(var(--sx))}}
+.area.hang .bar{grid-template-columns:minmax(0,1fr) 68px}
+.area.hang .bar span.who{position:relative;justify-self:start;padding:3px 13px;margin:3px 0 2px 3px;color:var(--muted);font-weight:700}
+.area.hang .bar span.who svg{position:absolute;left:-3px;top:-3px;width:calc(100% + 6px);height:calc(100% + 6px);overflow:visible;pointer-events:none}
+.area.hang .bar span.who path{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.area.hang .bar.a span.who path{stroke:var(--a)}
+.area.hang .bar.b span.who path{stroke:var(--b)}
+.area.hang .tips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:2px}
+.area.hang .area-tip{font-size:.88rem}
 .know{
   display:flex;
   gap:16px;
@@ -504,6 +561,65 @@ ul.dots li::before{
 .cards3 .card b{font-family:var(--serif);font-weight:400;font-size:clamp(1.02rem,2.4vw,1.28rem);line-height:1.12}
 .cards3 .card span{font-size:.84rem;color:var(--muted)}
 .cards3 .card span.tilt{background:var(--pink-soft);color:var(--pink);font-weight:800;padding:2px 11px;border-radius:999px}
+.cards3 .card span.status{font-size:.69rem;color:var(--pink);margin-top:2px}
+.cards3 .card p.climb{flex-basis:100%;font-size:.88rem;line-height:1.5;color:var(--ink);text-align:left}
+/* Teammates pages 4 and 5: every mountain or seesaw sits in its own panel, with its name (and on page 4 its
+   text) right below it, so the three areas read as three separate columns. On phones the panels stack. */
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.6vw,16px);align-items:stretch}
+.trio-item{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:4px clamp(12px,1.6vw,18px) 18px;
+  border:1px solid var(--line);
+  border-radius:var(--r-md);
+  background:radial-gradient(80% 70% at 50% 40%,rgba(255,255,255,.96),var(--stage-glow) 78%,rgba(255,255,255,.35));
+}
+.trio .stage{background:none}
+.trio .stage .ov{overflow:visible}   /* the stage has no edge of its own, so a wide label is never cut */
+.trio-text{display:flex;flex-direction:column;gap:8px}
+.trio-text h3{text-align:center;font-size:clamp(1.05rem,2.2vw,1.3rem);line-height:1.15;text-wrap:balance}
+.trio-text p{font-size:.9rem;line-height:1.55;color:var(--ink);text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+/* A one-item stage is a third as wide, so its pins use three times the cqw to keep their usual size */
+.stage.solo .pin.face-pin img{width:clamp(38px,16.8cqw,56px);height:clamp(38px,16.8cqw,56px)}
+.stage.solo .pin.rider-pin img.sitter{width:clamp(48px,22.8cqw,78px)}
+.stage.solo .pin .t{font-size:clamp(.62rem,5.55cqw,.79rem)}
+/* "Where to start": the try-this-week ideas are plain dot points */
+ul.dots li.dot::before{width:7px;height:7px;margin-top:9px;justify-self:center;background:var(--pink)}
+/* Teammates: box headings sit on the left above a thin rule, and the points are justified (straight on both
+   sides). The footsteps half of page 5 starts below a divider so it reads as its own section. */
+.team .box>h3{text-align:left;padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.team .box ul.dots li>span,.team .score-note,.team .remember p{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+.team #p5 h3.sub{border-top:1px solid var(--line);padding-top:28px;margin-top:10px}
+/* Two-line lede (Teammates footsteps text): one line per half on wide screens, two balanced lines on
+   tablets, and the same two halves on phones (where the text is too long for two lines) */
+.lede.two-line{max-width:none}
+.lede.two-line span{display:block}
+@media (min-width:701px) and (max-width:959px){.lede.two-line span{display:inline}}
+/* Teammates page 6: the overall Together score sits in a small box filled to that score, with slowly moving
+   waves like the liquid in the page 1 heart. Its negative margins keep the row as tall as the others, and the
+   water is a light tint so the number stays easy to read. */
+.wave-chip{
+  position:relative;
+  isolation:isolate;
+  display:inline-block;
+  margin:-6px 0;
+  padding:5px 11px;
+  border:1px solid var(--pink-mid);
+  border-radius:10px;
+  background:#fff;
+  box-shadow:0 4px 10px -7px var(--shadow-tint,rgba(45,20,35,.45));
+}
+.wave-chip .wave-clip{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:9px;opacity:.55}
+.wave-chip .wave-water{position:absolute;left:0;right:0;bottom:0;height:var(--fill);background:var(--w-top)}
+.wave-chip .wave{position:absolute;left:0;bottom:calc(100% - 1px);width:200%;height:5px;display:block}
+.wave-chip .wave path{fill:var(--w-top)}
+.wave-chip .wave.back{height:7px;opacity:.45;animation:wave-x 9s linear infinite reverse}
+.wave-chip .wave.back path{fill:var(--w-light)}
+.wave-chip .wave.front{animation:wave-x 6s linear infinite}
+@keyframes wave-x{to{transform:translateX(-50%)}}
+.score-note{text-align:left;max-width:none;margin-top:-6px;font-size:.92rem}
 .sub{font-size:clamp(1.45rem,4vw,2.05rem);text-align:center;margin-top:4px}
 .legend{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;font-size:.88rem;color:var(--muted);margin:0;padding:0;list-style:none}
 .legend li{display:inline-flex;align-items:center;gap:7px;font-weight:600}
@@ -609,6 +725,7 @@ footer a:hover{text-decoration:underline}
 /* Mobile layout */
 @media (max-width:700px){
   .hero-row,.flowers,.area,.remember{grid-template-columns:minmax(0,1fr)}
+  .area.hang .tips{grid-template-columns:minmax(0,1fr)}
   .hero-row .stage{max-width:390px;margin:0 auto}
   .couple{max-width:410px;margin:0 auto}
   .chips{grid-template-columns:minmax(0,1fr)}
@@ -625,8 +742,34 @@ footer a:hover{text-decoration:underline}
   .know{flex-direction:column;align-items:flex-start;gap:6px}
   .know span{border-left:0;padding-left:0}
   .stage.wide{--ar:var(--ar-m)!important}
+  .trio{grid-template-columns:minmax(0,1fr);gap:12px}
+  .trio-item{padding:4px 16px 20px}
+  /* Teammates score table: four columns, so tighter cells keep it inside the page on phones */
+  .team table.score-table{font-size:.86rem}
+  .team table.score-table th,.team table.score-table td{padding:10px 7px}
+  .team table.score-table th:first-child,.team table.score-table td:first-child{padding-left:12px}
+  .team table.score-table thead th{font-size:.98rem}
+  .team .wave-chip{padding:5px 7px}
   .keys{grid-template-columns:minmax(0,1fr)}
   .remember img.harmony{margin:0 auto}
   .page>h2,.page>h1{padding:0 28px}
+}
+/* Teammates page 3 on tablets and phones: the picture card sits above the text and is just as wide, so both
+   edges line up at every width. The picture and diagram columns stop growing at 320px and 240px, and any
+   extra width is shared out evenly around them. */
+@media (max-width:959px){
+  .area.hang{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "line" "visual" "body"}
+  .area-visual{grid-template-columns:minmax(0,min(54%,320px)) minmax(0,min(45%,240px));justify-content:space-evenly}
+  .area-visual .scene{max-height:310px}
+  .area-visual figure.hang{contain:none;align-self:center}
+  figure.hang svg{height:auto}
+}
+/* Teammates score table on narrow phones: smaller text and cells so all four columns fit without scrolling */
+@media (max-width:420px){
+  .team table.score-table{font-size:.8rem}
+  .team table.score-table th,.team table.score-table td{padding:9px 4px}
+  .team table.score-table th:first-child,.team table.score-table td:first-child{padding-left:10px}
+  .team table.score-table thead th{font-size:.92rem}
+  .team .wave-chip{padding:4px}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
